@@ -69,7 +69,7 @@ Things get more interesting when manipulating contiguous spans of several bits:
 
         *(int*)(0x400c0004) = (*(int*)(0x400c0004) & ~0xf00) | 0x600;
 
-        *(TIMER3 + TIMER_CONFIG_OFFSET) = (*(TIMER3 + TIMER_CONFIG_OFFSET) & TIMER_BAUD_MASK) | TIMER_BAUD_19200;
+        *(TIMER3 + TIMER_CONFIG_OFFSET) = (*(TIMER3 + TIMER_CONFIG_OFFSET) & TIMER_CLOCK_DIV_MASK) | TIMER_CLOCK_DIV_8;
 
         INSERT_BITS(USART2->CONFIG, USART_BAUD_MASK, USART_BAUD_19200);
 
@@ -80,16 +80,16 @@ But more important than what regbits does is what it does NOT do. All of the fol
         // read the manual if you want to know what this is trying to do
         *(int*)(0x40100010) = 0x802;
 
-        // they probably use the same bits
+        // they probably use the same bit positions for all peripherals
         *(SPI0 + SPI_CONFIG_OFFSET) = I2C_ENABLE | I2C_MASTER_MODE;
 
-        // might do something interesting
+        // this might do something interesting
         ADC1->CTRL = USART_PARITY_EVEN | TIMER_ENABLE_INTERRUPT;
         
         // we'll catch any problems during debug and test
         init_usb_periph(USART3);
 
-        // hope this works when used later
+        // hope this works when used later on
         uint32_t timer_config_settings = SPI_LSB_FIRST | I2C_NACK_ENABLE;
 
 Compared to regbits which won't allow any of the following to compile: <a name="regbits_compile_time_errors"></a>
