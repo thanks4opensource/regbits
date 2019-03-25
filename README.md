@@ -1,5 +1,3 @@
-<title>regbits: C++ templates for type-safe bit manipulation</title>
-
 regbits: C++ templates for type-safe bit manipulation
 ====================================================
 
@@ -77,7 +75,7 @@ Things get more interesting when manipulating contiguous spans of several bits:
 
         usart2->config <<= USART_BAUD_19200;  // or usart2->config.ins(USART_BAUD_19200)
 
-But more important than what regbits does is what it DOES NOT do. All of the following will compile without error but almost certainly cause serious, hard to debug problems when executed:
+But more important than what regbits does is what it does NOT do. All of the following will compile without error but almost certainly cause serious, hard to debug problems when executed:
 
         // read the manual if you want to know what this is trying to do
         *(int*)(0x40100010) = 0x802;
@@ -1089,7 +1087,7 @@ Client code uses this to instantiate desired constant objects as follows:
 
         Timer::Autoreload::AUTORELOAD<9347>();
 
-Yes, the syntax is ugly, but because C++ can currently only `static_assert` on template parameters it is the only way the range checking can be implemented. (Note: There may be other workarounds but the ones this author has seen far exceed his tolerance for template metaprogramming cleverness and /obfuscation. Please support proposals such as [this one](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1045r0.html) to fix the problem in future C++ standards.)
+Yes, the syntax is ugly, but because C++ can currently only `static_assert` on template parameters it is the only way the range checking can be implemented. (Note: There may be other workarounds but the ones this author has seen far exceed his tolerance for template metaprogramming cleverness and obfuscation. Please support proposals such as [this one](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1045r0.html) to fix the problem in future C++ standards.)
 
 The above function template takes care of the problem with constexpr objects, which is the main thrust of regbits. However, there may be valid use cases for generating regbits Bits and Mskd objects at runtime using variable data.
 
@@ -1217,7 +1215,7 @@ running on an NXP LCP824 ARM MCU at the default 12 MHz clock speed produces the 
         regbits.out             size: 2520      time: 3957
         struct.out              size: 2596      time: 4132
 
-Note these overall rankings of the implementations does not prove that each individual test performs in the same best-to-worst order. For that, the individual `*.elf.dmp` disassembled files should be examined. Also note, however, that the constant-between-versions overhead of saving data during execution likely reduces that actual differences in speed (and size).
+Note these overall rankings of the implementations do not prove that each individual test performs in the same best-to-worst order. For that, the individual `*.elf.dmp` disassembled files should be examined. Also note, however, that the constant-between-versions overhead of saving data during execution likely causes understimation of the actual differences in speed (and size).
 
 Attempts were made to make the tests "fair". For example, in the `struct` implementation ([`struct.c`](unittest/struct.c)) it would be "natural" to pass arguments by reference separately:
 

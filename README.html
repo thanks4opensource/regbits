@@ -1,5 +1,3 @@
-<p><title>regbits: C++ templates for type-safe bit manipulation</title></p>
-
 <h1>regbits: C++ templates for type-safe bit manipulation</h1>
 
 <p><strong>regbits</strong> is a C++ template library for type-safe manipulation of bits in microcontroller peripheral registers. Compiled executable object code equals or outperforms traditional techniques in terms of size and speed, and complexity of header files describing peripheral/register layout is comparable.</p>
@@ -83,7 +81,7 @@
     usart2-&gt;config &lt;&lt;= USART_BAUD_19200;  // or usart2-&gt;config.ins(USART_BAUD_19200)
 </code></pre>
 
-<p>But more important than what regbits does is what it DOES NOT do. All of the following will compile without error but almost certainly cause serious, hard to debug problems when executed:</p>
+<p>But more important than what regbits does is what it does NOT do. All of the following will compile without error but almost certainly cause serious, hard to debug problems when executed:</p>
 
 <pre><code>    // read the manual if you want to know what this is trying to do
     *(int*)(0x40100010) = 0x802;
@@ -1175,7 +1173,7 @@ Continuing with the example definition file, define constants for single bits:</
 <pre><code>    Timer::Autoreload::AUTORELOAD&lt;9347&gt;();
 </code></pre>
 
-<p>Yes, the syntax is ugly, but because C++ can currently only <code>static_assert</code> on template parameters it is the only way the range checking can be implemented. (Note: There may be other workarounds but the ones this author has seen far exceed his tolerance for template metaprogramming cleverness and /obfuscation. Please support proposals such as <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1045r0.html">this one</a> to fix the problem in future C++ standards.)</p>
+<p>Yes, the syntax is ugly, but because C++ can currently only <code>static_assert</code> on template parameters it is the only way the range checking can be implemented. (Note: There may be other workarounds but the ones this author has seen far exceed his tolerance for template metaprogramming cleverness and obfuscation. Please support proposals such as <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1045r0.html">this one</a> to fix the problem in future C++ standards.)</p>
 
 <p>The above function template takes care of the problem with constexpr objects, which is the main thrust of regbits. However, there may be valid use cases for generating regbits Bits and Mskd objects at runtime using variable data.</p>
 
@@ -1304,7 +1302,7 @@ Continuing with the example definition file, define constants for single bits:</
     struct.out              size: 2596      time: 4132
 </code></pre>
 
-<p>Note these overall rankings of the implementations does not prove that each individual test performs in the same best-to-worst order. For that, the individual <code>*.elf.dmp</code> disassembled files should be examined. Also note, however, that the constant-between-versions overhead of saving data during execution likely reduces that actual differences in speed (and size).</p>
+<p>Note these overall rankings of the implementations do not prove that each individual test performs in the same best-to-worst order. For that, the individual <code>*.elf.dmp</code> disassembled files should be examined. Also note, however, that the constant-between-versions overhead of saving data during execution likely causes understimation of the actual differences in speed (and size).</p>
 
 <p>Attempts were made to make the tests &ldquo;fair&rdquo;. For example, in the <code>struct</code> implementation (<a href="unittest/struct.c"><code>struct.c</code></a>) it would be &ldquo;natural&rdquo; to pass arguments by reference separately:</p>
 
