@@ -1,0 +1,318 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+registers           0x2e0             main.o
+finish              0x4               main.o
+start               0x4               main.o
+
+Discarded input sections
+
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 lpc8xx_ram_init.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .group         0x0000000000000000        0x8 struct.o
+ .debug_macro   0x0000000000000000      0xa60 struct.o
+ .debug_macro   0x0000000000000000       0x22 struct.o
+ .debug_macro   0x0000000000000000       0x8e struct.o
+ .debug_macro   0x0000000000000000       0x51 struct.o
+ .debug_macro   0x0000000000000000       0xef struct.o
+ .debug_macro   0x0000000000000000       0x6a struct.o
+ .debug_macro   0x0000000000000000      0x1df struct.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .group         0x0000000000000000        0x8 main.o
+ .debug_macro   0x0000000000000000      0xa60 main.o
+ .debug_macro   0x0000000000000000       0x22 main.o
+ .debug_macro   0x0000000000000000       0x8e main.o
+ .debug_macro   0x0000000000000000       0x51 main.o
+ .debug_macro   0x0000000000000000       0xef main.o
+ .debug_macro   0x0000000000000000       0x6a main.o
+ .debug_macro   0x0000000000000000      0x1df main.o
+ .debug_macro   0x0000000000000000       0x22 main.o
+ .debug_macro   0x0000000000000000       0x3a main.o
+ .debug_macro   0x0000000000000000       0x26 main.o
+ .debug_macro   0x0000000000000000      0x329 main.o
+ .debug_macro   0x0000000000000000       0x8f main.o
+ .debug_macro   0x0000000000000000      0x1c4 main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000000000000 0x0000000000008000 xr
+RAM              0x0000000010000000 0x0000000000002000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD lpc8xx_ram_init.o
+LOAD struct.o
+LOAD main.o
+                0x0000000000000020                PROVIDE (MINIMUM_STACK_SIZE, 0x20)
+                0x0000000010000000                . = ORIGIN (RAM)
+
+.text           0x0000000010000000      0xb8c
+ *(.isr_vectors)
+ .isr_vectors   0x0000000010000000       0x9c lpc8xx_ram_init.o
+                0x0000000010000000                INTERRUPT_VECTORS
+ *(.text)
+ .text          0x000000001000009c       0x68 lpc8xx_ram_init.o
+                0x000000001000009c                NMI_Handler
+                0x000000001000009e                HardFault_Handler
+                0x00000000100000a0                SVCall_Handler
+                0x00000000100000a2                PendSV_Handler
+                0x00000000100000a4                SysTick_Handler
+                0x00000000100000a6                SPI0_IRQHandler
+                0x00000000100000a8                SPI1_IRQHandler
+                0x00000000100000aa                UART0_IRQHandler
+                0x00000000100000ac                UART1_IRQHandler
+                0x00000000100000ae                UART2_IRQHandler
+                0x00000000100000b0                Reserved1_IRQHandler
+                0x00000000100000b2                SCT_IRQHandler
+                0x00000000100000b4                MRT_IRQHandler
+                0x00000000100000b6                CMP_IRQHandler
+                0x00000000100000b8                WDT_IRQHandler
+                0x00000000100000ba                BOD_IRQHandler
+                0x00000000100000bc                WKT_IRQHandler
+                0x00000000100000be                Reserved11_IRQHandler
+                0x00000000100000c0                PININT0_IRQHandler
+                0x00000000100000c2                PININT1_IRQHandler
+                0x00000000100000c4                PININT2_IRQHandler
+                0x00000000100000c6                PININT3_IRQHandler
+                0x00000000100000c8                PININT4_IRQHandler
+                0x00000000100000ca                PININT5_IRQHandler
+                0x00000000100000cc                PININT6_IRQHandler
+                0x00000000100000ce                PININT7_IRQHandler
+                0x00000000100000d0                init
+ .text          0x0000000010000104      0xa18 struct.o
+                0x0000000010000104                zero
+                0x0000000010000124                set_singl_bits
+                0x000000001000013c                clr_singl_bits
+                0x0000000010000154                set_singl_mskd
+                0x000000001000016c                clr_singl_mskd
+                0x0000000010000184                equ_singl_bits
+                0x0000000010000194                equ_singl_mskd
+                0x00000000100001a4                flp_singl_bits
+                0x00000000100001c0                flp_singl_mskd
+                0x00000000100001dc                ins_singl_mskd
+                0x00000000100001fc                set_multi_bits
+                0x0000000010000214                ins_multi_mskd
+                0x0000000010000238                equ_multi_bits
+                0x0000000010000248                equ_multi_mskd
+                0x0000000010000258                equ_bits_mskd
+                0x0000000010000268                equ_mskd_bits
+                0x0000000010000278                equ_bits_var
+                0x0000000010000288                equ_mskd_var
+                0x000000001000029c                cmp_zero
+                0x00000000100002dc                cmp_bits
+                0x000000001000031c                cmp_mskd
+                0x000000001000038c                cmp_reg
+                0x00000000100003cc                bits_val
+                0x00000000100003e0                call_bits_val
+                0x00000000100003f0                constexpr_bits_array
+                0x0000000010000404                runtime_bits_array
+                0x0000000010000428                bits_ref
+                0x0000000010000440                call_bits_ref
+                0x000000001000045a                mskd_val
+                0x0000000010000478                call_mskd_val
+                0x000000001000048c                mskd_ref
+                0x00000000100004ac                call_mskd_ref
+                0x00000000100004e4                periph_reg_bits_val
+                0x0000000010000508                call_periph_reg_bits_val
+                0x0000000010000520                periph_reg_bits_ref
+                0x0000000010000548                call_periph_reg_bits_ref
+                0x0000000010000568                periph_reg_mskd_val
+                0x0000000010000598                call_periph_reg_mskd_val
+                0x00000000100005b0                periph_reg_mskd_ref
+                0x00000000100005e8                call_periph_reg_mskd_ref
+                0x0000000010000610                return_bits
+                0x0000000010000614                call_return_bits
+                0x0000000010000638                return_mskd
+                0x0000000010000642                call_return_mskd
+                0x0000000010000674                return_reg
+                0x0000000010000688                call_return_reg
+                0x00000000100006ac                return_periph
+                0x00000000100006b8                call_return_periph
+                0x00000000100006dc                pos_val
+                0x0000000010000704                call_pos_val
+                0x0000000010000714                pos_ref
+                0x000000001000073c                call_pos_ref
+                0x0000000010000758                runtime_range_val
+                0x0000000010000768                call_range_val
+                0x0000000010000794                call_range_val_port
+                0x000000001000079e                runtime_range_ref
+                0x00000000100007b4                call_range_ref
+                0x00000000100007e8                call_range_ref_port
+                0x00000000100007f2                record_registers
+                0x0000000010000820                check_array_range_pass
+                0x0000000010000838                check_array_range_fail
+                0x0000000010000850                check_bits_range_pass
+                0x0000000010000868                check_bits_range_fail
+                0x0000000010000880                check_mskd_range_pass
+                0x0000000010000898                check_mskd_range_fail
+                0x00000000100008b0                check_bits_extract
+                0x00000000100008f0                check_mskd_extract
+                0x0000000010000940                run
+ .text          0x0000000010000b1c       0x70 main.o
+                0x0000000010000b1c                memset
+                0x0000000010000b30                unittest_record_registers
+                0x0000000010000b4c                main
+
+.glue_7         0x0000000010000b8c        0x0
+ .glue_7        0x0000000010000b8c        0x0 linker stubs
+
+.glue_7t        0x0000000010000b8c        0x0
+ .glue_7t       0x0000000010000b8c        0x0 linker stubs
+
+.vfp11_veneer   0x0000000010000b8c        0x0
+ .vfp11_veneer  0x0000000010000b8c        0x0 linker stubs
+
+.v4_bx          0x0000000010000b8c        0x0
+ .v4_bx         0x0000000010000b8c        0x0 linker stubs
+
+.iplt           0x0000000010000b8c        0x0
+ .iplt          0x0000000010000b8c        0x0 lpc8xx_ram_init.o
+
+.rel.dyn        0x0000000010000b8c        0x0
+ .rel.iplt      0x0000000010000b8c        0x0 lpc8xx_ram_init.o
+
+.rodata         0x0000000010000b8c       0x10
+ .rodata        0x0000000010000b8c       0x10 struct.o
+
+.data           0x0000000010000b9c        0x0
+                0x0000000010000b9c                . = ALIGN (0x4)
+ *(.data)
+ .data          0x0000000010000b9c        0x0 lpc8xx_ram_init.o
+ .data          0x0000000010000b9c        0x0 struct.o
+ .data          0x0000000010000b9c        0x0 main.o
+                0x0000000010000b9c                BSS_START = .
+
+.igot.plt       0x0000000010000b9c        0x0
+ .igot.plt      0x0000000010000b9c        0x0 lpc8xx_ram_init.o
+
+.bss            0x0000000010000b9c      0x2e8
+                0x0000000010000b9c                . = ALIGN (0x4)
+ *(.bss)
+ .bss           0x0000000010000b9c        0x0 lpc8xx_ram_init.o
+ .bss           0x0000000010000b9c        0x0 struct.o
+ .bss           0x0000000010000b9c        0x0 main.o
+ COMMON         0x0000000010000b9c      0x2e8 main.o
+                0x0000000010000b9c                registers
+                0x0000000010000e7c                finish
+                0x0000000010000e80                start
+                0x0000000010000e84                BSS_END = .
+                0x0000000010000e84                end = .
+                0x0000000010000000                RAM_BASE_ADDR = ORIGIN (RAM)
+                0x0000000000000000                FLASH_BASE_ADDR = ORIGIN (FLASH)
+                0x0000000010002000                TOP_OF_STACK = (ORIGIN (RAM) + LENGTH (RAM))
+                0x0000000000000000                ASSERT (((end + MINIMUM_STACK_SIZE) < TOP_OF_STACK), too big to fit in RAM)
+OUTPUT(struct.elf elf32-littlearm)
+
+.debug_info     0x0000000000000000     0x1de3
+ .debug_info    0x0000000000000000      0x3f1 lpc8xx_ram_init.o
+ .debug_info    0x00000000000003f1     0x1381 struct.o
+ .debug_info    0x0000000000001772      0x671 main.o
+
+.debug_abbrev   0x0000000000000000      0x598
+ .debug_abbrev  0x0000000000000000      0x14e lpc8xx_ram_init.o
+ .debug_abbrev  0x000000000000014e      0x241 struct.o
+ .debug_abbrev  0x000000000000038f      0x209 main.o
+
+.debug_loc      0x0000000000000000      0x3c5
+ .debug_loc     0x0000000000000000       0x55 lpc8xx_ram_init.o
+ .debug_loc     0x0000000000000055      0x267 struct.o
+ .debug_loc     0x00000000000002bc      0x109 main.o
+
+.debug_aranges  0x0000000000000000       0x60
+ .debug_aranges
+                0x0000000000000000       0x20 lpc8xx_ram_init.o
+ .debug_aranges
+                0x0000000000000020       0x20 struct.o
+ .debug_aranges
+                0x0000000000000040       0x20 main.o
+
+.debug_macro    0x0000000000000000     0x1eb5
+ .debug_macro   0x0000000000000000       0xae lpc8xx_ram_init.o
+ .debug_macro   0x00000000000000ae      0xa60 lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000b0e       0x22 lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000b30       0x8e lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000bbe       0x51 lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000c0f       0xef lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000cfe       0x6a lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000d68      0x1df lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000f47       0x22 lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000f69       0x3a lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000fa3       0x26 lpc8xx_ram_init.o
+ .debug_macro   0x0000000000000fc9      0x329 lpc8xx_ram_init.o
+ .debug_macro   0x00000000000012f2       0x8f lpc8xx_ram_init.o
+ .debug_macro   0x0000000000001381      0x1c4 lpc8xx_ram_init.o
+ .debug_macro   0x0000000000001545       0x7b struct.o
+ .debug_macro   0x00000000000015c0       0x10 struct.o
+ .debug_macro   0x00000000000015d0      0x6b5 struct.o
+ .debug_macro   0x0000000000001c85       0xbc main.o
+ .debug_macro   0x0000000000001d41      0x174 main.o
+
+.debug_line     0x0000000000000000     0x132e
+ .debug_line    0x0000000000000000      0x4ba lpc8xx_ram_init.o
+ .debug_line    0x00000000000004ba      0xafd struct.o
+ .debug_line    0x0000000000000fb7      0x377 main.o
+
+.debug_str      0x0000000000000000     0x882a
+ .debug_str     0x0000000000000000     0x5c5e lpc8xx_ram_init.o
+                                       0x5dca (size before relaxing)
+ .debug_str     0x0000000000005c5e     0x2625 struct.o
+                                       0x630c (size before relaxing)
+ .debug_str     0x0000000000008283      0x5a7 main.o
+                                       0x61e4 (size before relaxing)
+
+.comment        0x0000000000000000       0x75
+ .comment       0x0000000000000000       0x75 lpc8xx_ram_init.o
+                                         0x76 (size before relaxing)
+ .comment       0x0000000000000075       0x76 struct.o
+ .comment       0x0000000000000075       0x76 main.o
+
+.ARM.attributes
+                0x0000000000000000       0x1c
+ .ARM.attributes
+                0x0000000000000000       0x1c lpc8xx_ram_init.o
+ .ARM.attributes
+                0x000000000000001c       0x1c struct.o
+ .ARM.attributes
+                0x0000000000000038       0x1c main.o
+
+.debug_frame    0x0000000000000000      0x75c
+ .debug_frame   0x0000000000000000      0x1c8 lpc8xx_ram_init.o
+ .debug_frame   0x00000000000001c8      0x544 struct.o
+ .debug_frame   0x000000000000070c       0x50 main.o
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        3716 B         8 KB     45.36%

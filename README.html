@@ -1,0 +1,1431 @@
+<p><title>regbits: C++ templates for type-safe bit manipulation</title></p>
+
+<h1>regbits: C++ templates for type-safe bit manipulation</h1>
+
+<p><strong>regbits</strong> is a C++ template library for type-safe manipulation of bits in microcontroller peripheral registers. Compiled executable object code equals or outperforms traditional techniques in terms of size and speed, and complexity of header files describing peripheral/register layout is comparable.</p>
+
+<h2>Contents  <a name="contents"></a></h2>
+
+<ul>
+<li><a href="#license">License</a></li>
+<li><a href="#what_does_regbits_do">What does regbits do?</a></li>
+<li><a href="#what_is_regbits_for">What is regbits for?</a></li>
+<li><a href="#how_is_regbits_used">How is regbits used?</a></li>
+<li><a href="#how_is_regbits_implemented?">How is regbits implemented?</a></li>
+<li><a href="#comparison_with_other_approaches">Comparison with other approaches</a>
+
+<ul>
+<li><a href="#raw_numeric_values">Raw numeric values</a></li>
+<li><a href="#preprocessor_symbolic_peripheral_addresses_and_register_offsets">Preprocessor symbolic peripheral addresses and register offsets</a></li>
+<li><a href="#preprocessor_symbolic_bit_definitions">Preprocessor symbolic bit definitions</a></li>
+<li><a href="#static_consts">Static consts</a></li>
+<li><a href="#c_cxx_enums">C/C++ enums</a></li>
+<li><a href="#c_structs">C structs</a></li>
+<li><a href="#c_bitfields">C bitfields</a></li>
+<li><a href="#helper_functions">Helper functions</a></li>
+<li><a href="#Higher-level_wrappers">Higher-level wrappers</a></li>
+</ul>
+</li>
+<li><a href="#requirements_limitations_problems">Requirements, limitations, problems</a></li>
+<li><a href="#unit_test">Unit test</a>
+
+<ul>
+<li><a href="#type_safe_error_detection">Type-safe error detection</a></li>
+<li><a href="#computational_correctness">Computational correctness</a></li>
+<li><a href="#performance_claims">Performance claims</a></li>
+</ul>
+</li>
+<li><a href="#future_enhancements">Future enhancements</a></li>
+</ul>
+
+
+<h2>License  <a name="license"></a></h2>
+
+<p>regbits: C++ templates for type-safe bit manipulation</p>
+
+<p>Copyright &copy; 2019 Mark R. Rubin</p>
+
+<p>This file is part of regbits.</p>
+
+<p>The regbits program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+
+<p>The regbits program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the <a href="LICENSE.txt">GNU General Public License</a> along with the regbits program.  If not, see <a href="https://www.gnu.org/licenses/gpl.html">https://www.gnu.org/licenses/gpl.html</a></p>
+
+<h2>What does regbits do? <a name="what_does_regbits_do"></a></h2>
+
+<p><strong>regbits</strong> enables easy to use, optimally efficient low-level access to <a href="#microcontroller_registers">microcontroller registers</a>.</p>
+
+<p>Given appropriate header files, the following all compile to executable object code of equivalent size and speed (see <a href="#performance_claims">Performance claims</a>, below):</p>
+
+<pre><code>    // raw address and bits
+    *(int*)(0x40008008) = 0xc0;
+
+    // symbolic names for peripheral, register, and bits
+    *(TIMER1 + TIMER_CTRL_OFFSET) = TIMER_ENABLE | TIMER_COUNT_UP;
+
+    // C struct peripheral definition with symbolic bit names
+    TIMER1-&gt;CTRL = TIMER_ENABLE | TIMER_COUNT_UP;
+
+    // C++ regbits
+    timer1-&gt;ctrl = TIMER_ENABLE | TIMER_COUNT_UP;
+</code></pre>
+
+<p>Things get more interesting when manipulating contiguous spans of several bits:</p>
+
+<pre><code>    *(int*)(0x400c0004) = (*(int*)(0x400c0004) &amp; ~0xf00) | 0x600;
+
+    *(TIMER3 + TIMER_CONFIG_OFFSET) = (*(TIMER3 + TIMER_CONFIG_OFFSET) &amp; TIMER_BAUD_MASK) | TIMER_BAUD_19200;
+
+    INSERT_BITS(USART2-&gt;CONFIG, USART_BAUD_MASK, USART_BAUD_19200);
+
+    usart2-&gt;config &lt;&lt;= USART_BAUD_19200;  // or usart2-&gt;config.ins(USART_BAUD_19200)
+</code></pre>
+
+<p>But more important than what regbits does is what it DOES NOT do. All of the following will compile without error but almost certainly cause serious, hard to debug problems when executed:</p>
+
+<pre><code>    // read the manual if you want to know what this is trying to do
+    *(int*)(0x40100010) = 0x802;
+
+    // they probably use the same bits
+    *(SPI0 + SPI_CONFIG_OFFSET) = I2C_ENABLE | I2C_MASTER_MODE;
+
+    // might do something interesting
+    ADC1-&gt;CTRL = USART_PARITY_EVEN | TIMER_ENABLE_INTERRUPT;
+
+    // we'll catch any problems during debug and test
+    init_usb_periph(USART3);
+
+    // hope this works when used later
+    uint32_t timer_config_settings = SPI_LSB_FIRST | I2C_NACK_ENABLE;
+</code></pre>
+
+<p>Compared to regbits which won&rsquo;t allow any of the following to compile: <a name="regbits_compile_time_errors"></a></p>
+
+<pre><code>    // ERROR: can't set SPI peripheral with I2C configuration constants
+    spi0-&gt;ctrl = I2C_ENABLE;
+
+    // ERROR: can't set register with another register's constant
+    i2c1-&gt;interrupts = I2C_MODE_FAST;
+
+    // ERROR: can't call function with wrong kind of peripheral
+    init_usb(USART3);
+
+    // ERROR: can't mix different peripherals' constants
+    uint32_t timer_config_settings = (TIMER_COUNT_DOWN | USART_BAUD_9600).bits();
+</code></pre>
+
+<p>These are contrived, exaggerated examples. However, the point remains that this kind of error is easy to make, but hard to detect by source code inspection, and possibly even harder to find during runtime testing and debugging. A one-letter typo can easily hide in thousands of lines of code:</p>
+
+<pre><code>    I2C3-&gt;CTRL = I2C_TIMEOUT_ON | I2S_ENABLE | I2C_MASTER_MODE;
+</code></pre>
+
+<h2>What is regbits for? <a name="what_is_regbits_for"></a></h2>
+
+<p>Microcontrollers (MCUs / &ldquo;Systems On A Chip&rdquo; / SOCs) typically include <em>peripherals</em>: Hardware functionality such as input/output ports, timers, serial communications, analog-to-digital and digital-to-analog conversion, etc.</p>
+
+<p><a name="microcontroller_registers"></a>
+These peripherals typically contain multiple <em>registers</em>: Sets of memory locations (usually contiguous) which when written to and read from control the peripheral and access its data. Additionally, the MCU itself &ndash; clock speed, interrupts, I/O configuration &ndash; is configured via similar sets of registers.</p>
+
+<p>Single and sets of multiple (usually contiguous) bits within each register typically control or access specific capabilities of the peripheral or MCU. A register for a serial communications peripheral might be structured:</p>
+
+<pre><code>      31  30  29  28  27  26  25  24  23  22  21  20  19  18  17  16  15  14  13  12  11  10  9   8   7   6   5   4   3   2   1   0
+    |   |   |   |   |   |   |   | P |   |   |       PORT        |   | TR| RR|  CLK  |   |   | TI| RI|   |   |   |   SPEED   | M | E |
+
+    bit(s)  label   functionality   
+      0       E     Enable peripheral
+      1       M     Mode (0==transmit, 1==receive)
+     2-4    SPEED   Speed (0==slowest, 7==fastest)
+      8      RI     Enable receive interrupt
+      9      TI     Enable transmit interrupt
+    12-13    CLK    Clock source (0==peripherals, 1==main, 2==external)
+     14      RR     Receive data available
+     15      TR     Transmit ready
+    17-21   PORT    I/O port
+     24      P      Polarity (0=positive, 1=negative)
+</code></pre>
+
+<p>Although the examples in this <code>README.md</code> and the <a href="unittest"><code>unittest</code></a> code are for 32-bit architectures, all are equally applicable to 64-bit and other word widths. And although designed for register access, regbits and similar methods are not limited to such usage.</p>
+
+<h4>Hardware/software limitations</h4>
+
+<p>All or almost all contemporary MCU hardware permits accessing memory by words (32/64/etc bits), bytes (8 bits), shorts (typically 16 bits) and other fixed, multiples-of-8, bit widths (32 bits on 64-bit architecture, etc).</p>
+
+<p>Software frequently needs to access register bits (single or multiple) as separate, isolated atomic units, changing only those bits without affecting others in the same register.  Hardware does not support this, and with the exception of C bitfields (<a href="#c_bitfields">see below</a>), neither do the C and C++ languages. <strong>regbits</strong> and other software techniques (see <a href="#comparison_with_other_approaches">below</a>) address these limitations.</p>
+
+<h4>Register memory accesses <a name="register_memory_access"></a></h4>
+
+<p>Although registers are accessed as memory locations, they may or may not behave as such. C and C++ declarations should always include the <code>volatile</code> keyword because register bits may change independent of the CPU activity and the C/C++ execution model. There can be further differences; see <a href="#future_enhancements">Future enhancements</a>, below.</p>
+
+<h2>How is regbits used? <a name="how_is_regbits_used"></a></h2>
+
+<p>Given a microcontroller definition file based on the regbits C++ class templates (see <a href="#how_is_regbits_implemented?">below</a>), the set of operators and functions defined in <a href="regbits.hxx"><code>regbits.hxx</code></a> can be used in client code.</p>
+
+<p>The examples below are based on the sample definition file included in this repository&rsquo;s unit test directory, <a href="unittest/mcu_regbits.hxx"><code>mcu_regbits.hxx</code></a> (see <a href="#unit_test">Unit test</a>, below). This file contains a small set of example peripheral and register definitions describing a fictitious MCU and some of its peripherals.</p>
+
+<p>The examples show correct regbits usage. The type-safe design of regbits will intentionally produce compile failures in case of mismatches between regbits objects, as per <a href="#regbits_compile_time_errors">above</a>. Also see <a href="#type_safe_error_detection">&ldquo;Type-safe error detection&rdquo;</a> in the unittest documentation, below.</p>
+
+<p>Many of the examples (and the <a href="unittest">unit test suite</a>) show regbits' operator and function/method syntaxes, both of which produce the same results. They can be used interchangeably.</p>
+
+<h4>Word, single bit, and multiple bit span assignment</h4>
+
+<pre><code>    // assign single bit to register
+    serial2-&gt;config =   Serial::Config::POLARITY ;
+    serial2-&gt;config.wrt(Serial::Config::POLARITY);
+
+    // assign multiple single bits to register
+    serial2-&gt;config =   Serial::Config::ENDIAN | Serial::Config::POLARITY ;
+    serial2-&gt;config.wrt(Serial::Config::ENDIAN | Serial::Config::POLARITY);
+
+    // assign contiguous span of bits to register
+    serial2-&gt;config =   Serial::Config::DATALEN_16_BITS ;  // datalen 8, 16, or 32 encoded in 2 bits
+    serial2-&gt;config.wrt(Serial::Config::DATALEN_16_BITS);
+
+    // assign multiple contiguous span of bits to register
+    serial2-&gt;config =   Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;  // parity EVEN, ODD, CRC encoded in 2 bits
+    serial2-&gt;config.wrt(Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN);
+
+    // assign mix of single and contiguous span of bits
+    serial2-&gt;config =   Serial::Config::DATALEN_16_BITS | Serial::Config::MODE ;  // mode is single bit
+    serial2-&gt;config.wrt(Serial::Config::DATALEN_16_BITS | Serial::Config::MODE);
+
+    // single bit and bit span order unimportant
+    serial2-&gt;config = Serial::Config::MODE | Serial::Config::DATALEN_16_BITS ;
+</code></pre>
+
+<h4>Set, clear, flip bits</h4>
+
+<pre><code>    // set single/multiple bits/spans and mixtures thereof
+    serial2-&gt;config |=  Serial::Config::POLARITY;
+    serial2-&gt;config.set(Serial::Config::POLARITY        | Serial::Config::ENDIAN     );
+    serial2-&gt;config |=  Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;
+    serial2-&gt;config.set(Serial::Config::POLARITY        | Serial::Config::ENDIAN     );
+
+
+    // clr single/multiple bits/spans and mixtures thereof
+    serial2-&gt;config -=  Serial::Config::POLARITY;
+    serial2-&gt;config.clr(Serial::Config::POLARITY        | Serial::Config::ENDIAN     );
+    serial2-&gt;config -=  Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;
+    serial2-&gt;config.clr(Serial::Config::POLARITY        | Serial::Config::ENDIAN     );
+
+
+    // flip single/multiple bits/spans and mixtures thereof
+    serial2-&gt;config ^=  Serial::Config::POLARITY;
+    serial2-&gt;config.flp(Serial::Config::POLARITY        | Serial::Config::ENDIAN     );
+    serial2-&gt;config ^=  Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;
+    serial2-&gt;config.flp(Serial::Config::POLARITY        | Serial::Config::ENDIAN     );
+</code></pre>
+
+<h4>Insert bits (set without changing others)</h4>
+
+<pre><code>    // assign multiple single bits to register
+    serial2-&gt;config &lt;&lt;= Serial::Config::ENDIAN | Serial::Config::POLARITY ;
+    serial2-&gt;config.ins(Serial::Config::ENDIAN | Serial::Config::POLARITY);
+
+    // assign contiguous span of bits to register
+    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS ;
+    serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS);
+
+    // assign multiple contiguous span of bits to register
+    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;
+    serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN);
+
+    // assign mix of single and contiguous span of bits
+    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS | Serial::Config::MODE ;
+    serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS | Serial::Config::MODE);
+
+    // single bit and bit span order unimportant
+    serial2-&gt;config &lt;&lt;=  Serial::Config::MODE | Serial::Config::DATALEN_16_BITS ;
+    serial2-&gt;config.ins( Serial::Config::MODE | Serial::Config::DATALEN_16_BITS);
+</code></pre>
+
+<h4>Test register bits</h4>
+
+<pre><code>    // Test zero or arbitrary value
+    if (serial2-&gt;config        == 0         ) // ...
+    if (serial2-&gt;config.zero() == 0         ) // ...
+    if (serial2-&gt;config        == 0x12345678) // ...
+
+    // Test if bits are set in register
+    if (serial2-&gt;config == Serial::Config::ENDIAN) // ...
+    if (serial2-&gt;config != Serial::Config::ENDIAN |  | Serial::Config::POLARITY)  // ...
+
+    // Test span of bits (including 0/zero/cleared bits within span)
+    if (serial2-&gt;config == Serial::Config::DATALEN_16_BITS) // ...
+    if (serial2-&gt;config != Serial::Config::DATALEN_16_BITS | Serial::Config::POLARITY) // ...
+
+    // Test all bits in register
+    if (serial2-&gt;config ==   Serial::Config::ENDIAN.bits()) // ...
+    if (serial2-&gt;config != ((Serial::Config::ENDIAN.bits() | Serial::Config::DATALEN_16_BITS).bits()) // ...
+</code></pre>
+
+<h4>Extract single and multiple bit spans from a register</h4>
+
+<pre><code>    // extract single bit from register
+    Serial::Config::bits_t  bits;
+    serial2-&gt;config &gt;&gt;= bits;
+
+    // extract all bits in the bit span 
+    Serial::Config::mskd_t  mskd = Serial::Config::DATALEN_16_BITS;  // or any other DATALEN_XX_BITS constant, only internal .mask() value used
+    serial2-&gt;config &gt;&gt;= mskd;  // extract all bits, 0 or 1, within span
+</code></pre>
+
+<h2>How is regbits implemented? <a name="how_is_regbits_implemented?"></a></h2>
+
+<p>The C++ class templates defining regbits are contained in the file <a href="regbits.hxx"><code>regbits.hxx</code></a>. This file is intended for inclusion in an MCU peripheral/register/bits definition file such as the <a href="unittest/mcu_regbits.hxx"><code>mcu_regbits.hxx</code></a> example in the <a href="unittest"><code>unittest</code></a> subdirectory (see <a href="#unit_test">Unit test</a>, below).</p>
+
+<p>Following are some commented excerpts from <code>mcu_regbits.hxx</code> illustrating use of the templates:</p>
+
+<p>Include the regbits.hxx templates:</p>
+
+<pre><code>    #include &lt;regbits.hxx&gt;
+</code></pre>
+
+<p>Typically MCU regbits definition should go in their own namespace &ndash; a manufacturer or chip name such as <code>stm32f767xx</code> or <code>lpc824</code> would replace the example&rsquo;s generic &ldquo;mcu&rdquo; namespace name:</p>
+
+<pre><code>    namespace mcu {
+</code></pre>
+
+<p>Start definition of a peripheral:</p>
+
+<pre><code>    struct Serial {
+</code></pre>
+
+<p>Start definition of a register in the peripheral.:</p>
+
+<pre><code>        struct Config {
+</code></pre>
+
+<p>MCU regbits definitions implement type-safety by instantiating several classes templated on each specific register. Other instantiated template classes' methods will only accept objects template-instantiated on the same register.</p>
+
+<p><code>pos_t</code> is a type-safe wrapper for unsigned integers. It ensures that the values can only be used with the classes/register they are intended for</p>
+
+<pre><code>            using  pos_t = Pos&lt;uint32_t, Config&gt;;
+</code></pre>
+
+<p>Define bit positions of individual bits and spans of bits within the register &hellip;</p>
+
+<p>Note that these, and all other definitions, are <code>static constexpr</code>. Combined with the regbits <code>constexpr</code> constructors in the <code>regbits.hxx</code> class templates (and when compiled with appropriate optimization flags) they become compile-time only constants &ndash; no runtime storage is allocated for them.</p>
+
+<p>Note also that these values are externally visible in case client code has use for them.</p>
+
+<p>Bit positions:</p>
+
+<pre><code>            static constexpr pos_t  MODE_POS     = pos_t( 0),
+                                    DATALEN_POS  = pos_t( 1),
+                                    PARITY_POS   = pos_t( 3),
+                                    ENDIAN_POS   = pos_t( 5),
+                                    POLARITY_POS = pos_t( 6),
+                                    RXPORT_POS   = pos_t( 7),
+                                    TXPORT_POS   = pos_t(12);
+</code></pre>
+
+<p>Define bitmasks describing the size of multi-bit spans:</p>
+
+<pre><code>            static const uint32_t   DATALEN_MASK = 0x03,
+                                    PARITY_MASK  = 0x03,
+                                    RXPORT_MASK  = 0x1f,
+                                    TXPORT_MASK  = 0x1f;
+</code></pre>
+
+<p>Instantiation of the two main regbits templated classes. <code>Bits</code> is used for single bits (although when object instances are combined with others via the &ldquo;<code>|</code>&rdquo; operator they  can contain multiple single bits). <code>Mskd</code> is used for spans of multiple bits.</p>
+
+<pre><code>            using bits_t = Bits&lt;uint32_t, Config&gt;;
+            using mskd_t = Mskd&lt;uint32_t, Config&gt;;
+</code></pre>
+
+<p>The fact that Mskd objects hold both a bitmask and an bit value allows it to be used as a standalone object that supports bit span insertion into a register. Expressions using regbits insertion operators/methods  objects such as:</p>
+
+<pre><code>    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS
+</code></pre>
+
+<p>compile to executable object code identical that generated when not using regbits:</p>
+
+<pre><code>    serial2_register = (serial2_register &amp; ~datalen_mask) | datalen_bits;
+</code></pre>
+
+<p><a name="regbits_bits_t_and_mskd_t"></a>
+Continuing with the example definition file, define constants for single bits:</p>
+
+<pre><code>    static constexpr bits_t MODE     = bits_t(1, MODE_POS    ),
+                            ENDIAN   = bits_t(1, ENDIAN_POS  ),
+                            POLARITY = bits_t(1, POLARITY_POS);
+</code></pre>
+
+<p>Defining constants for multiple bit spans:</p>
+
+<pre><code>    static constexpr mskd_t
+            DATALEN_8_BITS  = mskd_t(DATALEN_MASK, 0, DATALEN_POS),
+            DATALEN_16_BITS = mskd_t(DATALEN_MASK, 1, DATALEN_POS),
+            DATALEN_32_BITS = mskd_t(DATALEN_MASK, 2, DATALEN_POS),
+            PARITY_ODD      = mskd_t(PARITY_MASK,  0, PARITY_POS ),
+            PARITY_EVEN     = mskd_t(PARITY_MASK,  1, PARITY_POS ),
+            PARITY_CRC      = mskd_t(PARITY_MASK,  2, PARITY_POS );
+</code></pre>
+
+<p>End the register definition, define a type name for possible external use, and allocate storage for the register. This where the peripheral struct gets a finite size (and layout) to match the actual hardware peripheral when a pointer to its address is declared.</p>
+
+<pre><code>        };    // struct Config
+        using config_t = Reg&lt;uint32_t, Config&gt;;
+        config_t    config;
+</code></pre>
+
+<p>More register definitions:</p>
+
+<pre><code>        struct Interrupts {
+        // ...
+</code></pre>
+
+<p>End peripheral definition and check that size is correct:</p>
+
+<pre><code>    };    // struct Serial
+    static_assert(sizeof(Serial) == 24, "sizeof(Serial)");
+</code></pre>
+
+<p>Define pointers to actual hardware peripherals:</p>
+
+<pre><code>    static const uint32_t   PERIPH_BASE     = 0x40000000;
+
+    static const uint32_t   SERIAL_BASE     = PERIPH_BASE + 0x00a00000;
+
+    static const uint32_t   SERIAL0_BASE    = SERIAL_BASE + 0x00000000,
+                            SERIAL1_BASE    = SERIAL_BASE + 0x00001000,
+                            SERIAL1_BASE    = SERIAL_BASE + 0x00002000;
+
+    static Serial* const    serial0 = reinterpret_cast&lt;Serial*&gt;(SERIAL0_BASE);
+    static Serial* const    serial1 = reinterpret_cast&lt;Serial*&gt;(SERIAL1_BASE);
+    static Serial* const    serial2 = reinterpret_cast&lt;Serial*&gt;(SERIAL2_BASE);
+</code></pre>
+
+<h2>Comparison with other approaches <a name="comparison_with_other_approaches"></a></h2>
+
+<p>(This material is included as background for the design of regbits. Experienced microcontroller programmers will be very familiar with the approaches and should skip ahead to the <a href="#requirements_limitations_problems">Requirements, limitations, problems</a> section, below.)</p>
+
+<p>Two different sets of information need to be provided to client code:</p>
+
+<ol>
+<li>Registers order/layout within peripherals</li>
+<li>Bits within the registers</li>
+</ol>
+
+
+<p>Some current approaches for addressing both of these requirements are described (somewhat intermixed) in the following sections.</p>
+
+<h4>Raw numeric register addresses and bits <a name="raw_numeric_values"></a></h4>
+
+<p>source (.c) file:</p>
+
+<pre><code>    *(int*)(0x400080a2) = 0xc0;
+</code></pre>
+
+<p>This is sadomasochism &ndash; sadism inflicted on anyone else who has to work with the code, and masochism on the part of the original developer who needs to maintain or debug it in the future.</p>
+
+<h5>pros:</h5>
+
+<ul>
+<li>no definition file needed</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>completely opaque; inherently undocumented</li>
+<li>requires constant reference to external manuals</li>
+<li>error prone, typos almost impossible to detect</li>
+</ul>
+
+
+<h4>Preprocessor symbolic peripheral addresses and register offsets <a name="preprocessor_symbolic_peripheral_addresses_and_register_offsets"></a></h4>
+
+<h5>source (.c) file:</h5>
+
+<pre><code>    *(TIMER1 + TIMER_CTRL_OFFSET) = //...
+</code></pre>
+
+<h5>definition (.h) file:</h5>
+
+<pre><code>    #define TIMER_BASE              ((PERIPH_BASE) + 0x00200000)
+
+    #define TIMER0_BASE             ((TIMER_BASE)  + 0x00000000)
+    #define TIMER1_BASE             ((TIMER_BASE)  + 0x00001000)
+    #define TIMER2_BASE             ((TIMER_BASE)  + 0x00002000)
+
+    #define TIMER0                  ((volatile uint32_t*)(TIMER0_BASE))
+    #define TIMER1                  ((volatile uint32_t*)(TIMER1_BASE))
+    #define TIMER2                  ((volatile uint32_t*)(TIMER2_BASE))
+
+    #define TIMER_CONTROL_OFFSET    0
+    #define TIMER_PRESCALE_OFFSET   1
+    #define TIMER_AUTORELOAD_OFFSET 2
+</code></pre>
+
+<h5>pros:</h5>
+
+<ul>
+<li>more readable / self-documenting</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>verbose and error-prone</li>
+<li>not type-safe, no error detection</li>
+</ul>
+
+
+<h4>Preprocessor symbolic bit definitions <a name="preprocessor_symbolic_bit_definitions"></a></h4>
+
+<h6>source (.c) file:</h6>
+
+<pre><code>    // set_bits
+    /*...*/ = TIMER_CONTROL_ENABLE | TIMER_CONTROL_CLOCK_SOURCE_PLL;
+
+    // clear bits
+    /*...*/ &amp;= ~(TIMER_CONTROL_ENABLE | TIMER_CONTROL_DIRECTION);
+
+    // insert field
+    /*...*/ = (/*...*/ &amp; ~TIMER_CONTROL_CLOCK_SOURCE_MSK) | TIMER_CONTROL_CLOCK_SOURCE_PLL;
+</code></pre>
+
+<h6>definition (.h) file:</h6>
+
+<pre><code>    #define TIMER_CONTROL_ENABLE_POS          4
+    #define TIMER_CONTROL_SINGLE_CYCLE_POS    5
+    #define TIMER_CONTROL_ARR_ENABLE_POS      6
+    #define TIMER_CONTROL_CLOCK_SOURCE_POS    7
+    #define TIMER_CONTROL_DIRECTION_POS       10
+
+    #define TIMER_CONTROL_ENABLE_MSK          (1 &lt;&lt; TIMER_CONTROL_ENABLE_POS)
+    #define TIMER_CONTROL_SINGLE_CYCLE_MSK    (1&lt;&lt; TIMER_CONTROL_SINGLE_CYCLE_POS)
+    #define TIMER_CONTROL_SINGLE_CYCLE        TIMER_CONTROL_SINGLE_CYCLE_MSK
+    #define TIMER_CONTROL_ARR_ENABLE_MSK      (1 &lt;&lt; TIMER_CONTROL_ARR_ENABLE_POS)
+    #define TIMER_CONTROL_ARR_ENABLE          TIMER_CONTROL_ARR_ENABLE_MSK
+    #define TIMER_CONTROL_ENABLE              TIMER_CONTROL_ENABLE_MSK
+    #define TIMER_CONTROL_CLOCK_SOURCE_MSK    (0x7 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)
+    #define TIMER_CONTROL_CLOCK_SOURCE_MAIN   (0x0 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)
+    #define TIMER_CONTROL_CLOCK_SOURCE_PLL    (0x1 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)
+    #define TIMER_CONTROL_CLOCK_SOURCE_EXTERN (0x2 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)
+    #define TIMER_CONTROL_DIRECTION_MSK       (1 &lt;&lt; TIMER_CONTROL_DIRECTION_POS)
+    #define TIMER_CONTROL_DIRECTION           TIMER_CONTROL_DIRECTION_MSK
+
+    #define TIMER_MAX_PRESCALER_VAL           0xff
+    #define TIMER_PRESCALE_PRESCALER_POS      24
+    #define TIMER_PRESCALE_PRESCALER_MSK      (0xff &lt;&lt; TIMER_PRESCALE_PRESCALER_POS)
+
+    #define TIMER_MAX_AUTORELOAD_VAL          0x00ffffff
+    #define TIMER_AUTORELOAD_AUTORELOAD_POS   0
+    #define TIMER_AUTORELOAD_AUTORELOAD_MSK   (0xffffff &lt;&lt; TIMER_AUTORELOAD_AUTORELOAD_POS)
+</code></pre>
+
+<h6>pros:</h6>
+
+<ul>
+<li>self-documenting</li>
+</ul>
+
+
+<h6>cons:</h6>
+
+<ul>
+<li>global scope</li>
+<li>verbose (due to need to prefix/disambiguate many similar names)</li>
+<li>not type-safe</li>
+<li>no error checking</li>
+<li>not visible in debuggers (exception: GCC &ldquo;<code>-g3</code>&rdquo; flag)</li>
+</ul>
+
+
+<h4>Static consts <a name="static_consts"></a></h4>
+
+<h5>source (.c) file:</h5>
+
+<p>(same as <a href="#preprocessor_symbolic_peripheral_addresses_and_register_offsets">Preprocessor symbolic peripheral addresses and register offsets</a> and  <a href="#preprocessor_symbolic_bit_definitions">Preprocessor symbolic bit definitions</a>, above.)</p>
+
+<h5>definition (.h) file:</h5>
+
+<pre><code>    static const uint8_t    TIMER_CONTROL_ENABLE_POS       =  4,
+                            TIMER_CONTROL_SINGLE_CYCLE_POS =  5,
+                            TIMER_CONTROL_ARR_ENABLE_POS   =  6,
+                            TIMER_CONTROL_CLOCK_SOURCE_POS =  7,
+                            TIMER_CONTROL_DIRECTION_POS    = 10;
+
+    static const uint32_t   TIMER_CONTROL_ENABLE_MSK          = (1 &lt;&lt; TIMER_CONTROL_ENABLE_POS)              ,
+                            TIMER_CONTROL_SINGLE_CYCLE_MSK    = (1&lt;&lt; TIMER_CONTROL_SINGLE_CYCLE_POS)         ,
+                            TIMER_CONTROL_SINGLE_CYCLE        = TIMER_CONTROL_SINGLE_CYCLE_MSK               ,
+                            TIMER_CONTROL_ARR_ENABLE_MSK      = (1 &lt;&lt; TIMER_CONTROL_ARR_ENABLE_POS)          ,
+                            TIMER_CONTROL_ARR_ENABLE          = TIMER_CONTROL_ARR_ENABLE_MSK                 ,
+                            TIMER_CONTROL_ENABLE              = TIMER_CONTROL_ENABLE_MSK                     ,
+                            TIMER_CONTROL_CLOCK_SOURCE_MSK    = (0x7 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)      ,
+                            TIMER_CONTROL_CLOCK_SOURCE_MAIN   = (0x0 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)      ,
+                            TIMER_CONTROL_CLOCK_SOURCE_PLL    = (0x1 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)      ,
+                            TIMER_CONTROL_CLOCK_SOURCE_EXTERN = (0x2 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS)      ,
+                            TIMER_CONTROL_DIRECTION_MSK       = (1 &lt;&lt; TIMER_CONTROL_DIRECTION_POS)           ,
+                            TIMER_CONTROL_DIRECTION           = TIMER_CONTROL_DIRECTION_MSK                  ,
+                                                              = TIMER_MAX_PRESCALER_VAL= 0xff                ,
+                            TIMER_PRESCALE_PRESCALER_POS      = 24                                           ,
+                            TIMER_PRESCALE_PRESCALER_MSK      = (0xff &lt;&lt; TIMER_PRESCALE_PRESCALER_POS)       ,
+                                                              =                                              ,
+                            TIMER_MAX_AUTORELOAD_VAL          = 0x00ffffff                                   ,
+                            TIMER_AUTORELOAD_AUTORELOAD_POS   = 0                                            ,
+                            TIMER_AUTORELOAD_AUTORELOAD_MSK   = (0xffffff &lt;&lt; TIMER_AUTORELOAD_AUTORELOAD_POS);
+</code></pre>
+
+<p>and if used for raw numeric register addresses and bits ([above[(raw_numeric_values)):</p>
+
+<pre><code>    static const uint32_t   TIMER_BASE  = PERIPH_BASE + 0x00c00000;
+
+    static const uint32_t   TIMER0_BASE = TIMER_BASE  + 0x00000000,
+                            TIMER1_BASE = TIMER_BASE  + 0x00001000,
+                            TIMER2_BASE = TIMER_BASE  + 0x00002000;
+
+    static volatile uint32_t* const   TIMER0 = (volatile uint32_t*)TIMER0_BASE;
+    static volatile uint32_t* const   TIMER1 = (volatile uint32_t*)TIMER1_BASE;
+    static volatile uint32_t* const   TIMER2 = (volatile uint32_t*)TIMER2_BASE;
+
+    static const uint32_t   TIMER_CONTROL_OFFSET    = 0,
+                            TIMER_PRESCALE_OFFSET   = 1,
+                            TIMER_AUTORELOAD_OFFSET = 2;
+</code></pre>
+
+<h5>pros:</h5>
+
+<ul>
+<li>self-documenting</li>
+<li>type-safe</li>
+<li>can be namespace-scoped (C++, short, non-prefixed names)</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>(in C) global scope, verbose (due to need to prefix/disambiguate many similar names)</li>
+<li>no error checking</li>
+<li>memory space for variables (potentially thousands) in executable binary if appropriate compiler flags not used</li>
+</ul>
+
+
+<h4>C/C++ enums <a name="c_cxx_enums"></a></h4>
+
+<h5>source (.c) file:</h5>
+
+<p>(same as <a href="#preprocessor_symbolic_peripheral_addresses_and_register_offsets">Preprocessor symbolic peripheral addresses, register offsets</a> and  <a href="#preprocessor_symbolic_bit_definitions">Preprocessor symbolic bit definitions</a>, and <a href="#static_consts">Static consts</a> above.)</p>
+
+<h5>definition (.h) file (C code):</h5>
+
+<pre><code>    enum TIMER_CONTROL_POS {
+        TIMER_CONTROL_ENABLE_POS       =   4,
+        TIMER_CONTROL_SINGLE_CYCLE_POS =   5,
+        TIMER_CONTROL_ARR_ENABLE_POS   =   6,
+        TIMER_CONTROL_CLOCK_SOURCE_POS =   7,
+        TIMER_CONTROL_DIRECTION_POS    =  10,
+    };
+
+    enum TIMER_CONTROL_BITS {
+        TIMER_CONTROL_ENABLE_MSK          = (1 &lt;&lt; TIMER_CONTROL_ENABLE_POS),
+        TIMER_CONTROL_SINGLE_CYCLE_MSK    = (1&lt;&lt; TIMER_CONTROL_SINGLE_CYCLE_POS),
+        TIMER_CONTROL_SINGLE_CYCLE        = TIMER_CONTROL_SINGLE_CYCLE_MSK,
+        TIMER_CONTROL_ARR_ENABLE_MSK      = (1 &lt;&lt; TIMER_CONTROL_ARR_ENABLE_POS),
+        TIMER_CONTROL_ARR_ENABLE          = TIMER_CONTROL_ARR_ENABLE_MSK,
+        TIMER_CONTROL_ENABLE              = TIMER_CONTROL_ENABLE_MSK,
+        TIMER_CONTROL_CLOCK_SOURCE_MSK    = (0x7 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS),
+        TIMER_CONTROL_CLOCK_SOURCE_MAIN   = (0x0 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS),
+        TIMER_CONTROL_CLOCK_SOURCE_PLL    = (0x1 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS),
+        TIMER_CONTROL_CLOCK_SOURCE_EXTERN = (0x2 &lt;&lt; TIMER_CONTROL_CLOCK_SOURCE_POS),
+        TIMER_CONTROL_DIRECTION_MSK       = (1 &lt;&lt; TIMER_CONTROL_DIRECTION_POS),
+        TIMER_CONTROL_DIRECTION           = TIMER_CONTROL_DIRECTION_MSK,
+    };
+
+    enum TIMER_PRESCALE_BITS {
+        TIMER_MAX_PRESCALER_VAL      = 0xff,
+        TIMER_PRESCALE_PRESCALER_POS = 16,
+        TIMER_PRESCALE_PRESCALER_MSK = 0xff &lt;&lt; TIMER_PRESCALE_PRESCALER_POS,
+    };
+
+    enum TIMER_AUTORELOAD_BTIS {
+        TIMER_MAX_AUTORELOAD_VAL        = 0x00ffffff,
+        TIMER_AUTORELOAD_AUTORELOAD     = 0,
+        TIMER_AUTORELOAD_AUTORELOAD_MSK = 0xffffff&lt;&lt; &lt;&lt; TIMER_AUTORELOAD_AUTORELOAD_POS,
+    };
+</code></pre>
+
+<h5>definition (.h) file (C++ code):</h5>
+
+<pre><code>    enum class TIMER_CONTROL {
+        ENABLE       =  4,
+        SINGLE_CYCLE =  5,
+        ARR_ENABLE   =  6,
+        CLOCK_SOURCE =  7,
+        DIRECTION    = 10,
+    };
+
+    enum class TIMER_CONTROL_BITS {
+        ENABLE_MSK          = (1 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::ENABLE)),
+        ENABLE              = ENABLE_MSK,
+        SINGLE_CYCLE_MSK    = (1&lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::SINGLE_CYCLE)),
+        SINGLE_CYCLE        = SINGLE_CYCLE_MSK,
+        ARR_ENABLE_MSK      = (1 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::ARR_ENABLE)),
+        ARR_ENABLE          = ARR_ENABLE_MSK,
+        CLOCK_SOURCE_MSK    = (0x7 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::CLOCK_SOURCE)),
+        CLOCK_SOURCE_MAIN   = (0x0 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::CLOCK_SOURCE)),
+        CLOCK_SOURCE_PLL    = (0x1 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::CLOCK_SOURCE)),
+        CLOCK_SOURCE_EXTERN = (0x2 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::CLOCK_SOURCE)),
+        DIRECTION_MSK       = (1 &lt;&lt; static_cast&lt;uint32_t&gt;(TIMER_CONTROL::DIRECTION)),
+        DIRECTION            = DIRECTION_MSK,
+    };
+
+
+    enum class TIMER_PRESCALE_BITS {
+        MAX_PRESCALER_VAL  = 0xff,
+        PRESCALER_POS      = 16,
+        PRESCALER_MSK      = (0xff &lt;&lt; static_cast&lt;uint32_t&gt;(PRESCALER_POS),
+    };
+
+    enum class TIMER_AUTORELOAD_BTIS {
+        AUTORELOAD_VAL  =  0x00ffffff,
+        AUTORELOAD_POS  =  0,
+        AUTORELOAD_MSK  = (0xffffff  &lt;&lt; static_cast&lt;uint32_t&gt;(AUTORELOAD_POS),
+    };
+</code></pre>
+
+<h5>pros:</h5>
+
+<ul>
+<li>self-documenting</li>
+<li>short class-scoped names (C++)</li>
+<li>type-safe (C++) (but not really due to need to cast before use)</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>requires casting before use (C++)</li>
+<li>requires C++11 or higher (C++)</li>
+<li>global scope, verbose (due to need to prefix/disambiguate many similar names) &copy;</li>
+<li>not type-safe (<code>C</code>)</li>
+<li>no error checking (<code>C</code>)</li>
+</ul>
+
+
+<h4>C structs <a name="c_structs"></a></h4>
+
+<p>(The most commonly used technique.)</p>
+
+<h5>source (.c) file:</h5>
+
+<pre><code>    // set value
+    TIMER1-&gt;CTRL = value;
+
+    // set bits without affecting others
+    GPIO1-&gt;SET |= value;
+
+    // clear bits without affecting others
+    SYS-&gt;INTERRUPTS &amp;= ~value;
+
+    // insert bits without affecting others
+    USART1-&gt;SPEED = (USART1-&gt;SPEED &amp; mask) | value;
+</code></pre>
+
+<p>(values via numeric values, #defines, static consts, enums, etc)</p>
+
+<h5>definition (.h) file: <a name="c_structs_definition_file"></a></h5>
+
+<pre><code>    typedef struct serial {
+            volatile uint32_t       CONTROL  ;
+            volatile uint32_t       CONFIG   ;
+            volatile uint32_t       INTERRUPT;
+            volatile uint32_t       STATUS   ;
+            volatile uint32_t       RXBUFFER ;
+            volatile uint32_t       TXBUFFER ;
+    } serial_t;
+
+    #ifdef USE_PREPROCESSOR_ADDRESSES
+    #define SERIAL_BASE     ((PERIPH_BASE) + 0x00a00000)
+
+    #define SERIAL0_BASE    ((SERIAL_BASE) + 0x00000000)
+    #define SERIAL1_BASE    ((SERIAL_BASE) + 0x00001000)
+    #define SERIAL2_BASE    ((SERIAL_BASE) + 0x00002000)
+
+    #define SERIAL0         ((serial_t*)(SERIAL0_BASE))
+    #define SERIAL1         ((serial_t*)(SERIAL1_BASE))
+    #define SERIAL2         ((serial_t*)(SERIAL2_BASE))
+    #endif
+
+    #ifdef USE_STATIC_CONST_ADDRESSES
+    static const uint32_t   SERIAL_BASE     = PERIPH_BASE + 0x00a00000;
+
+    static const uint32_t   SERIAL0_BASE    = SERIAL_BASE + 0x00000000,
+                            SERIAL1_BASE    = SERIAL_BASE + 0x00001000,
+                            SERIAL1_BASE    = SERIAL_BASE + 0x00002000;
+
+
+    static serial_t* const  SERIAL0         = (serial_t*)SERIAL0_BASE;
+    static serial_t* const  SERIAL1         = (serial_t*)SERIAL1_BASE;
+    static serial_t* const  SERIAL2         = (serial_t*)SERIAL2_BASE;
+    #endif
+
+    // constants via #defines, static consts, enums, etc)
+    // ...
+</code></pre>
+
+<h5>pros:</h5>
+
+<ul>
+<li>self-documenting</li>
+<li>type-safe peripheral and register definitions</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>bit values not type-safe</li>
+<li>struct name frequently omitted (superceded by typedef) thus not allowing forward declaration</li>
+</ul>
+
+
+<h4>C bitfields <a name="c_bitfields"></a></h4>
+
+<p>C bitfields would seem to solve all requirements for independent/atomic/isolated register bit access:</p>
+
+<h5>source (.c) file:</h5>
+
+<pre><code>    // set single bit
+    SERIAL2-&gt;config.polarity = 1;
+
+    // clear single bit
+    SERIAL2-&gt;config.polarity = 0;
+
+    // set span of bits
+    SERIAL2-&gt;config.datalen = SERIAL_CONFIG_DATALEN_8_BITS;
+
+    // clear span of bits
+    SERIAL2-&gt;config.datalen = 0;
+</code></pre>
+
+<h5>definition (.h) file:</h5>
+
+<pre><code>    typedef struct serial {
+        volatile struct {
+            unsigned    enable :  1,
+                        recv   :  1,
+                        xmit   :  1,
+                               : 29;
+            };
+        } control;
+
+        volatile struct {
+            unsigned    mode     :  1,
+                        datalen  :  2,
+                        parity   :  2,
+                        endian   :  1,
+                        polarity :  1,
+                        rxport   :  5,
+                        txport   :  5,
+                                 : 15;
+        } config;
+    } serial_t;
+
+    // (addresses of peripheral instances as per [C structs](#c_structs_definition_file), above)
+
+    // (values for multi-bit fields via numeric values, #defines, static consts, enums, etc)
+</code></pre>
+
+<p>Unfortunately, there are several problems with this feature of C/C++. First, testing bitfield values generates more executable/object code than other approaches by necessitating large amounts of bit masking and shifting:</p>
+
+<pre><code>    // other approaches
+    SERIAL2-&gt;parity = ODD_PARITY;
+    if (SERIAL2-&gt;parity == ODD_PARITY) // ...
+
+    //  bitfield
+    register = 0;
+    SERIAL2-&gt;config.parity = ODD_PARITY;
+    if (SERIAL2-&gt;config.parity == ODD_PARITY) // ...
+
+    // equivalent code to that generated by bitfield approach
+    SERIAL2-&gt;config = ODD_PARITY &lt;&lt; PARITY_POSITION;
+    if (((SERIAL2-&gt;config &amp; 0x18) &gt;&gt; 3) == ODD_PARITY) // ...
+</code></pre>
+
+<p>(In the other approaches <code>ODD_PARITY</code> has been pre-shifted to its correct bit position.)</p>
+
+<p>But a much worse inefficiency, both in source code verbosity and more importantly executable/object code size and speed, occurs when multiple individual bit fields need to be set/cleared/modified:</p>
+
+<pre><code>    // other approaches
+    SERIAL2-&gt;parity = ODD_PARITY | BIG_ENDIAN;
+
+    // bitfields
+    SERIAL2-&gt;config.parity = ODD_PARITY;
+    SERIAL2-&gt;config.endian = 1;
+
+    // equivalent bitfield code -- two writes to register instead of one
+    SERIAL2-&gt;config = (SERIAL2-&gt;config &amp; ~PARITY_MASK) | (ODD_PARITY &lt;&lt; PARITY_POSITION);
+    SERIAL2-&gt;config = (SERIAL2-&gt;config &amp; ~ENDIAN_MASK) | (1          &lt;&lt; ENDIAN_POSITION);
+</code></pre>
+
+<p>Some of this inefficiency can be avoided by creating a union between the C bitfields and a variable of the architecture&rsquo;s native word size:</p>
+
+<pre><code>    union CONFIG_T {
+        volatile uint32_t    word;
+        volatile struct {
+            unsigned    mode     :  1,
+                        datalen  :  2,
+                        parity   :  2,
+                        endian   :  1,
+                        polarity :  1,
+                        rxport   :  5,
+                        txport   :  5,
+                                 : 15;
+        };
+    } config;
+</code></pre>
+
+<p>In this way at least the entire register can be cleared in one operation. But setting or clearing multiple fields at once requires including <code>#define</code> or <code>static const</code> definitions as per the other approaches. This effectively doubles the size and complexity of the definition file and the effort to create it, and introduces the risk of mismatched definitions, etc.</p>
+
+<p>Finally, there does exist the possibility that a very &ldquo;smart&rdquo; compiler could detect the multiple settings and coalesce them into a single or at least smaller set of operations.</p>
+
+<h5>pros:</h5>
+
+<ul>
+<li>self-documenting</li>
+<li>type-safe, intuitive access to register bits/fields</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>inefficient</li>
+<li>may require duplicate, possibly mismatched definitions</li>
+<li>multi-bit values not type-safe</li>
+</ul>
+
+
+<h4>Helper functions <a name="helper_functions"></a></h4>
+
+<p>Helper functions can simplify usage of many of the above approaches, particularly for inserting single bits and multiple fields (not needed for C bitfields).</p>
+
+<p>Functions may be implemented as parameterized preprocessor macros:</p>
+
+<pre><code>    #define GET_BITS(REG, MASK) ((REG) &amp; (MASK))
+
+    #define SET_BITS(REG, BITS) ((REG) |= (BITS))
+
+    #define CLR_BITS(REG, BITS) ((REG) &amp;= ~(BITS))
+
+    #define FLIP_BITS(REG, BITS) (REG) ^= (BITS)
+
+    #define INSERT_BITS(REG, MASK, BITS) ((REG) = ((REG &amp; ~(MASK)) | (BITS)))
+</code></pre>
+
+<p>or as C inline functions:</p>
+
+<pre><code>    inline uint32_t GET_BITS(
+    volatile uint32_t   &amp;reg,
+    const    uint32_t    mask)
+    {
+        return reg &amp; mask;
+    };
+
+    inline void SET_BITS(
+    volatile uint32_t   &amp;reg,
+    const    uint32_t    bits)
+    {
+        reg |= bits;
+    };
+
+
+    inline void CLR_BITS(
+    volatile uint32_t   &amp;reg,
+    const    uint32_t    bits)
+    {
+        reg &amp;= ~bits;
+    };
+
+    inline void FLP_BITS(
+    volatile uint32_t    &amp;reg,
+    const    uint32_t     bits)
+    {
+        reg |= bits;
+    };
+
+    inline void INS_BITS(
+    volatile uint32_t   &amp;reg,
+    const    uint32_t    mask,
+    const    uint32_t    bits)
+    {
+        reg = (reg &amp; ~mask) | bits;
+    };
+</code></pre>
+
+<p>or as C++ inline function templates:</p>
+
+<pre><code>    template &lt;typename UINT_T&gt; inline UINT_T GET_BITS(
+    volatile UINT_T   &amp;reg,
+    const    UINT_T    mask)
+    {
+        return reg &amp; mask;
+    };
+
+    template &lt;typename UINT_T&gt; inline void SET_BITS(
+    volatile UINT_T   &amp;reg,
+    const    UINT_T    bits)
+    {
+        reg |= bits;
+    };
+
+
+    template &lt;typename UINT_T&gt; inline void CLR_BITS(
+    volatile UINT_T   &amp;reg,
+    const    UINT_T    bits)
+    {
+        reg &amp;= ~bits;
+    };
+
+    template &lt;typename UINT_T&gt; inline void FLP_BITS(
+    volatile UINT_T    &amp;reg,
+    const    UINT_T     bits)
+    {
+        reg |= bits;
+    };
+
+    template &lt;typename UINT_T&gt; inline void INS_BITS(
+    volatile UINT_T   &amp;reg,
+    const    UINT_T    mask,
+    const    UINT_T    bits)
+    {
+        reg = (reg &amp; ~mask) | bits;
+    };
+</code></pre>
+
+<h5>pros:</h5>
+
+<ul>
+<li>reduces source code verbosity</li>
+<li>simplifies accesses</li>
+<li>reduces liklihood of errors</li>
+<li>C++ version type-safe</li>
+</ul>
+
+
+<h5>cons:</h5>
+
+<ul>
+<li>C version not type-safe</li>
+</ul>
+
+
+<h4>Higher-level wrappers <a name="Higher-level_wrappers"></a></h4>
+
+<p><strong>regbits</strong> and the existing approaches described above are intended for low-level, &ldquo;bare metal&rdquo; (&ldquo;bare silicon&rdquo;?) programming. There also exist higher-level libraries which attempt to make programming microcontrollers easier, simpler, and more generic and portable,</p>
+
+<p>Some examples include:</p>
+
+<ul>
+<li>[Arduino]<a href="https://www.arduino.cc/">https://www.arduino.cc/</a></li>
+<li>[openocd]<a href="http://openocd.org/">http://openocd.org/</a></li>
+<li>STM HAL</li>
+<li>NXP LPCXpresso and MCUXpresso</li>
+</ul>
+
+
+<p>It is this author&rsquo;s opinion that such libraries rarely achieve their goals. They introduce entirely new/large/complex APIs on top of the native MCU&rsquo;s and do not remove the need to fully understand the underlying hardware. They are also inefficient, introducing additional levels of function calls and frequently a requirement to allocate (statically, on the stack, or in dynamic memory) large data structures to be passed to the library&rsquo;s functions. They often do not support much if any compile time type-safety, instead replacing it with runtime checks which subsequently requires solving the difficult problem of how to handle fatal coding errors in (possibly safety-critical) embedded applications.</p>
+
+<h2><strong>regbits</strong> requirements, limitations, problems <a name="requirements_limitations_problems"></a></h2>
+
+<h4>Compiler optimization</h4>
+
+<p><strong>regbits</strong> requires a C++11 or later compiler. It should run correctly at any optimization level; however GCC optimization <code>-O1</code> or higher is needed as otherwise storage is allocated for the peripheral/register constant objects. (There are likely individual optimization flags which would allow <code>-O0</code> without the excess allocations.)</p>
+
+<h4>Parameter passing</h4>
+
+<p><strong>regbits</strong> is specifically designed for passing its (usually constant) objects to functions by value, not by reference. The objects are either one (regbits::Bits) or two (regbits::Mskd) native words in size, and at least on ARM architectures they should be passed in registers. If optimization is not enabled, GCC passes them on the stack.</p>
+
+<p>Note that with at least with:</p>
+
+<pre><code>    (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
+</code></pre>
+
+<p><code>-mabi=apcs-gnu</code> or <code>-mabi=atpcs</code> must be specified in order to force passing regbits objects in registers. Code will compile and run without these flags, however it will not be as small/fast/efficient as possible (and possibly less efficient in that case than other approaches, such as C structs).</p>
+
+<h4>Forcing use of constants</h4>
+
+<p>Further, GCC/G++ will sometimes require a static constexpr regbits object to be instantiated in memory instead of being treated as a compile-time-only constant. This requires a (small amount) of unnecessary storage, and unless defined manually causes an undefined variable error at runtime.</p>
+
+<p>To work around the problem, regbits implements a unary <code>operator+()</code> for its objects. Client code should use this as needed, typically only when passing objects as parameters to functions:</p>
+
+<pre><code>    // do this:
+    func(+Serial::Config::DATALEN_16_BITS);
+
+    // ... instead of this:
+    func(Serial::Config::DATALEN_16_BITS);
+</code></pre>
+
+<p>There is no runtime cost for using the operator; in fact the opposite (it forces the object to be passed in registers instead of the stack). Suggestions for a better solution are hereby solicited.</p>
+
+<h4>Templates for numerically-defined constants</h4>
+
+<p>Constants defining regbits Bits and Mskd objects are intended to generally be declared with semantically-meaningful names, as per <a href="#regbits_bits_t_and_mskd_t">above</a>.</p>
+
+<p>This scheme is workable (though tedious) up through, for example, defining 32 individual bits in a 32-bit register:</p>
+
+<pre><code>    static constexpr pos_t  PORT_0_POS  = pos_t( 0),
+                            PORT_1_POS  = pos_t( 1),
+                            PORT_2_POS  = pos_t( 2),
+                            PORT_3_POS  = pos_t( 3),
+                            PORT_4_POS  = pos_t( 4),
+                            PORT_5_POS  = pos_t( 5),
+                            PORT_6_POS  = pos_t( 6),
+                            PORT_7_POS  = pos_t( 7),
+                            PORT_8_POS  = pos_t( 8),
+                            PORT_9_POS  = pos_t( 9),
+                            PORT_10_POS = pos_t(10),
+                            PORT_11_POS = pos_t(11),
+                            PORT_12_POS = pos_t(12),
+                            PORT_13_POS = pos_t(13),
+                            PORT_14_POS = pos_t(14),
+                            PORT_15_POS = pos_t(15),
+                            PORT_16_POS = pos_t(16),
+                            PORT_17_POS = pos_t(17),
+                            PORT_18_POS = pos_t(18),
+                            PORT_19_POS = pos_t(19),
+                            PORT_20_POS = pos_t(20),
+                            PORT_21_POS = pos_t(21),
+                            PORT_22_POS = pos_t(22),
+                            PORT_23_POS = pos_t(23),
+                            PORT_24_POS = pos_t(24),
+                            PORT_25_POS = pos_t(25),
+                            PORT_26_POS = pos_t(26),
+                            PORT_27_POS = pos_t(27),
+                            PORT_28_POS = pos_t(28),
+                            PORT_29_POS = pos_t(29),
+                            PORT_30_POS = pos_t(30),
+                            PORT_31_POS = pos_t(31);
+
+    static constexpr bits_t PORT_0  = bits_t(1, PORT_0_POS ),
+                            PORT_1  = bits_t(1, PORT_1_POS ),
+                            PORT_2  = bits_t(1, PORT_2_POS ),
+                            PORT_3  = bits_t(1, PORT_3_POS ),
+                            PORT_4  = bits_t(1, PORT_4_POS ),
+                            PORT_5  = bits_t(1, PORT_5_POS ),
+                            PORT_6  = bits_t(1, PORT_6_POS ),
+                            PORT_7  = bits_t(1, PORT_7_POS ),
+                            PORT_8  = bits_t(1, PORT_8_POS ),
+                            PORT_9  = bits_t(1, PORT_9_POS ),
+                            PORT_10 = bits_t(1, PORT_10_POS),
+                            PORT_11 = bits_t(1, PORT_11_POS),
+                            PORT_12 = bits_t(1, PORT_12_POS),
+                            PORT_13 = bits_t(1, PORT_13_POS),
+                            PORT_14 = bits_t(1, PORT_14_POS),
+                            PORT_15 = bits_t(1, PORT_15_POS),
+                            PORT_16 = bits_t(1, PORT_16_POS),
+                            PORT_17 = bits_t(1, PORT_17_POS),
+                            PORT_18 = bits_t(1, PORT_18_POS),
+                            PORT_19 = bits_t(1, PORT_19_POS),
+                            PORT_20 = bits_t(1, PORT_20_POS),
+                            PORT_21 = bits_t(1, PORT_21_POS),
+                            PORT_22 = bits_t(1, PORT_22_POS),
+                            PORT_23 = bits_t(1, PORT_23_POS),
+                            PORT_24 = bits_t(1, PORT_24_POS),
+                            PORT_25 = bits_t(1, PORT_25_POS),
+                            PORT_26 = bits_t(1, PORT_26_POS),
+                            PORT_27 = bits_t(1, PORT_27_POS),
+                            PORT_28 = bits_t(1, PORT_28_POS),
+                            PORT_29 = bits_t(1, PORT_29_POS),
+                            PORT_30 = bits_t(1, PORT_30_POS),
+                            PORT_31 = bits_t(1, PORT_31_POS);
+</code></pre>
+
+<p>It becomes completely untenable with larger potential numbers of constants:</p>
+
+<pre><code>    static constexpr pos_t      AUTORELOADER_POS = pos_t(0);
+
+    static const uint32_t       AUTORELOAD_MASK   = 0x00ffffff;
+
+    static constexpr mskd_t     AUTORELOAD_0(AUTORELOAD_MASK, 0, AUTORELOADER_POS),
+                                AUTORELOAD_1(AUTORELOAD_MASK, 1, AUTORELOADER_POS),
+                                AUTORELOAD_2(AUTORELOAD_MASK, 2, AUTORELOADER_POS),
+                                // 16777212 more ...
+                                AUTORELOAD_ffffff(AUTORELOAD_MASK, 0xffffff, AUTORELOADER_POS);
+</code></pre>
+
+<p>Regardless this problem, the symbolic names provide little additional value compared to some means of specifying the objects by numeric value (as long as type-safety and range checking is maintained):</p>
+
+<pre><code>    // fictitious example, for illustration only
+    timer2-&gt;autoreload = Timer::Autoreload::mskd_t(9347);
+</code></pre>
+
+<p>To work around the problem, regbits supports the following function template. Because it is verbose and may need to be used many times in an mcu/peripheral/register definition file, a parameterized preprocessor macro is provided:</p>
+
+<pre><code>    #define REGBITS_MSKD_RANGE(CLASS, CONSTEXPR_FUNC, RUNTIME_FUNC, VALID_FUNC, MASK, POS, LIMIT) \
+    template&lt;unsigned BITS&gt; static constexpr mskd_t CONSTEXPR_FUNC() { \
+        static_assert(BITS &lt;= LIMIT, \
+                      CLASS "::" #CONSTEXPR_FUNC "&lt;BITS&gt; out of range"); \
+        return mskd_t(MASK, BITS, POS); \
+    } \
+    // macro continues, discussed below
+</code></pre>
+
+<p>Client code uses this to instantiate desired constant objects as follows:</p>
+
+<pre><code>    Timer::Autoreload::AUTORELOAD&lt;9347&gt;();
+</code></pre>
+
+<p>Yes, the syntax is ugly, but because C++ can currently only <code>static_assert</code> on template parameters it is the only way the range checking can be implemented. (Note: There may be other workarounds but the ones this author has seen far exceed his tolerance for template metaprogramming cleverness and /obfuscation. Please support proposals such as <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1045r0.html">this one</a> to fix the problem in future C++ standards.)</p>
+
+<p>The above function template takes care of the problem with constexpr objects, which is the main thrust of regbits. However, there may be valid use cases for generating regbits Bits and Mskd objects at runtime using variable data.</p>
+
+<p>The <code>REGBITS_MSKD_RANGE</code> macro continues, defining two runtime, non-templated, functions. The first is:</p>
+
+<pre><code>    static const mskd_t RUNTIME_FUNC( \
+    const unsigned    bits) \
+    { \
+        return mskd_t(MASK &lt;&lt; POS.pos(), bits &lt;&lt; POS.pos()); \
+    } \
+</code></pre>
+
+<p>This generates a Mskd object with the specified bits, using the mask defined in the macro invocation. It intentionally does no range checking, for two reasons. First, regbits is intended to be maximally efficient at runtime (the whole rationale for type-safety and range checking at compile time).</p>
+
+<p>Second, regbits is intended to be used in a &ldquo;bare metal&rdquo; (&ldquo;silicon&rdquo;) runtime environment, generally without C++ exceptions (or virtual methods or even dynamic memory). Given that there is no possibility of throwing an exception for out-of-range values, it is felt that the alternative &ndash; silently clamping the value to be within range &ndash; is a poor design decision which would typically push the inevitable code failure further down the execution path where it would be harder to find. (This is even considering the fact that the out-of-range value will very probably overwrite other, possibly crucial, bits in the register.) &ldquo;Fail early, fail fast.&rdquo;</p>
+
+<p>Range checking is still desirable, so it is provided by the third and final preprocessor-macro-defined function:</p>
+
+<pre><code>    static bool VALID_FUNC( \
+    const unsigned  bits) \
+    { \
+        return bits &lt;= LIMIT; \
+    }
+</code></pre>
+
+<p>In this way it is up to the client code (i.e. programmer) to decide if and when to include runtime range checking.</p>
+
+<h2>Unit test <a name="unit_test"></a></h2>
+
+<p>A unit test suite is provided <a href="unittest">here</a>. The suite is designed to test three aspects of regbits:</p>
+
+<ol>
+<li><a href="#type_safe_error_detection">Type-safe error detection</a></li>
+<li><a href="#computational_correctness">Computational correctness</a></li>
+<li><a href="#performance_claims">Performance claims</a> (executable object code speed and size)</li>
+</ol>
+
+
+<h3>Type-safe error detection <a name="type_safe_error_detection"></a></h3>
+
+<p>Type-safe (and other) error detection is tested in the <code>linux</code> and <code>arm</code> subdirectories under the <a href="unittest/bad"><code>bad</code></a> directory.</p>
+
+<p>&ldquo;cd&rdquo; to either of the subdirectories and run &ldquo;make&rdquo;. The <code>Makefile</code> will attempt to build (&ldquo;g++ -c&rdquo;) each of the <code>*.cxx</code> tests and confirm that, as intended, they fail to compile. For completeness, running &ldquo;make GOOD=-DGOOD&rdquo; will confirm that code without errors <em>does</em> compile (this detects potential bugs such as a missing include file producing an error that masks the intended regbits-type-safety error).</p>
+
+<h3>Computational correctness <a name="computational_correctness"></a></h3>
+
+<p>Four different implementations of the tests are included. Each consists of a header definition file (peripheral and register definitions for a fictitious MCU), and a test suite source file. Each implementation should perform the same computations and produce the same results.</p>
+
+<ul>
+<li>regbits: <a href="unittest/mcu_regbits.hxx"><code>mcu_regbits.hxx</code></a>,  <a href="unittest/regbits.cxx"><code>regbits.cxx</code></a></li>
+<li>struct (C structs): <a href="unittest/mcu_struct.h"><code>mcu_struct.h</code></a>,  <a href="unittest/struct.c"><code>struct.c</code></a></li>
+<li>raw (raw C pointers): <a href="unittest/mcu_raw.h"><code>mcu_raw.h</code></a>,  <a href="unittest/raw.c"><code>raw.c</code></a></li>
+<li>bitfield (C bitfields): <a href="unittest/mcu_bitfield.h"><code>mcu_bitfield.h</code></a>,  <a href="unittest/bitfield.c"><code>bitfield.c</code></a></li>
+</ul>
+
+
+<p>Executable binaries to exercise these four versions can be built in the following directories:</p>
+
+<h4>Linux</h4>
+
+<p><strong>regbits</strong> is intended for use in standalone MCU applications. However, nothing precludes its use in other environments (and in fact it may be useful for writing device drivers, in OS kernels, etc).</p>
+
+<p>The <a href="unittest/linux">linux</a> version of the unittest suite is included for ease of testing under the Linux operating system without the need for embedded development testbed. It reports relative sizes of the four implementations' object code, and execution speed in terms of the Linux <code>clock_gettime()</code> system call. The former (sizes) may be useful for comparing the implementations despite the radical differences between the native Linux and the (ARM) embedded compilers, and the latter (speed) for comparison despite the non-deterministic nature of timing when running under a multitasking OS.</p>
+
+<p>To run the Linux unittest, type &ldquo;make&rdquo; in that directory. This will build and run executables for the four versions, and collate the results (see <a href="#running_unittests">below</a>). The <a href="unittest/linux/Makefile"><code>Makefile</code></a> has many configuration variables that can be overridden on the <code>make</code> commandline.</p>
+
+<h4>Embedded testbed</h4>
+
+<p>And sample <a href="unittest/arm/cortex_m0plus/nxp/lpc824">embedded testbed</a> is included. It is of course completely specific to one particular MCU but can be used as a template for any other.</p>
+
+<p>Running the unittest is broken into two steps. Typing &ldquo;make&rdquo; will build the four implementations' binaries, including disassembled object code (see <a href="#disassembled_object_code">below</a>) and information about the resultant object code size.</p>
+
+<p>The <a href="unittest/arm/cortex_m0plus/nxp/lpc824/Makefile"><code>Makefile</code></a> has many configuration variables (including ARM-specific ones) that can be overridden on the <code>make</code> commandline. Additionally, an environment variable, <code>GCC_ARM_ROOT</code>, must be set to point to the compiler&rsquo;s installed location.</p>
+
+<p>Actually running the executables on the target embedded system is broken out as the second step, invoked by typing &ldquo;make gdb&rdquo;, to allow the first to run without requiring attached development hardware.</p>
+
+<h4>Disassembled object code <a name="disassembled_object_code"></a></h4>
+
+<p>The Makefiles (specifically the embedded  <a href="unittest/arm/cortex_m0plus/nxp/lpc824/Makefile"><code>Makefile</code></a>, but also the Linux <a href="unittest/linux/Makefile"><code>Makefile</code></a>) disassemble the four implementation executables into <a href="unittest/arm/cortex_m0plus/nxp/lpc824/regbits.elf.dmp"><code>regbits.elf.dmp</code></a>, <a href="unittest/arm/cortex_m0plus/nxp/lpc824/struct.elf.dmp"><code>struct.elf.dmp</code></a>, <a href="unittest/arm/cortex_m0plus/nxp/lpc824/raw.elf.dmp"><code>raw.elf.dmp</code></a>, and  <a href="unittest/arm/cortex_m0plus/nxp/lpc824/bitfield.elf.dmp"><code>bitfield.elf.dmp</code></a>. (The ones included in this repository were compiled &ldquo;<code>-O3</code>&rdquo;.) These listings are intended for manual inspection to confirm that each is producing object code that will produce the same results. Suggestion: Use a good visual &ldquo;diff&rdquo; tool like <code>meld</code> or <code>kompare</code> to view the files side-by-side.</p>
+
+<h4>Running the unittests <a name="running_unittests"></a></h4>
+
+<p>As per above, run the unittests by typing &ldquo;make&rdquo; in the <a href="unittest/linux">linux</a> directory, or &ldquo;make&rdquo; followed by &ldquo;make gdb&rdquo; in the <a href="unittest/arm/cortex_m0plus/nxp/lpc824">embedded</a> directory.</p>
+
+<p>The unittests are specifically written to be run under <code>gdb</code> in order to remove any requirements for I/O in the executables, as that would influence both speed and size performance. The unittest code calls <code>unittest_record_registers()</code> in each version&rsquo;s <code>main()</code> (see linux <a href="unittest/linux/main.c"><code>main.c</code></a> and embedded <a href="unittest/arm/cortex_m0plus/nxp/lpc824/main.c"><code>main.c</code></a>).</p>
+
+<p>The provided GDB scripts (linux <a href="unittest/linux/unittest.gdb">unittest.gdb</a> and embedded <a href="unittest/arm/cortex_m0plus/nxp/lpc824/unittest.gdb">unittest.gdb</a>) run the executables under <code>gdb</code>, hit a breakpoint at the end of execution, dump the test results to a file, and exit. Note that the embedded version requires an environment variable, <code>GDB_OPENOCD</code>, naming a program (typically a UNIX shell script) which runs <code>gdb</code> with appropriate connection to the target embedded system. The program (not included as it is completely development environment specific) also need to pass its commandline arguments to <code>gdb</code> as this is how the <code>unittest.gdb</code> script is loaded.</p>
+
+<p>The &ldquo;make&rdquo; (or &ldquo;make gdb&rdquo;) command will run the <a href="unittest/unittest.py">unittest.py</a> script to collate the output files from <code>gdb</code>. If no differences between the four implementations are found it will only output information comparing their code sizes and execution speeds. Any differences will be listed with the name of the test that failed, and data from each test&rsquo;s saved registers.</p>
+
+<h3>Performance claims <a name="performance_claims"></a></h3>
+
+<p>Using:</p>
+
+<pre><code>    (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
+</code></pre>
+
+<p>with the the following options:</p>
+
+<pre><code>    -c -Wall -std=c++11 -g3 -mthumb -mcpu=cortex-m0plus -mabi=apcs-gnu -fno-exceptions -fno-unwind-tables
+</code></pre>
+
+<p>running on an NXP LCP824 ARM MCU at the default 12 MHz clock speed produces the following results:</p>
+
+<p><code>make OPTIMIZE=-O1</code></p>
+
+<pre><code>    bitfield.out            size: 3920      time: 4909
+    raw.out                 size: 2676      time: 4285
+    regbits.out             size: 2552      time: 4029
+    struct.out              size: 2632      time: 4206
+</code></pre>
+
+<p><code>make OPTIMIZE=-O2</code></p>
+
+<pre><code>    bitfield.out            size: 3728      time: 4721
+    raw.out                 size: 2664      time: 4264
+    regbits.out             size: 2532      time: 4007
+    struct.out              size: 2620      time: 4185
+</code></pre>
+
+<p><code>make OPTIMIZE=-O3</code>:</p>
+
+<pre><code>    bitfield.out            size: 3700      time: 4716
+    raw.out                 size: 2640      time: 4211
+    regbits.out             size: 2520      time: 3957
+    struct.out              size: 2596      time: 4132
+</code></pre>
+
+<p>Note these overall rankings of the implementations does not prove that each individual test performs in the same best-to-worst order. For that, the individual <code>*.elf.dmp</code> disassembled files should be examined. Also note, however, that the constant-between-versions overhead of saving data during execution likely reduces that actual differences in speed (and size).</p>
+
+<p>Attempts were made to make the tests &ldquo;fair&rdquo;. For example, in the <code>struct</code> implementation (<a href="unittest/struct.c"><code>struct.c</code></a>) it would be &ldquo;natural&rdquo; to pass arguments by reference separately:</p>
+
+<pre><code>    __attribute__((noinline)) void mskd_ref(
+    const uint32_t    *mask,
+    const uint32_t    *bits)
+    {
+        CHG_BITS(SERIAL2-&gt;CONFIG, mask, bits);
+        CHG_BITS(SERIAL2-&gt;CONFIG, mask, bits);
+    }
+
+    __attribute__((noinline)) void call_mskd_ref()
+    {
+        uint32_t    mask   = SERIAL_CONFIG_DATALEN_MSK,
+                    bits_a = SERIAL_CONFIG_DATALEN_16_BITS,
+                    bits_b = SERIAL_CONFIG_DATALEN_32_BITS;
+
+        mskd_ref(mask, bits_a);
+        mskd_ref(mask, bits_b);
+
+        SERIAL2-&gt;CONFIG &amp;= ~SERIAL_CONFIG_POLARITY; // clear for periph_reg_bits_val
+    }
+</code></pre>
+
+<p>However, since regbits passes a single object by reference:</p>
+
+<pre><code>    __attribute__((noinline)) void mskd_ref(
+    const Serial::Config::mskd_t        &amp;config)
+    {
+        serial2-&gt;config &lt;&lt;= config;
+        serial2-&gt;config.ins(config);
+    }
+
+    __attribute__((noinline)) void call_mskd_ref()
+    {
+        Serial::Config::mskd_t    config = Serial::Config::DATALEN_16_BITS;
+
+        mskd_ref(config);
+        mskd_ref(+Serial::Config::DATALEN_32_BITS);
+
+        serial2-&gt;config -= Serial::Config::POLARITY; // clear for periph_reg_bits_val
+    }
+</code></pre>
+
+<p>The <code>struct</code> version was written to match that as closely as possible:</p>
+
+<pre><code>    __attribute__((noinline)) void mskd_ref(
+    const uint32_t* const    mask_bits)
+    {
+        CHG_BITS(SERIAL2-&gt;CONFIG, mask_bits[0], mask_bits[1]);
+        CHG_BITS(SERIAL2-&gt;CONFIG, mask_bits[0], mask_bits[1]);
+    }
+
+
+
+    __attribute__((noinline)) void call_mskd_ref()
+    {
+        uint32_t    mask_bits_a[2] = {SERIAL_CONFIG_DATALEN_MSK    ,
+                                      SERIAL_CONFIG_DATALEN_16_BITS},
+                    mask_bits_b[2] = {SERIAL_CONFIG_DATALEN_MSK    ,
+                                      SERIAL_CONFIG_DATALEN_32_BITS};
+
+        mskd_ref(mask_bits_a);
+        mskd_ref(mask_bits_b);
+
+        SERIAL2-&gt;CONFIG &amp;= ~SERIAL_CONFIG_POLARITY; // clear for periph_reg_bits_val
+    }
+</code></pre>
+
+<h2>Future enhancements <a name="future_enhancements"></a></h2>
+
+<p>Microcontroller registers, as described <a href="#register_memory_access">above</a>, are accessed as if they were memory locations, but need not behave like normal RAM/ROM/FLASH/etc memory.</p>
+
+<p>Registers, or individual bits within them, can implement the following behaviors (among others):</p>
+
+<pre><code>            initial                 final
+    mode    value    read   write   value
+
+              0       0       0       0
+    normal    0       0       1       1
+              1       1       0       0
+              1       1       1       1
+
+              0       0       0       0
+    read      0       0       1       0
+    only      1       1       0       1
+              1       1       1       1
+
+              0       0       0       0
+    set       0       0       1       1
+    only      1       1       0       1
+              1       1       1       1
+
+              0       0       0       0
+    write     0       0       1       0
+    clear     1       1       0       1
+              1       1       1       0
+
+              0       0       0       0
+    read      0       0       1       0
+    clear     1       1       0       0
+              1       1       1       0
+</code></pre>
+
+<p>All of these behaviors are useful. For example, &ldquo;read clear&rdquo; is often used for interrupt registers, enabling software to query the status of an interrupt and clear it in one operation. (This does, however, make debugging difficult as querying the register in a debugger destroys its value, and subsequent reads by software will behave differently than they would otherwise. For this reason this author calls them &ldquo;Schrodinger&rsquo;s Cat&rdquo; registers.)</p>
+
+<p>As another example, &ldquo;set only&rdquo; registers or bits are often used for setting state. They allow setting one or more bits as desired, without affecting other bits in the register. This eliminates the need for regbit&rsquo;s <code>|=</code> operator:</p>
+
+<pre><code>    serial2-&gt;config |= Serial::Config::ENABLE;
+</code></pre>
+
+<p>or the other approach&rsquo;s equivalent:</p>
+
+<pre><code>    SERIAL2-&gt;CONFIG |= SERIAL_CONFIG_ENABLE;
+</code></pre>
+
+<p>allowing the simpler and more efficient:</p>
+
+<pre><code>    serial2-&gt;config = Serial::Config::ENABLE;
+
+    SERIAL2-&gt;CONFIG = SERIAL_CONFIG_ENABLE;
+</code></pre>
+
+<p><strong>regbits</strong> could be enhanced to allow defining the various register/bit behaviors, and use this information to chose, in a type-aware manner, the appropriate technique for accessing registers/bits, and/or disallow (compile-time error) incorrect usage such as writing to a read-only register/bit.</p>
