@@ -10,7 +10,7 @@
 //
 // The regbits program is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.      See the GNU
 // General Public License for more details.
 //
 // You should have received a copy of the GNU General Public
@@ -26,9 +26,8 @@ using namespace mcu;
 void reg_bits_diff()
 {
 #ifdef GOOD
-    serial2->control = Serial::Control::ENABLE;
     timer1 ->control = Timer ::Control::ENABLE;
 #else
-    serial1->control = Timer::Control::ENABLE;
+    serial2->control = Timer::Control::ENABLE;
 #endif
 }

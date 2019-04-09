@@ -10,7 +10,7 @@
 //
 // The regbits program is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.      See the GNU
 // General Public License for more details.
 //
 // You should have received a copy of the GNU General Public
@@ -23,7 +23,7 @@
 using namespace mcu;
 
 void mskd_same(
-Serial::Config::mskd_t  mskd)
+Timer::Prescale::mskd_t mskd)
 {
 }
 
@@ -32,8 +32,8 @@ Serial::Config::mskd_t  mskd)
 void call_mskd_same()
 {
 #ifdef GOOD
-    mskd_same(Serial::Config::DATALEN_16_BITS);
+    mskd_same(Timer::Prescale::PRESCALER_HIGH<11>());
 #else
-    mskd_same(Serial::Control::RXPORT<7>());
+    mskd_same(Timer::Control::CLOCK_SOURCE_PLL);
 #endif
 }

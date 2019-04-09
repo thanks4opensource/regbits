@@ -53,7 +53,7 @@
 
 <h2>What does regbits do? <a name="what_does_regbits_do"></a></h2>
 
-<p><strong>regbits</strong> enables easy to use, optimally efficient low-level access to <a href="#microcontroller_registers">microcontroller registers</a>.</p>
+<p>Regbits enables easy to use, optimally efficient low-level access to <a href="#microcontroller_registers">microcontroller registers</a>.</p>
 
 <p>Given appropriate header files, the following all compile to executable object code of equivalent size and speed (see <a href="#performance_claims">Performance claims</a>, below):</p>
 
@@ -72,13 +72,17 @@
 
 <p>Things get more interesting when manipulating contiguous spans of several bits:</p>
 
-<pre><code>    *(int*)(0x400c0004) = (*(int*)(0x400c0004) &amp; ~0xf00) | 0x600;
+<pre><code>    // raw address and bits
+    *(int*)(0x400c0004) = (*(int*)(0x400c0004) &amp; ~0xf00) | 0x600;
 
+    // symbolic names for peripheral, register, and bits
     *(TIMER3 + TIMER_CONFIG_OFFSET) = (*(TIMER3 + TIMER_CONFIG_OFFSET) &amp; TIMER_CLOCK_DIV_MASK) | TIMER_CLOCK_DIV_8;
 
+    // C struct peripheral definition with symbolic bit names and bit manipulation preprocessor macro
     INSERT_BITS(USART2-&gt;CONFIG, USART_BAUD_MASK, USART_BAUD_19200);
 
-    usart2-&gt;config &lt;&lt;= USART_BAUD_19200;  // or usart2-&gt;config.ins(USART_BAUD_19200)
+    // C++ regbits
+    usart2-&gt;config /= USART_BAUD_19200;  // or usart2-&gt;config.ins(USART_BAUD_19200)
 </code></pre>
 
 <p>But more important than what regbits does is what it does NOT do. All of the following will compile without error but almost certainly cause serious, hard to debug problems when executed:</p>
@@ -114,7 +118,7 @@
     uint32_t timer_config_settings = (TIMER_COUNT_DOWN | USART_BAUD_9600).bits();
 </code></pre>
 
-<p>These are contrived, exaggerated examples. However, the point remains that this kind of error is easy to make, but hard to detect by source code inspection, and possibly even harder to find during runtime testing and debugging. A one-letter typo can easily hide in thousands of lines of code:</p>
+<p>These are contrived, exaggerated examples. However, the point remains that this kind of error is easy to make, hard to detect by source code inspection, and possibly even harder to find during runtime testing and debugging. A one-letter typo can easily hide in thousands of lines of code:</p>
 
 <pre><code>    I2C3-&gt;CTRL = I2C_TIMEOUT_ON | I2S_ENABLE | I2C_MASTER_MODE;
 </code></pre>
@@ -150,7 +154,7 @@ These peripherals typically contain multiple <em>registers</em>: Sets of memory 
 
 <p>All or almost all contemporary MCU hardware permits accessing memory by words (32/64/etc bits), bytes (8 bits), shorts (typically 16 bits) and other fixed, multiples-of-8, bit widths (32 bits on 64-bit architecture, etc).</p>
 
-<p>Software frequently needs to access register bits (single or multiple) as separate, isolated atomic units, changing only those bits without affecting others in the same register.  Hardware does not support this, and with the exception of C bitfields (<a href="#c_bitfields">see below</a>), neither do the C and C++ languages. <strong>regbits</strong> and other software techniques (see <a href="#comparison_with_other_approaches">below</a>) address these limitations.</p>
+<p>Software frequently needs to access register bits (single or multiple) as separate, isolated atomic units, changing only those bits without affecting others in the same register.  Hardware does not support this, and with the exception of C bitfields (<a href="#c_bitfields">see below</a>), neither do the C and C++ languages. Regbits and other software techniques (see <a href="#comparison_with_other_approaches">below</a>) address these limitations.</p>
 
 <h4>Register memory accesses <a name="register_memory_access"></a></h4>
 
@@ -164,7 +168,7 @@ These peripherals typically contain multiple <em>registers</em>: Sets of memory 
 
 <p>The examples show correct regbits usage. The type-safe design of regbits will intentionally produce compile failures in case of mismatches between regbits objects, as per <a href="#regbits_compile_time_errors">above</a>. Also see <a href="#type_safe_error_detection">&ldquo;Type-safe error detection&rdquo;</a> in the unittest documentation, below.</p>
 
-<p>Many of the examples (and the <a href="unittest">unit test suite</a>) show regbits' operator and function/method syntaxes, both of which produce the same results. They can be used interchangeably.</p>
+<p>Many of the examples (and the <a href="unittest">unit test suite</a>) show regbits' operator and function/method syntaxes, both of which produce the same results and can be used interchangeably.</p>
 
 <h4>Word, single bit, and multiple bit span assignment</h4>
 
@@ -217,56 +221,99 @@ These peripherals typically contain multiple <em>registers</em>: Sets of memory 
 
 <h4>Insert bits (set without changing others)</h4>
 
-<pre><code>    // assign multiple single bits to register
-    serial2-&gt;config &lt;&lt;= Serial::Config::ENDIAN | Serial::Config::POLARITY ;
+<p>(see <a href="#insert_operator_syntax">Insert operator syntax</a>, below)</p>
+
+<pre><code>    // insert multiple single bits into register
+    serial2-&gt;config /=  Serial::Config::ENDIAN | Serial::Config::POLARITY ;
     serial2-&gt;config.ins(Serial::Config::ENDIAN | Serial::Config::POLARITY);
 
-    // assign contiguous span of bits to register
-    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS ;
+    // insert contiguous span of bits to register
+    serial2-&gt;config /=  Serial::Config::DATALEN_16_BITS ;
     serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS);
 
-    // assign multiple contiguous span of bits to register
-    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;
+    // insert multiple contiguous span of bits into register
+    serial2-&gt;config /=  Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN ;
     serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN);
 
-    // assign mix of single and contiguous span of bits
-    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS | Serial::Config::MODE ;
+    // insert mix of single and contiguous span of bits
+    serial2-&gt;config /=  Serial::Config::DATALEN_16_BITS | Serial::Config::MODE ;
     serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS | Serial::Config::MODE);
 
-    // single bit and bit span order unimportant
-    serial2-&gt;config &lt;&lt;=  Serial::Config::MODE | Serial::Config::DATALEN_16_BITS ;
-    serial2-&gt;config.ins( Serial::Config::MODE | Serial::Config::DATALEN_16_BITS);
+    // single bit and bit span order unimportant (reversed from above)
+    serial2-&gt;config /=  Serial::Config::MODE | Serial::Config::DATALEN_16_BITS ;
+    serial2-&gt;config.ins(Serial::Config::MODE | Serial::Config::DATALEN_16_BITS);
 </code></pre>
 
 <h4>Test register bits</h4>
 
 <pre><code>    // Test zero or arbitrary value
     if (serial2-&gt;config        == 0         ) // ...
-    if (serial2-&gt;config.zero() == 0         ) // ...
     if (serial2-&gt;config        == 0x12345678) // ...
 
     // Test if bits are set in register
     if (serial2-&gt;config == Serial::Config::ENDIAN) // ...
     if (serial2-&gt;config != Serial::Config::ENDIAN |  | Serial::Config::POLARITY)  // ...
 
-    // Test span of bits (including 0/zero/cleared bits within span)
+    // Test span of bits (ignoring others in register)
     if (serial2-&gt;config == Serial::Config::DATALEN_16_BITS) // ...
     if (serial2-&gt;config != Serial::Config::DATALEN_16_BITS | Serial::Config::POLARITY) // ...
 
-    // Test all bits in register
+    // Test all bits in register (exactly equal, no other bits set)
     if (serial2-&gt;config ==   Serial::Config::ENDIAN.bits()) // ...
     if (serial2-&gt;config != ((Serial::Config::ENDIAN.bits() | Serial::Config::DATALEN_16_BITS).bits()) // ...
 </code></pre>
 
 <h4>Extract single and multiple bit spans from a register</h4>
 
-<pre><code>    // extract single bit from register
-    Serial::Config::bits_t  bits;
-    serial2-&gt;config &gt;&gt;= bits;
+<pre><code>    // extract all bits from register
+    Serial::Config::bits_t  config_bits = serial2-&gt;config;
+    // test all bits exactly equal to single bits or combinations of  single bits
+    if (config_bits ==  Serial::Config::ENDIAN) // ...
+    if (config_bits == (Serial::Config::ENDIAN | Serial::Config::POLARITY)) // ...
 
-    // extract all bits in the bit span 
-    Serial::Config::mskd_t  mskd = Serial::Config::DATALEN_16_BITS;  // or any other DATALEN_XX_BITS constant, only internal .mask() value used
-    serial2-&gt;config &gt;&gt;= mskd;  // extract all bits, 0 or 1, within span
+    // extract all bits from register
+    Serial::Config::mskd_t  config_mskd = Serial::Config::DATALEN_16_BITS;  // or any other DATALEN_XX_BITS constant, only internal .mask() value used
+                            config_mskd = serial2-&gt;config                ;
+    // test bits with span (or multiple spans and/or single bits)
+    if (config_mskd ==  Serial::Config::DATALEN_32_BITS) // ...
+    // order important, otherwise loses .mask()
+    if (config_mskd == (Serial::Config::DATALEN_32_BITS | Serial::Config::ENDIAN)) // ...
+    // works, but only considers bits that are set in ENDIAN|DATALEN_32_BITS
+    if (config_mskd == (Serial::Config::ENDIAN | Serial::Config::DATALEN_32_BITS)) // ...
+</code></pre>
+
+<h4>Atomic (single) read of hardware register</h4>
+
+<p>See discussion <a href="#future_enhancements">below</a> about self-modifying registers.</p>
+
+<pre><code>    // hardware register might change between accesses
+    if (   serial2-&gt;config == Serial::Config::ENDIAN
+        || serial2-&gt;config &gt;= Serial::Config::DATALEN_16_BITS) // ...
+
+    // single atomic read
+    Copy&lt;uint32_t, Serial::Config&gt;  config(serial2-&gt;config);
+    if (   config == Serial::Config::ENDIAN
+        || config &gt;= Serial::Config::DATALEN_16_BITS) // ...
+</code></pre>
+
+<h4>Working with multiple bit spans containing arbitrary values <a name="mskd_arbitrary_values"></a></h4>
+
+<p>(see rationale for syntax <a href="#ugly_indexing_syntax">below</a>)</p>
+
+<pre><code>    timer1-&gt;prescale = Timer::Prescale::PRESCALER_HIGH&lt;17&gt;();
+    if (timer1-&gt;prescale != Timer::Prescale::PRESCALER_HIGH&lt;17&gt;()) // ...
+</code></pre>
+
+<h4>Shifted values <a name="shifted_values"></a></h4>
+
+<p>Regbits canonically works with multiple bit spans in their hardware-defined position within the register, avoiding unnecessary shift operations. (See <a href="#c_bitfields">C bitfields</a>, below.) Cases exist, however, where shifting is required:</p>
+
+<pre><code>      31  30  29  28  27  26  25  24  23  22  21  20  19  18  17  16  15  14  13  12  11  10  9   8   7   6   5   4   3   2   1   0
+    |   |   |   |   |   |   |   |   |   |   |             DATA              |   |   |   |   |   |   |   |   |   |  |   |   |STATUS |
+
+    Copy&lt;uint32_t, Usart::Rxdata&gt; copy(usart3-&gt;rxdata);
+    if (copy == Usart::Rxdata::STATUS_DATA_RCVD)
+        return copy.shifted(Usart::Rxdata::DATA_SHIFTED);  // 0..255
 </code></pre>
 
 <h2>How is regbits implemented? <a name="how_is_regbits_implemented?"></a></h2>
@@ -327,15 +374,16 @@ These peripherals typically contain multiple <em>registers</em>: Sets of memory 
                                     TXPORT_MASK  = 0x1f;
 </code></pre>
 
-<p>Instantiation of the two main regbits templated classes. <code>Bits</code> is used for single bits (although when object instances are combined with others via the &ldquo;<code>|</code>&rdquo; operator they  can contain multiple single bits). <code>Mskd</code> is used for spans of multiple bits.</p>
+<p>Instantiation of the regbits templated classes. <code>Bits</code> is used for single bits (although when object instances are combined with others via the &ldquo;<code>|</code>&rdquo; operator they  can contain multiple single bits). <code>Mskd</code> is used for spans of multiple bits. <code>Shft</code> is used to normalize (right shift to LSB) masked values.</p>
 
 <pre><code>            using bits_t = Bits&lt;uint32_t, Config&gt;;
             using mskd_t = Mskd&lt;uint32_t, Config&gt;;
+            using shft_t = Shft&lt;uint32_t, Config&gt;;
 </code></pre>
 
 <p>The fact that Mskd objects hold both a bitmask and an bit value allows it to be used as a standalone object that supports bit span insertion into a register. Expressions using regbits insertion operators/methods  objects such as:</p>
 
-<pre><code>    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS
+<pre><code>    serial2-&gt;config /= Serial::Config::DATALEN_16_BITS
 </code></pre>
 
 <p>compile to executable object code identical that generated when not using regbits:</p>
@@ -360,6 +408,16 @@ Continuing with the example definition file, define constants for single bits:</
             PARITY_ODD      = mskd_t(PARITY_MASK,  0, PARITY_POS ),
             PARITY_EVEN     = mskd_t(PARITY_MASK,  1, PARITY_POS ),
             PARITY_CRC      = mskd_t(PARITY_MASK,  2, PARITY_POS );
+</code></pre>
+
+<p>Defining multiple bit spans with arbitrary values, limit checking, and bit shifting (see <a href="#shifted_values">Shifted values</a>, above, and <a href="#templates_numeric_constants">Templates for numerically-defined constants</a>, below).</p>
+
+<pre><code>    REGBITS_MSKD_RANGE("Serial::Config",
+                       RXPORT,
+                       rxport,
+                       RXPORT_MASK,
+                       RXPORT_POS,
+                       MAX_PORT_NUM);
 </code></pre>
 
 <p>End the register definition, define a type name for possible external use, and allocate storage for the register. This where the peripheral struct gets a finite size (and layout) to match the actual hardware peripheral when a pointer to its address is declared.</p>
@@ -532,7 +590,7 @@ Continuing with the example definition file, define constants for single bits:</
 <li>verbose (due to need to prefix/disambiguate many similar names)</li>
 <li>not type-safe</li>
 <li>no error checking</li>
-<li>not visible in debuggers (exception: GCC &ldquo;<code>-g3</code>&rdquo; flag)</li>
+<li>not visible in debuggers (exception: gcc &ldquo;<code>-g3</code>&rdquo; flag)</li>
 </ul>
 
 
@@ -1019,13 +1077,13 @@ Continuing with the example definition file, define constants for single bits:</
 
 <h4>Higher-level wrappers <a name="Higher-level_wrappers"></a></h4>
 
-<p><strong>regbits</strong> and the existing approaches described above are intended for low-level, &ldquo;bare metal&rdquo; (&ldquo;bare silicon&rdquo;?) programming. There also exist higher-level libraries which attempt to make programming microcontrollers easier, simpler, and more generic and portable,</p>
+<p>Regbits and the existing approaches described above are intended for low-level, &ldquo;bare metal&rdquo; (&ldquo;bare silicon&rdquo;?) programming. There also exist higher-level libraries which attempt to make programming microcontrollers easier, simpler, and more generic and portable,</p>
 
 <p>Some examples include:</p>
 
 <ul>
-<li>[Arduino]<a href="https://www.arduino.cc/">https://www.arduino.cc/</a></li>
-<li>[openocd]<a href="http://openocd.org/">http://openocd.org/</a></li>
+<li>Arduino (<a href="https://www.arduino.cc/">https://www.arduino.cc/</a>)</li>
+<li>openocd (<a href="http://openocd.org/">http://openocd.org/</a>)</li>
 <li>STM HAL</li>
 <li>NXP LPCXpresso and MCUXpresso</li>
 </ul>
@@ -1033,15 +1091,15 @@ Continuing with the example definition file, define constants for single bits:</
 
 <p>It is this author&rsquo;s opinion that such libraries rarely achieve their goals. They introduce entirely new/large/complex APIs on top of the native MCU&rsquo;s and do not remove the need to fully understand the underlying hardware. They are also inefficient, introducing additional levels of function calls and frequently a requirement to allocate (statically, on the stack, or in dynamic memory) large data structures to be passed to the library&rsquo;s functions. They often do not support much if any compile time type-safety, instead replacing it with runtime checks which subsequently requires solving the difficult problem of how to handle fatal coding errors in (possibly safety-critical) embedded applications.</p>
 
-<h2><strong>regbits</strong> requirements, limitations, problems <a name="requirements_limitations_problems"></a></h2>
+<h2>Regbits requirements, limitations, problems <a name="requirements_limitations_problems"></a></h2>
 
 <h4>Compiler optimization</h4>
 
-<p><strong>regbits</strong> requires a C++11 or later compiler. It should run correctly at any optimization level; however GCC optimization <code>-O1</code> or higher is needed as otherwise storage is allocated for the peripheral/register constant objects. (There are likely individual optimization flags which would allow <code>-O0</code> without the excess allocations.)</p>
+<p>Regbits requires a C++11 or later compiler. It should run correctly at any optimization level; however gcc optimization <code>-O1</code> or higher is needed as otherwise storage is allocated for the peripheral/register constant objects. (There are likely individual optimization flags which would allow <code>-O0</code> without the excess allocations.)</p>
 
 <h4>Parameter passing</h4>
 
-<p><strong>regbits</strong> is specifically designed for passing its (usually constant) objects to functions by value, not by reference. The objects are either one (regbits::Bits) or two (regbits::Mskd) native words in size, and at least on ARM architectures they should be passed in registers. If optimization is not enabled, GCC passes them on the stack.</p>
+<p>Regbits is specifically designed for passing its (usually constant) objects to functions by value, not by reference. The objects are either one (regbits::Bits) or two (regbits::Mskd) native words in size, and at least on ARM architectures they should be passed in registers. If optimization is not enabled, gcc passes them on the stack.</p>
 
 <p>Note that with at least with:</p>
 
@@ -1052,7 +1110,7 @@ Continuing with the example definition file, define constants for single bits:</
 
 <h4>Forcing use of constants</h4>
 
-<p>Further, GCC/G++ will sometimes require a static constexpr regbits object to be instantiated in memory instead of being treated as a compile-time-only constant. This requires a (small amount) of unnecessary storage, and unless defined manually causes an undefined variable error at runtime.</p>
+<p>Further, gcc/g++ will sometimes require a static constexpr regbits object to be instantiated in memory instead of being treated as a compile-time-only constant. This requires a (small amount) of unnecessary storage, and unless defined manually causes an undefined variable error at runtime.</p>
 
 <p>To work around the problem, regbits implements a unary <code>operator+()</code> for its objects. Client code should use this as needed, typically only when passing objects as parameters to functions:</p>
 
@@ -1065,7 +1123,76 @@ Continuing with the example definition file, define constants for single bits:</
 
 <p>There is no runtime cost for using the operator; in fact the opposite (it forces the object to be passed in registers instead of the stack). Suggestions for a better solution are hereby solicited.</p>
 
-<h4>Templates for numerically-defined constants</h4>
+<h4>Insert operator syntax <a name="insert_operator_syntax"></a></h4>
+
+<p>Choice of syntax for regbits&rsquo;s insert operator is difficult and debatable.</p>
+
+<p>To match what the operator actually does, the following (&ldquo;invert mask, <code>AND</code> with register, then <code>OR</code> in bits.) would be intuitive:</p>
+
+<pre><code>    serial2-&gt;config ~&amp;|= Serial::Config::DATALEN_16_BITS
+</code></pre>
+
+<p>This is of course impossible in C/C++. Perhaps better (but even further removed from permissible C/C++ syntax) would be:</p>
+
+<pre><code>    serial2-&gt;config @= Serial::Config::DATALEN_16_BITS
+</code></pre>
+
+<p>An earlier release of regbits used:</p>
+
+<pre><code>    serial2-&gt;config &lt;&lt;= Serial::Config::DATALEN_16_BITS
+</code></pre>
+
+<p>which somewhat matched the C++ Standard Libary&rsquo;s <code>ostream&lt;&lt;</code> operator. That particular syntax is unworkable due to C/C++ operator precedence rules which work perfectly for <code>ostream</code>s:</p>
+
+<pre><code>    // plain
+    std::cout &lt;&lt; a &lt;&lt; b &lt;&lt; c &lt;&lt; std::endl;
+
+    // equivalent explicitly parenthesized
+    ((((std::cout &lt;&lt; a) &lt;&lt; b) &lt;&lt; c) &lt;&lt; std::endl);
+</code></pre>
+
+<p>but very poorly for regbits' insert:</p>
+
+<pre><code>    // parentheses required:
+    serial2-&gt;config &lt;&lt; (Serial::Config::DATALEN_16_BITS | Serial);
+</code></pre>
+
+<p>because without parentheses:</p>
+
+<pre><code>    serial2-&gt;config &lt;&lt; Serial::Config::DATALEN_16_BITS | Serial;
+</code></pre>
+
+<p>would following equivalent would be compiled:</p>
+
+<pre><code>    (serial2-&gt;config &lt;&lt; Serial::Config::DATALEN_16_BITS) | Serial;
+</code></pre>
+
+<p>Regbit&rsquo;s insert operator intentionally returns void (<em>not</em> <code>regbits::Reg&amp;</code>) because otherwise the above would result in two operations to the hardware register, which would be inefficient and possible problematic (see <a href="#future_enhancements">below</a> regarding non-memory-like semantics of microcontroller registers).</p>
+
+<p>This release of regbits &ndash; for lack of a better alternative &ndash;  uses &ldquo;<code>/=</code>&rdquo;:</p>
+
+<pre><code>    serial2-&gt;config /= Serial::Config::DATALEN_16_BITS;
+</code></pre>
+
+<p>Not ideal, but possibly the best of the various poor options. An (unconvincing) argument can be made that the operator &ldquo;divides&rdquo; the register before subsequently inserting the <code>mskd_t</code> object&rsquo;s value.</p>
+
+<p>Admittedly, there is possible confusion between:</p>
+
+<pre><code>    serial2-&gt;config /= Serial::Config::DATALEN_16_BITS;
+    serial2-&gt;config |= Serial::Config::DATALEN_16_BITS;
+</code></pre>
+
+<p>both of which are valid, useful, but different operators. The fact that the glyphs are sufficiently distinct in most software-coding fonts partly alleviates the problem. And finally, to close out this overly-long section:</p>
+
+<pre><code>    serial2-&gt;config %= Serial::Config::DATALEN_16_BITS;
+</code></pre>
+
+<p>was considered too ugly and confusing. Alternate suggestions (if any exist) welcome, and please feel free to use the equivalent, verbose regbits <code>ins</code> method:</p>
+
+<pre><code>    serial2-&gt;config.ins(Serial::Config::DATALEN_16_BITS);
+</code></pre>
+
+<h4>Templates for numerically-defined constants <a name="templates_numeric_constants"></a></h4>
 
 <p>Constants defining regbits Bits and Mskd objects are intended to generally be declared with semantically-meaningful names, as per <a href="#regbits_bits_t_and_mskd_t">above</a>.</p>
 
@@ -1160,7 +1287,18 @@ Continuing with the example definition file, define constants for single bits:</
 <p>To work around the problem, regbits supports the following function template. Because it is verbose and may need to be used many times in an mcu/peripheral/register definition file, a parameterized preprocessor macro is provided:</p>
 
 <pre><code>    #define REGBITS_MSKD_RANGE(CLASS, CONSTEXPR_FUNC, RUNTIME_FUNC, VALID_FUNC, MASK, POS, LIMIT) \
-    template&lt;unsigned BITS&gt; static constexpr mskd_t CONSTEXPR_FUNC() { \
+</code></pre>
+
+<p>The macro first defines a <code>shft_t</code> constant (see <a href="#shifted_values">Shifted values</a>, above):</p>
+
+<pre><code>    static constexpr shft_t          CONSTEXPR_NAME##_SHFT       \
+                                = shft_t(CONSTEXPR_NAME##_MASK,  \
+                                         CONSTEXPR_NAME##_POS ); \
+</code></pre>
+
+<p>It then defines a function template for compile time generation of a static <code>mskd_t</code> object with the appropriate <code>.mask()</code> and <code>.bits()</code> values:</p>
+
+<pre><code>    template&lt;unsigned BITS&gt; static constexpr mskd_t CONSTEXPR_FUNC() { \
         static_assert(BITS &lt;= LIMIT, \
                       CLASS "::" #CONSTEXPR_FUNC "&lt;BITS&gt; out of range"); \
         return mskd_t(MASK, BITS, POS); \
@@ -1168,7 +1306,8 @@ Continuing with the example definition file, define constants for single bits:</
     // macro continues, discussed below
 </code></pre>
 
-<p>Client code uses this to instantiate desired constant objects as follows:</p>
+<p><a name="ugly_indexing_syntax"></a>
+Client code uses this to instantiate desired constant objects as follows:</p>
 
 <pre><code>    Timer::Autoreload::AUTORELOAD&lt;9347&gt;();
 </code></pre>
@@ -1201,6 +1340,218 @@ Continuing with the example definition file, define constants for single bits:</
 
 <p>In this way it is up to the client code (i.e. programmer) to decide if and when to include runtime range checking.</p>
 
+<h4>gcc/g++ compiler bug</h4>
+
+<p>Unfortunately, the <a href="#unit_test">Unit test suite</a>, below, reveals what is almost certainly a bug in the following release of ARM gcc/g++:</p>
+
+<pre><code>    (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
+</code></pre>
+
+<p>The unit test suite, as well as the author&rsquo;s production code, places aliases for global objects in one or more configuration (<code>.hxx</code>) files. This is tested in the unit test suite&rsquo;s <a href="unittest/regbits.cxx"><code>regbits.cxx</code></a> via:</p>
+
+<pre><code>    namespace app_config {
+    static const Serial::Config::pos_t
+    SERIAL_CONFIG_POS = Serial::Config::POLARITY_POS;
+
+    static const Serial::Config::bits_t
+    SERIAL_CONFIG_BITS = Serial::Config::POLARITY;
+
+    static const Serial::Config::mskd_t
+    SERIAL_CONFIG_MSKD = Serial::Config::DATALEN_16_BITS;
+
+    #ifdef GCC_ARM_BUG
+    #include &lt;stddef.h&gt;
+    static volatile uint32_t&amp;          GPIO_WORD
+                                    = *(  reinterpret_cast&lt;uint32_t*&gt;(gpio1)
+                                        + (offsetof(mcu::Gpio, words) &gt;&gt; 2 )
+                                        + 3                                   );
+    #else
+    static volatile uint32_t&amp;        GPIO_WORD = gpio1-&gt;words.WORDS&lt;3&gt;();
+    #endif
+
+    static const Timer::Prescale::shft_t
+    TIMER_PRESCALER_SHIFT = Timer::Prescale::PRESCALER_HIGH_SHFT;
+
+    static Serial* const    SERIAL = serial2;
+    }
+</code></pre>
+
+<p>The <code>#else</code> branch of the preprocessor conditional (which is <em>not</em> compiled by default) produces erroneous code.</p>
+
+<p>This has been confirmed by running the unittests under GNU/Linux:</p>
+
+<pre><code>    g++ (SUSE Linux) 4.8.5
+    Copyright (C) 2015 Free Software Foundation, Inc.
+</code></pre>
+
+<p>where the <code>#else</code> code produces slightly inefficient code (see <a href="#performance_claims">Performance claims</a> regarding executable object code speed and size, below) that nevertheless produces the correct results. Additionally, <code>gdb</code> has been used to step through the two versions of the code (resulting from use of one or the other of the <code>unit32_t&amp;</code> <code>#ifdef</code>s) which confirmed the correct behaviors.</p>
+
+<p>When compiled and run on an ARM MCU with above gcc-arm compiler, the <code>#ifdef GCC_ARM_BUG</code> implementation functions correctly. This has been confirmed by:</p>
+
+<ol>
+<li><p>Comparing the disassembled object code to that from the <a href="unittest/struct.c"><code>struct.c</code></a> C structures implementation (the code is identical)</p></li>
+<li><p>Comparing the <code>gdb</code> results from the unittests (see <a href="#running_unittests">Running the unittests</a>, below)</p></li>
+<li><p>Stepping through the binary&rsquo;s execution using <code>gdb</code>, as per the following commented output:</p></li>
+</ol>
+
+
+<p>Set breakpoint and run (<code>continue</code> instead of <code>run</code> required in embedded GDN):</p>
+
+<pre><code>    (gdb) break assign_array_global
+    Breakpoint 1 at 0x10000684: file ../../../../regbits.cxx, line 1123.
+    (gdb) continue
+    Continuing.
+    Breakpoint 1, assign_array_global () at ../../../../regbits.cxx:1123
+    1123        app_config::GPIO_WORD = 189;
+</code></pre>
+
+<p>Hit breakpoint, disassemble code:</p>
+
+<pre><code>    (gdb) disassemble
+    Dump of assembler code for function assign_array_global():
+    =&gt; 0x10000684 &lt;+0&gt;:     ldr     r3, [pc, #8]    ; (0x10000690 &lt;assign_array_global()+12&gt;)
+       0x10000686 &lt;+2&gt;:     ldr     r3, [r3, #0]
+       0x10000688 &lt;+4&gt;:     movs    r2, #189        ; 0xbd
+       0x1000068a &lt;+6&gt;:     str     r2, [r3, #0]
+       0x1000068c &lt;+8&gt;:     bx      lr
+       0x1000068e &lt;+10&gt;:    nop                     ; (mov r8, r8)
+       0x10000690 &lt;+12&gt;:    asrs    r4, r3, #23
+       0x10000692 &lt;+14&gt;:    asrs    r0, r0, #32
+    End of assembler dump.
+</code></pre>
+
+<p>Note <code>gdb</code> is confused by the 32-bit data word at the end of the function. The two <code>asrs</code> instructions are actually an address to be loaded as per the instruction at address <code>0x10000684</code>:</p>
+
+<pre><code>    (gdb) x/1wx 0x10000690
+    0x10000690 &lt;assign_array_global()+12&gt;:  0x100015dc
+</code></pre>
+
+<p>Step through function:</p>
+
+<pre><code>    (gdb) set disassemble-next-line on
+    (gdb) x/1wx 0x100015dc
+    0x100015dc &lt;_ZN10app_configL9GPIO_WORDE&gt;:       0x00000000
+    (gdb) p/x $pc
+    $1 = 0x10000684
+    (gdb) display/x $r3
+    1: /x $r3 = 0x0
+    (gdb) display/x $r2
+    2: /x $r2 = 0x58
+    (gdb) display
+    1: /x $r3 = 0x0
+    2: /x $r2 = 0x58
+    (gdb) nexti
+    0x10000686      1123        app_config::GPIO_WORD = 189;
+       0x10000684 &lt;assign_array_global()+0&gt;:        02 4b   ldr     r3, [pc, #8]    ; (0x10000690 &lt;assign_array_global()+12&gt;)
+    =&gt; 0x10000686 &lt;assign_array_global()+2&gt;:        1b 68   ldr     r3, [r3, #0]
+       0x10000688 &lt;assign_array_global()+4&gt;:        bd 22   movs    r2, #189        ; 0xbd
+       0x1000068a &lt;assign_array_global()+6&gt;:        1a 60   str     r2, [r3, #0]
+       0x1000068c &lt;assign_array_global()+8&gt;:        70 47   bx      lr
+       0x1000068e &lt;assign_array_global()+10&gt;:       c0 46   nop                     ; (mov r8, r8)
+       0x10000690 &lt;assign_array_global()+12&gt;:       dc 15   asrs    r4, r3, #23
+       0x10000692 &lt;assign_array_global()+14&gt;:       00 10   asrs    r0, r0, #32
+    1: /x $r3 = 0x100015dc
+    2: /x $r2 = 0x58
+</code></pre>
+
+<p>The address has been loaded into ARM core register <code>r3</code>. Continue:</p>
+
+<pre><code>    (gdb) nexti
+    0x10000688      1123        app_config::GPIO_WORD = 189;
+       0x10000684 &lt;assign_array_global()+0&gt;:        02 4b   ldr     r3, [pc, #8]    ; (0x10000690 &lt;assign_array_global()+12&gt;)
+       0x10000686 &lt;assign_array_global()+2&gt;:        1b 68   ldr     r3, [r3, #0]
+    =&gt; 0x10000688 &lt;assign_array_global()+4&gt;:        bd 22   movs    r2, #189        ; 0xbd
+       0x1000068a &lt;assign_array_global()+6&gt;:        1a 60   str     r2, [r3, #0]
+       0x1000068c &lt;assign_array_global()+8&gt;:        70 47   bx      lr
+       0x1000068e &lt;assign_array_global()+10&gt;:       c0 46   nop                     ; (mov r8, r8)
+       0x10000690 &lt;assign_array_global()+12&gt;:       dc 15   asrs    r4, r3, #23
+       0x10000692 &lt;assign_array_global()+14&gt;:       00 10   asrs    r0, r0, #32
+    1: /x $r3 = 0x0
+    2: /x $r2 = 0x58
+</code></pre>
+
+<p>This above is where the error occurs. The value at <code>0x100015dc</code> should be the address of the <code>gpio1-&gt;words.WORDS&lt;3&gt;()</code> array member. Instead, the compiler has not initialized it correctly &ndash; in fact, in this ELF executable it is in the uninitialized <code>.bss</code> segment).</p>
+
+<p>Continuing, the code incorrectly sets address zero to to the desired value of <code>189</code>, with potentially disastrous results:</p>
+
+<pre><code>    (gdb) nexti
+    0x1000068a      1123        app_config::GPIO_WORD = 189;
+       0x10000684 &lt;assign_array_global()+0&gt;:        02 4b   ldr     r3, [pc, #8]    ; (0x10000690 &lt;assign_array_global()+12&gt;)
+       0x10000686 &lt;assign_array_global()+2&gt;:        1b 68   ldr     r3, [r3, #0]
+       0x10000688 &lt;assign_array_global()+4&gt;:        bd 22   movs    r2, #189        ; 0xbd
+    =&gt; 0x1000068a &lt;assign_array_global()+6&gt;:        1a 60   str     r2, [r3, #0]
+       0x1000068c &lt;assign_array_global()+8&gt;:        70 47   bx      lr
+       0x1000068e &lt;assign_array_global()+10&gt;:       c0 46   nop                     ; (mov r8, r8)
+       0x10000690 &lt;assign_array_global()+12&gt;:       dc 15   asrs    r4, r3, #23
+       0x10000692 &lt;assign_array_global()+14&gt;:       00 10   asrs    r0, r0, #32
+    1: /x $r3 = 0x0
+    2: /x $r2 = 0xbd
+    (gdb) x/1wx 0
+    0x0:    0x10002000
+    (gdb) nexti
+    0x1000068c      1123        app_config::GPIO_WORD = 189;
+       0x10000684 &lt;assign_array_global()+0&gt;:        02 4b   ldr     r3, [pc, #8]    ; (0x10000690 &lt;assign_array_global()+12&gt;)
+       0x10000686 &lt;assign_array_global()+2&gt;:        1b 68   ldr     r3, [r3, #0]
+       0x10000688 &lt;assign_array_global()+4&gt;:        bd 22   movs    r2, #189        ; 0xbd
+       0x1000068a &lt;assign_array_global()+6&gt;:        1a 60   str     r2, [r3, #0]
+    =&gt; 0x1000068c &lt;assign_array_global()+8&gt;:        70 47   bx      lr
+       0x1000068e &lt;assign_array_global()+10&gt;:       c0 46   nop                     ; (mov r8, r8)
+       0x10000690 &lt;assign_array_global()+12&gt;:       dc 15   asrs    r4, r3, #23
+       0x10000692 &lt;assign_array_global()+14&gt;:       00 10   asrs    r0, r0, #32
+    1: /x $r3 = 0x0
+    2: /x $r2 = 0xbd
+    (gdb) x/1wx 0
+    0x0:    0x000000bd
+</code></pre>
+
+<p>In this case (fortunately) the program doesn&rsquo;t crash because the LPC824 ARM Cortex-M0+ MCU it is running on has 32K of flash memory (unwritable except via special techniques) starting at address 0.</p>
+
+<p>To conclude, the following is the same code running on GNU/Linux x86-64 with gcc/g++ 4.8.5 showing the correct address being loaded and stored to:</p>
+
+<pre><code>    (gdb) b assign_array_global
+    Breakpoint 1 at 0x400f4b: file ../regbits.cxx, line 1125.
+    (gdb) run
+    ...
+    Breakpoint 1, assign_array_global () at ../regbits.cxx:1125
+    1125        app_config::GPIO_WORD = 189;
+    Missing separate debuginfos, use: zypper install libgcc_s1-debuginfo-5.3.1+r233831-6.1.x86_64 libstdc++6-debuginfo-5.3.1+r233831-6.1.x86_64
+    (gdb) disassemble 
+    Dump of assembler code for function assign_array_global():
+    =&gt; 0x0000000000400f4b &lt;+0&gt;:     mov    0x20314e(%rip),%rax        # 0x6040a0 &lt;_ZN10app_configL9GPIO_WORDE&gt;
+       0x0000000000400f52 &lt;+7&gt;:     movl   $0xbd,(%rax)
+       0x0000000000400f58 &lt;+13&gt;:    retq   
+    End of assembler dump.
+    (gdb) p/x $rip
+    $1 = 0x400f4b
+    (gdb) p/x $rax
+    $2 = 0x0
+    (gdb) p/x $rip + 0x20314e + 7
+    $5 = 0x6040a0
+    (gdb) x/1wg 0x6040a0
+    0x6040a0 &lt;_ZN10app_configL9GPIO_WORDE&gt;: 0x000000000070012c
+    (gdb) set disassemble-next-line on
+    (gdb) nexti
+    0x0000000000400f52      1125        app_config::GPIO_WORD = 189;
+       0x0000000000400f4b &lt;assign_array_global()+0&gt;:        48 8b 05 4e 31 20 00    mov    0x20314e(%rip),%rax        # 0x6040a0 &lt;_ZN10app_configL9GPIO_WORDE&gt;
+    =&gt; 0x0000000000400f52 &lt;assign_array_global()+7&gt;:        c7 00 bd 00 00 00       movl   $0xbd,(%rax)
+       0x0000000000400f58 &lt;assign_array_global()+13&gt;:       c3      retq   
+    (gdb) p/x $rip
+    $6 = 0x400f52
+    (gdb) p/x $rax
+    $7 = 0x70012c
+    (gdb) x/1xw 0x70012c
+    0x70012c:       0x00000000
+    (gdb) nexti
+    0x0000000000400f58      1125        app_config::GPIO_WORD = 189;
+       0x0000000000400f4b &lt;assign_array_global()+0&gt;:        48 8b 05 4e 31 20 00    mov    0x20314e(%rip),%rax        # 0x6040a0 &lt;_ZN10app_configL9GPIO_WORDE&gt;
+       0x0000000000400f52 &lt;assign_array_global()+7&gt;:        c7 00 bd 00 00 00       movl   $0xbd,(%rax)
+    =&gt; 0x0000000000400f58 &lt;assign_array_global()+13&gt;:       c3      retq   
+    (gdb) x/1xw 0x70012c
+    0x70012c:       0x000000bd
+</code></pre>
+
+<p>Comments and/or suggestions welcome, particularly if they identify errors in the unittest codebase which may have triggered this problem.</p>
+
 <h2>Unit test <a name="unit_test"></a></h2>
 
 <p>A unit test suite is provided <a href="unittest">here</a>. The suite is designed to test three aspects of regbits:</p>
@@ -1216,7 +1567,7 @@ Continuing with the example definition file, define constants for single bits:</
 
 <p>Type-safe (and other) error detection is tested in the <code>linux</code> and <code>arm</code> subdirectories under the <a href="unittest/bad"><code>bad</code></a> directory.</p>
 
-<p>&ldquo;cd&rdquo; to either of the subdirectories and run &ldquo;make&rdquo;. The <code>Makefile</code> will attempt to build (&ldquo;g++ -c&rdquo;) each of the <code>*.cxx</code> tests and confirm that, as intended, they fail to compile. For completeness, running &ldquo;make GOOD=-DGOOD&rdquo; will confirm that code without errors <em>does</em> compile (this detects potential bugs such as a missing include file producing an error that masks the intended regbits-type-safety error).</p>
+<p>&ldquo;cd&rdquo; to either of the subdirectories and run &ldquo;make&rdquo;. The <code>Makefile</code> will attempt to build (&ldquo;g++ -c&rdquo;) each of the <code>*.cxx</code> tests and confirm that, as intended, they fail to compile. For completeness, running &ldquo;make GOOD=-DGOOD&rdquo; will confirm that code without errors <em>does</em> compile (this detects potential bugs such as a missing include file producing an error that masks the intended regbits type-safety error).</p>
 
 <h3>Computational correctness <a name="computational_correctness"></a></h3>
 
@@ -1225,86 +1576,48 @@ Continuing with the example definition file, define constants for single bits:</
 <ul>
 <li>regbits: <a href="unittest/mcu_regbits.hxx"><code>mcu_regbits.hxx</code></a>,  <a href="unittest/regbits.cxx"><code>regbits.cxx</code></a></li>
 <li>struct (C structs): <a href="unittest/mcu_struct.h"><code>mcu_struct.h</code></a>,  <a href="unittest/struct.c"><code>struct.c</code></a></li>
-<li>raw (raw C pointers): <a href="unittest/mcu_raw.h"><code>mcu_raw.h</code></a>,  <a href="unittest/raw.c"><code>raw.c</code></a></li>
+<li>raw (raw C pointers and offsets): <a href="unittest/mcu_raw.h"><code>mcu_raw.h</code></a>,  <a href="unittest/raw.c"><code>raw.c</code></a></li>
 <li>bitfield (C bitfields): <a href="unittest/mcu_bitfield.h"><code>mcu_bitfield.h</code></a>,  <a href="unittest/bitfield.c"><code>bitfield.c</code></a></li>
 </ul>
 
 
-<p>Executable binaries to exercise these four versions can be built in the following directories:</p>
+<p>Executable binaries to exercise these four versions can be built in the following directories. All four tests are run and their results compared; if any differ it is known that a problem exists.</p>
 
 <h4>Linux</h4>
 
-<p><strong>regbits</strong> is intended for use in standalone MCU applications. However, nothing precludes its use in other environments (and in fact it may be useful for writing device drivers, in OS kernels, etc).</p>
+<p>Regbits is intended for use in standalone MCU applications. However, nothing precludes its use in other environments (and in fact it may be useful for writing device drivers, in OS kernels, etc).</p>
 
-<p>The <a href="unittest/linux">linux</a> version of the unittest suite is included for ease of testing under the Linux operating system without the need for embedded development testbed. It reports relative sizes of the four implementations' object code, and execution speed in terms of the Linux <code>clock_gettime()</code> system call. The former (sizes) may be useful for comparing the implementations despite the radical differences between the native Linux and the (ARM) embedded compilers, and the latter (speed) for comparison despite the non-deterministic nature of timing when running under a multitasking OS.</p>
+<p>The <a href="unittest/linux">linux</a> version of the unittest suite is included for ease of testing under the Linux operating system without the need for embedded development testbed. It reports relative sizes of the four implementations' object code,execution speed in terms of the Linux <code>clock_gettime()</code> system call, and sizes of the individual tests. The sizes may be useful for comparing the implementations despite the radical differences between the native Linux and the (ARM) embedded compilers, and the latter (speed) for comparison despite the non-deterministic nature of timing when running under a multitasking OS.</p>
 
 <p>To run the Linux unittest, type &ldquo;make&rdquo; in that directory. This will build and run executables for the four versions, and collate the results (see <a href="#running_unittests">below</a>). The <a href="unittest/linux/Makefile"><code>Makefile</code></a> has many configuration variables that can be overridden on the <code>make</code> commandline.</p>
 
 <h4>Embedded testbed</h4>
 
-<p>And sample <a href="unittest/arm/cortex_m0plus/nxp/lpc824">embedded testbed</a> is included. It is of course completely specific to one particular MCU but can be used as a template for any other.</p>
+<p>Two sample embedded testbeds are included, one for an ARM Cortex-M0+ MCU <a href="unittest/arm/cortex_m0plus/nxp/lpc824"><code>lpc824</code></a> and one for an ARM Cortex-M3 MCU <a href="unittest/arm/cortex_m3/stm/stm32f103xb"><code>stm32f103xb</code></a>. Each is of course completely specific to one particular MCU, but can be used as a template for others.</p>
 
 <p>Running the unittest is broken into two steps. Typing &ldquo;make&rdquo; will build the four implementations' binaries, including disassembled object code (see <a href="#disassembled_object_code">below</a>) and information about the resultant object code size.</p>
 
-<p>The <a href="unittest/arm/cortex_m0plus/nxp/lpc824/Makefile"><code>Makefile</code></a> has many configuration variables (including ARM-specific ones) that can be overridden on the <code>make</code> commandline. Additionally, an environment variable, <code>GCC_ARM_ROOT</code>, must be set to point to the compiler&rsquo;s installed location.</p>
+<p>The <a href="unittest/arm/Makefile.arm"><code>Makefile.arm</code></a> has many configuration variables (including ARM-specific ones) that can be overridden on the <code>make</code> commandline. Additionally, an environment variable, <code>GCC_ARM_ROOT</code>, must be set to point to the compiler&rsquo;s installed location.</p>
 
 <p>Actually running the executables on the target embedded system is broken out as the second step, invoked by typing &ldquo;make gdb&rdquo;, to allow the first to run without requiring attached development hardware.</p>
 
 <h4>Disassembled object code <a name="disassembled_object_code"></a></h4>
 
-<p>The Makefiles (specifically the embedded  <a href="unittest/arm/cortex_m0plus/nxp/lpc824/Makefile"><code>Makefile</code></a>, but also the Linux <a href="unittest/linux/Makefile"><code>Makefile</code></a>) disassemble the four implementation executables into <a href="unittest/arm/cortex_m0plus/nxp/lpc824/regbits.elf.dmp"><code>regbits.elf.dmp</code></a>, <a href="unittest/arm/cortex_m0plus/nxp/lpc824/struct.elf.dmp"><code>struct.elf.dmp</code></a>, <a href="unittest/arm/cortex_m0plus/nxp/lpc824/raw.elf.dmp"><code>raw.elf.dmp</code></a>, and  <a href="unittest/arm/cortex_m0plus/nxp/lpc824/bitfield.elf.dmp"><code>bitfield.elf.dmp</code></a>. (The ones included in this repository were compiled &ldquo;<code>-O3</code>&rdquo;.) These listings are intended for manual inspection to confirm that each is producing object code that will produce the same results. Suggestion: Use a good visual &ldquo;diff&rdquo; tool like <code>meld</code> or <code>kompare</code> to view the files side-by-side.</p>
+<p>The Makefiles (specifically the embedded Makefile, <a href="unittest/arm/Makefile.arm"><code>Makefile.arm</code></a>, but also the Linux <a href="unittest/linux/Makefile"><code>Makefile</code></a>) disassemble the four implementation executables into files such as the LPC824 versions,  <a href="unittest/arm/cortex_m0plus/nxp/lpc824/regbits.elf.dmp"><code>regbits.elf.dmp</code></a>, <a href="unittest/arm/cortex_m0plus/nxp/lpc824/struct.elf.dmp"><code>struct.elf.dmp</code></a>, <a href="unittest/arm/cortex_m0plus/nxp/lpc824/raw.elf.dmp"><code>raw.elf.dmp</code></a>, and  <a href="unittest/arm/cortex_m0plus/nxp/lpc824/bitfield.elf.dmp"><code>bitfield.elf.dmp</code></a>. (The ones included in this repository were compiled &ldquo;<code>-O3</code>&rdquo;.) These listings are intended for manual inspection to confirm that each is producing object code that will produce the same results. Suggestion: Use a good visual &ldquo;diff&rdquo; tool like <code>meld</code> or <code>kompare</code> to view the files side-by-side.</p>
 
 <h4>Running the unittests <a name="running_unittests"></a></h4>
 
 <p>As per above, run the unittests by typing &ldquo;make&rdquo; in the <a href="unittest/linux">linux</a> directory, or &ldquo;make&rdquo; followed by &ldquo;make gdb&rdquo; in the <a href="unittest/arm/cortex_m0plus/nxp/lpc824">embedded</a> directory.</p>
 
-<p>The unittests are specifically written to be run under <code>gdb</code> in order to remove any requirements for I/O in the executables, as that would influence both speed and size performance. The unittest code calls <code>unittest_record_registers()</code> in each version&rsquo;s <code>main()</code> (see linux <a href="unittest/linux/main.c"><code>main.c</code></a> and embedded <a href="unittest/arm/cortex_m0plus/nxp/lpc824/main.c"><code>main.c</code></a>).</p>
+<p>The unittests are specifically written to be run under <code>gdb</code> in order to remove any requirements for I/O in the executables, as that would influence both speed and size performance. The unittest code calls <code>do_test()</code> in each version&rsquo;s <code>main()</code> (see linux <a href="unittest/linux/main.c"><code>main.c</code></a> and embedded <a href="unittest/arm/main.c"><code>main.c</code></a>) to initialize pseudo-/test-registers, run a single test, and store the result.</p>
 
-<p>The provided GDB scripts (linux <a href="unittest/linux/unittest.gdb">unittest.gdb</a> and embedded <a href="unittest/arm/cortex_m0plus/nxp/lpc824/unittest.gdb">unittest.gdb</a>) run the executables under <code>gdb</code>, hit a breakpoint at the end of execution, dump the test results to a file, and exit. Note that the embedded version requires an environment variable, <code>GDB_OPENOCD</code>, naming a program (typically a UNIX shell script) which runs <code>gdb</code> with appropriate connection to the target embedded system. The program (not included as it is completely development environment specific) also need to pass its commandline arguments to <code>gdb</code> as this is how the <code>unittest.gdb</code> script is loaded.</p>
+<p>The provided GDB scripts (linux <a href="unittest/linux/unittest.gdb">unittest.gdb</a> and embedded <a href="unittest/arm/unittest.gdb">unittest.gdb</a>) run the executables under <code>gdb</code>, hit a breakpoint at the end of execution, dump the test results to a file, and exit. Note that the embedded version requires an environment variable, <code>GDB_OPENOCD</code>, naming a program (typically a UNIX shell script) which runs <code>gdb</code> with appropriate connection to the target embedded system. That program (not included as it is completely development environment specific) also need to pass its commandline arguments to <code>gdb</code> as this is how the <code>unittest.gdb</code> script is loaded.</p>
 
-<p>The &ldquo;make&rdquo; (or &ldquo;make gdb&rdquo;) command will run the <a href="unittest/unittest.py">unittest.py</a> script to collate the output files from <code>gdb</code>. If no differences between the four implementations are found it will only output information comparing their code sizes and execution speeds. Any differences will be listed with the name of the test that failed, and data from each test&rsquo;s saved registers.</p>
+<p>The &ldquo;make&rdquo; (or &ldquo;make gdb&rdquo;) command will run the <a href="unittest/unittest.py">unittest.py</a> script to collate the output files from <code>gdb</code>. If no differences between the four implementations are found it will only output information comparing their code sizes and execution speeds. Any differences will be listed with the name of the test that failed, and data from each test&rsquo;s saved (pseudo/test) registers. The <a href="unittest/unittest.py">unittest.py</a> script also reports the code size of each of the individual unit test functions.</p>
 
 <h3>Performance claims <a name="performance_claims"></a></h3>
 
-<p>Using:</p>
-
-<pre><code>    (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
-</code></pre>
-
-<p>with the the following options:</p>
-
-<pre><code>    -c -Wall -std=c++11 -g3 -mthumb -mcpu=cortex-m0plus -mabi=apcs-gnu -fno-exceptions -fno-unwind-tables
-</code></pre>
-
-<p>running on an NXP LCP824 ARM MCU at the default 12 MHz clock speed produces the following results:</p>
-
-<p><code>make OPTIMIZE=-O1</code></p>
-
-<pre><code>    bitfield.out            size: 3920      time: 4909
-    raw.out                 size: 2676      time: 4285
-    regbits.out             size: 2552      time: 4029
-    struct.out              size: 2632      time: 4206
-</code></pre>
-
-<p><code>make OPTIMIZE=-O2</code></p>
-
-<pre><code>    bitfield.out            size: 3728      time: 4721
-    raw.out                 size: 2664      time: 4264
-    regbits.out             size: 2532      time: 4007
-    struct.out              size: 2620      time: 4185
-</code></pre>
-
-<p><code>make OPTIMIZE=-O3</code>:</p>
-
-<pre><code>    bitfield.out            size: 3700      time: 4716
-    raw.out                 size: 2640      time: 4211
-    regbits.out             size: 2520      time: 3957
-    struct.out              size: 2596      time: 4132
-</code></pre>
-
-<p>Note these overall rankings of the implementations do not prove that each individual test performs in the same best-to-worst order. For that, the individual <code>*.elf.dmp</code> disassembled files should be examined. Also note, however, that the constant-between-versions overhead of saving data during execution likely causes understimation of the actual differences in speed (and size).</p>
-
-<p>Attempts were made to make the tests &ldquo;fair&rdquo;. For example, in the <code>struct</code> implementation (<a href="unittest/struct.c"><code>struct.c</code></a>) it would be &ldquo;natural&rdquo; to pass arguments by reference separately:</p>
+<p>The four versions of the unit tests (regbits, C structs, raw C pointers and offsets, and C bitfields) were written in an attempt to make the comparisons &ldquo;fair&rdquo;. For example, in the C struct implementation (<a href="unittest/struct.c"><code>struct.c</code></a>) it would be &ldquo;natural&rdquo; to pass arguments by reference separately:</p>
 
 <pre><code>    __attribute__((noinline)) void mskd_ref(
     const uint32_t    *mask,
@@ -1332,7 +1645,7 @@ Continuing with the example definition file, define constants for single bits:</
 <pre><code>    __attribute__((noinline)) void mskd_ref(
     const Serial::Config::mskd_t        &amp;config)
     {
-        serial2-&gt;config &lt;&lt;= config;
+        serial2-&gt;config /=  config;
         serial2-&gt;config.ins(config);
     }
 
@@ -1371,6 +1684,281 @@ Continuing with the example definition file, define constants for single bits:</
         SERIAL2-&gt;CONFIG &amp;= ~SERIAL_CONFIG_POLARITY; // clear for periph_reg_bits_val
     }
 </code></pre>
+
+<h3>Results</h3>
+
+<p>Using:</p>
+
+<pre><code>    (GNU Tools for Arm Embedded Processors 8-2018-q4-major) 8.2.1 20181213 (release) [gcc-8-branch revision 267074]
+</code></pre>
+
+<p>with the the options listed below, running on an NXP LCP824 ARM Cortex-M0+ and STM STM32F103XB ARM Cortex-M3 MCUs, produced the following results. Note that both were run at their default clock speeds (12 and 8 MHz respectively); however, as execution time was measured via the ARM <code>SysTick</code> counter which runs at main clock speed, the times should be independent of clock speed as long as there are no wait states for memory accesses (which should be the case as all tests were code and data in on-chip RAM).</p>
+
+<pre><code>    cortex-m0plus apcs-gnu -O2 -g3 -DGCC_ARM_BUG c++11
+    bitfield.out            (too large to fit in 8K LPC824 RAM)
+    raw.out                 size: 5276      time: 11086
+    regbits.out             size: 5224      time: 11064
+    struct.out              size: 5276      time: 11132
+
+    cortex-m0plus apcs-gnu -O2 -g3 -DGCC_ARM_BUG c++11
+    bitfield.out            (too large to fit in 8K LPC824 RAM)
+    raw.out                 size: 5420      time: 11038
+    regbits.out             size: 5348      time: 10972
+    struct.out              size: 5416      time: 11084
+
+    cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
+    bitfield.out            (too large to fit in 8K LPC824 RAM)
+    raw.out                 size: 5488      time: 10954
+    regbits.out             size: 5424      time: 10906
+    struct.out              size: 5484      time: 11000
+
+    cortex-m3 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+    bitfield.out            size: 6884      time: 14367
+    raw.out                 size: 5092      time: 12249
+    regbits.out             size: 5036      time: 12084
+    struct.out              size: 5100      time: 12319
+
+    cortex-m3 apcs-gnu -O2 -g3 -DGCC_ARM_BUG c++11
+    bitfield.out            size: 6860      time: 13887
+    raw.out                 size: 5312      time: 11983
+    regbits.out             size: 5180      time: 11693
+    struct.out              size: 5328      time: 12051
+
+    cortex-m3 apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
+    bitfield.out            size: 7128      time: 13433
+    raw.out                 size: 5356      time: 11859
+    regbits.out             size: 5240      time: 11601
+    struct.out              size: 5364      time: 11927
+</code></pre>
+
+<p>Note these overall rankings do not prove that each individual test performs in the same best-to-worst order. Also note that the constant-between-versions overhead of saving data during execution likely causes underestimation of the actual differences in speed.</p>
+
+<p>To understand the exact differences, the individual <code>*.elf.dmp</code> files should be examined. However, as almost all ARM Thumb instructions execute in one cycle, comparing the relative sizes of the four implementation&rsquo;s individual tests is alternately a good indicator of their relative speeds. To that end, the <a href="unittest/unittest.py">unittest.py</a> reports those sizes. An example output follows; the <code>*</code> indicates that the version&rsquo;s size is the smallest for that particular test.</p>
+
+<pre><code>    compile: cortex-m3 apcs-gnu -O2 -g3 -DGCC_ARM_BUG c++11
+       regbits    struct       raw  bitfield
+          24 *      24 *      24 *              .rodata
+          12 *      12 *      12 *      12 *    assign_array_global
+          12 *      12 *      12 *      24      assign_register_global
+          24 *      24 *      24 *      40      bits_extract_eq
+          24 *      24 *      24 *      40      bits_extract_ne
+          16 *      16 *      16 *      92      bits_ref
+          16 *      16 *      16 *      88      bits_val
+          20 *      20 *      20 *      28      call_bits_ref_const
+          20 *      20 *      20 *      28      call_bits_ref_global
+          20 *      20 *      20 *      28      call_bits_ref_var
+           8 *      20         8 *       8 *    call_bits_val_const
+           8 *       8 *       8 *       8 *    call_bits_val_global
+           8 *      20         8 *       8 *    call_bits_val_var
+          32 *      32 *      32 *      44      call_copy_bits_ref
+          16 *      16 *      16 *      28      call_copy_bits_val
+          24 *      28        28        28      call_mskd_ref_const
+          24 *      32        32        24 *    call_mskd_ref_global
+          28        32        32        24 *    call_mskd_ref_var
+           8 *      24        24        24      call_mskd_val_const
+           8 *       8 *       8 *       8 *    call_mskd_val_global
+           8 *      24        24        24      call_mskd_val_var
+          12 *      12 *      12 *      12 *    call_periph_bits
+          28 *      28 *      28 *      28 *    call_periph_bits_ref
+          12 *      12 *      12 *      12 *    call_periph_bits_val
+          12 *      12 *      12 *      12 *    call_periph_mskd
+          16 *      40        40        28      call_periph_mskd_ref
+          16        16        16        12 *    call_periph_mskd_val
+          28 *      32        32        28 *    call_pos_ref
+          20 *      24        24        20 *    call_pos_ref_global
+          20 *      20 *      20 *      20 *    call_pos_val
+           8 *       8 *       8 *       8 *    call_pos_val_global
+          12 *      32        32        20      call_range_ref
+           8 *       8 *       8 *       8 *    call_range_ref_port
+          12        16        16         8 *    call_range_val
+           8 *       8 *       8 *       8 *    call_range_val_port
+          28 *      28 *      28 *      28 *    call_reg_bits_ref
+          12 *      12 *      12 *      12 *    call_reg_bits_val
+          16 *      40        40        28      call_reg_mskd_ref
+          16        16        16        12 *    call_reg_mskd_val
+          32 *      32 *      32 *      48      call_return_bits
+          56 *      56 *      56 *      68      call_return_mskd
+          32 *      32 *      32 *      36      call_return_periph
+          32 *      32 *      32 *      40      call_return_reg
+          32        32        32        20 *    call_shifted_const_ref
+          12        12        12         8 *    call_shifted_const_val
+          28        32        32        20 *    call_shifted_global_ref
+          12        12        12         8 *    call_shifted_global_val
+          32        32        32        20 *    call_shifted_var_ref
+          12        12        12         8 *    call_shifted_var_val
+          20 *      20 *      20 *      20 *    check_array_range_fail
+          20 *      20 *      20 *      20 *    check_array_range_pass
+          20 *      20 *      20 *      20 *    check_bits_range_fail
+          20 *      20 *      20 *      20 *    check_bits_range_pass
+          20 *      20 *      20 *      20 *    check_mskd_range_fail
+          20 *      20 *      20 *      20 *    check_mskd_range_pass
+          16 *      16 *      16 *      16 *    clr_singl_bits_method
+          16 *      16 *      16 *      16 *    clr_singl_bits_operator
+          16 *      16 *      16 *      28      clr_singl_mskd_method
+          16 *      16 *      16 *      28      clr_singl_mskd_operator
+          36 *      36 *      36 *      44      cmp_equ_bits
+          48 *      48 *      48 *      52      cmp_equ_mskd
+          36 *      36 *      36 *     120      cmp_equ_reg
+          40 *      40 *      40 *      48      cmp_equ_zero
+          24 *      24 *      24 *      52      cmp_neq_bits
+          44 *      44 *      44 *      52      cmp_neq_mskd
+          24 *      24 *      24 *     112      cmp_neq_reg
+          28 *      28 *      28 *      36      cmp_neq_zero
+          20 *      20 *      24        32      constexpr_bits_array
+          24 *      24 *      24 *      52      copy_bits_equ
+          24 *      24 *      24 *      40      copy_bits_neq
+          20 *      20 *      20 *      40      copy_bits_ref
+          20 *      20 *      20 *      36      copy_bits_val
+          36 *      36 *      36 *      56      copy_mskd_equ
+          36 *      36 *      36 *      56      copy_mskd_geq
+          40 *      40 *      40 *      56      copy_mskd_gtr
+          36 *      36 *      36 *      56      copy_mskd_leq
+          40 *      40 *      40 *      56      copy_mskd_lss
+          36 *      36 *      36 *      56      copy_mskd_neq
+          36 *      36 *      36 *      56      copy_shifted
+          12 *      12 *      12 *      32      equ_bits_mskd_method
+          12 *      12 *      12 *      32      equ_bits_mskd_operator
+          16 *      16 *      16 *      32      equ_bits_var
+          12 *      12 *      12 *      32      equ_mskd_bits_method
+          12 *      12 *      12 *      32      equ_mskd_bits_operator
+          20 *      20 *      20 *      40      equ_mskd_var
+          12 *      12 *      12 *      28      equ_multi_bits_method
+          12 *      12 *      12 *      28      equ_multi_bits_operator
+          16 *      16 *      16 *      32      equ_multi_mskd_method
+          16 *      16 *      16 *      32      equ_multi_mskd_operator
+          12 *      12 *      12 *      20      equ_singl_bits_method
+          12 *      12 *      12 *      20      equ_singl_bits_operator
+          12 *      12 *      12 *      24      equ_singl_mskd_method
+          12 *      12 *      12 *      24      equ_singl_mskd_operator
+          16 *      16 *      16 *      28      flp_singl_bits_method
+          16 *      16 *      16 *      28      flp_singl_bits_operator
+          16 *      16 *      16 *      28      flp_singl_mskd_method
+          16 *      16 *      16 *      28      flp_singl_mskd_operator
+          20 *      20 *      20 *      20 *    ins_mskd_global
+          24 *      24 *      24 *      28      ins_multi_mskd_method
+          24 *      24 *      24 *      28      ins_multi_mskd_operator
+          20 *      20 *      20 *      20 *    ins_singl_mskd_method
+          20 *      20 *      20 *      20 *    ins_singl_mskd_operator
+          24 *      28        28        44      mskd_extract_eq
+          32 *      36        36        72      mskd_extract_geq
+          36 *      40        40        56      mskd_extract_gtr
+          32 *      36        36        72      mskd_extract_leq
+          36 *      40        40        56      mskd_extract_lss
+          24 *      28        28        48      mskd_extract_ne
+          28 *      28 *      28 *     170      mskd_ref
+          20 *      20 *      20 *     166      mskd_val
+          12 *      12 *      12 *      12 *    periph_bits
+          12 *      12 *      12 *      16      periph_bits_ref
+           8 *       8 *       8 *      16      periph_bits_val
+          16        16        16        12 *    periph_mskd
+          12 *      20        20        16      periph_mskd_ref
+          12 *      12 *      12 *      16      periph_mskd_val
+          12 *      12 *      12 *      24      pos_cmp_eq
+          12 *      12 *      12 *      24      pos_cmp_ne
+          32 *      32 *      32 *      32 *    pos_ref
+          32 *      32 *      32 *      32 *    pos_val
+          28 *      28 *      28 *      32      prescaler_high
+          28 *      28 *      28 *      32      prescaler_low
+          12 *      12 *      12 *      16      reg_bits_ref
+           8 *       8 *       8 *      16      reg_bits_val
+          56 *      56 *      56 *      80      reg_mskd_geq
+          40 *      40 *      40 *      56      reg_mskd_gtr
+          56 *      56 *      56 *      80      reg_mskd_leq
+          40 *      40 *      40 *      56      reg_mskd_lss
+          12 *      20        20        16      reg_mskd_ref
+          12 *      12 *      12 *      16      reg_mskd_val
+           4 *       4 *       4 *       4 *    return_bits
+          12 *      12 *      12 *      12 *    return_mskd
+          12 *      12 *      20        24      return_periph
+          20        20        12 *      28      return_reg
+        1232      1176 *    1176 *    1176 *    run
+          44 *      44 *      48        60      runtime_bits_array
+          20 *      28        28        20 *    runtime_range_ref
+          20        20        20        16 *    runtime_range_val
+          16 *      16 *      16 *      16 *    set_bits_global
+          16 *      16 *      16 *      24      set_multi_bits_method
+          16 *      16 *      16 *      24      set_multi_bits_operator
+          16 *      16 *      16 *      16 *    set_singl_bits_method
+          16 *      16 *      16 *      16 *    set_singl_bits_operator
+          16 *      16 *      16 *      28      set_singl_mskd_method
+          16 *      16 *      16 *      28      set_singl_mskd_operator
+          28 *      28 *      28 *      32      shifted_global
+          36 *      36 *      36 *      44      shifted_ref
+          32 *      32 *      32 *      40      shifted_val
+          12 *      12 *      12 *      12 *    zero_array
+          12 *      12 *      12 *      12 *    zero_reg
+</code></pre>
+
+<p>Note that in almost all cases the regbits version is as small or smaller than the three C versions. The exceptions in which the C bitfield version is smallest are somewhat misleading. Most of those cases are passing values from a one function to another, and in most, the increased size of the bitfield &ldquo;callee&rdquo; function is larger than the decreased &ldquo;caller&rdquo; size. Additionally, the semantics of the bitfield version &ndash; where separate parameters specifying which bitfield is to be operated on &ndash; are so different from the regbits/struct/raw versions, which pass bits and bit masks, as to make comparisons somewhat meaningless. (The bitfield version was written and tested for completeness' sake.)</p>
+
+<p>Cases where regbits was larger/slower than the C structs or raw C pointers/offsets implementations are tabulated as follows. The disassembled object code was closely reviewed, and some observations from that process are included below.</p>
+
+<pre><code>    compile: cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+       regbits    struct       raw  bitfield
+          20        14        14        10 *    call_shifted_global_val
+</code></pre>
+
+<p><em>regbits compiles to a global object; struct and raw compile to compile-time constants</em></p>
+
+<pre><code>          26        24 *      24 *      26      check_array_range_pass
+</code></pre>
+
+<p><em>regbits has <code>nop</code> for function address alignment</em></p>
+
+<pre><code>          44        40 *      48        56      runtime_bits_array
+</code></pre>
+
+<p><em>regbits has extra offset calculation, reason unknown</em></p>
+
+<pre><code>    compile: cortex-m0plus apcs-gnu -O2 -g3 -DGCC_ARM_BUG c++11
+       regbits    struct       raw  bitfield
+          44        40 *      48        52      runtime_bits_array
+</code></pre>
+
+<p><em>as above</em></p>
+
+<pre><code>    compile: cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++17
+       regbits    struct       raw  bitfield
+          12         8 *       8 *       8 *    call_bits_val_global
+          12         8 *       8 *       8 *    call_mskd_val_global
+          16        12 *      12 *      12 *    call_pos_val
+          12         8 *       8 *       8 *    call_pos_val_global
+          12         8 *       8 *      12      call_range_val_port
+</code></pre>
+
+<p><em>struct and raw compile single-purpose variants of callee functions, similar to C++ partial template specializations, that contain immediate values so that they don&rsquo;t have to be passed as parameters. unknown why regbits/C++ does not</em></p>
+
+<pre><code>          44        40 *      48        52      runtime_bits_array
+</code></pre>
+
+<p><em>as per same in -O1 and -O2 above</em></p>
+
+<pre><code>    compile: cortex-m3 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+       regbits    struct       raw  bitfield
+          36        32 *      32 *      36      call_return_periph
+          36        32 *      32 *      44      call_return_reg
+</code></pre>
+
+<p><em>struct and raw use 16-bit</em> <code>cmp</code> <em>instruction, regbits uses 32-bit</em> <code>tst.w</code> <em>and contains</em> <code>nop</code> <em>for function alignment</em></p>
+
+<pre><code>          24        16        16        12 *    call_shifted_global_val
+</code></pre>
+
+<p><em>as per Cortex-M0+, regbits compiles to a global object; struct and raw compile to compile-time constants</em></p>
+
+<pre><code>    compile: cortex-m3 apcs-gnu -O2 -g3 -DGCC_ARM_BUG c++11
+       regbits    struct       raw  bitfield
+           (none)
+
+    compile: cortex-m3 apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
+       regbits    struct       raw  bitfield
+           8         4 *       4 *       4 *    call_mskd_val_global
+          16        12 *      12 *      12 *    call_pos_val
+          12         8 *       8 *       8 *    call_range_val
+           8         4 *       4 *       8      call_range_val_port
+</code></pre>
+
+<p><em>function specialization, as per Cortex-M0+ above</em></p>
 
 <h2>Future enhancements <a name="future_enhancements"></a></h2>
 
@@ -1426,4 +2014,4 @@ Continuing with the example definition file, define constants for single bits:</
     SERIAL2-&gt;CONFIG = SERIAL_CONFIG_ENABLE;
 </code></pre>
 
-<p><strong>regbits</strong> could be enhanced to allow defining the various register/bit behaviors, and use this information to chose, in a type-aware manner, the appropriate technique for accessing registers/bits, and/or disallow (compile-time error) incorrect usage such as writing to a read-only register/bit.</p>
+<p>Regbits could be enhanced to allow defining the various register/bit behaviors, and use this information to chose, in a type-aware manner, the appropriate technique for accessing registers/bits, and/or disallow (compile-time error) incorrect usage such as writing to a read-only register/bit.</p>

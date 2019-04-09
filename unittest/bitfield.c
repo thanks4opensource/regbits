@@ -22,117 +22,207 @@
 #include "mcu_bitfield.h"
 
 
+static const enum SERIAL_CONFIG     SERIAL_CONFIG_BITS = POLARITY,
+                                    SERIAL_CONFIG_MASK = DATALEN ;
 
-__attribute__((noinline)) void zero()
+static const uint32_t       SERIAL_CONFIG_MSKD = SERIAL_CONFIG_DATALEN_16_BITS;
+
+static const enum TIMER_PRESCALE    TIMER_PRESCALER_SHIFT = PRESCALER_HIGH;
+
+
+static volatile uint32_t* const  GPIO_WORDS = &((gpio_t*)(GPIO1_BASE))->words[3];
+static          serial_t* const  SERIAL     = (serial_t*)(SERIAL2_BASE)         ;
+
+
+
+
+__attribute__((noinline)) void zero_reg()
 {
     SERIAL2->config  .word = 0;
-    TIMER1 ->prescale.word = 0;
-    GPIO1  ->bytes[3]      = 0;
-    GPIO1  ->set     .word = 0;
 }
 
 
 
-__attribute__((noinline)) void set_singl_bits()
+__attribute__((noinline)) void zero_array()
+{
+    GPIO1  ->words[3]      = 0;
+}
+
+
+
+__attribute__((noinline)) void set_singl_bits_operator()
 {
     SERIAL2->config.polarity = 1;
+}
+
+
+
+__attribute__((noinline)) void set_singl_bits_method()
+{
     SERIAL2->config.polarity = 1;
 }
 
 
 
-__attribute__((noinline)) void clr_singl_bits()
+__attribute__((noinline)) void clr_singl_bits_operator()
 {
     SERIAL2->config.polarity = 0;
+}
+
+
+
+__attribute__((noinline)) void clr_singl_bits_method()
+{
     SERIAL2->config.polarity = 0;
 }
 
 
 
-__attribute__((noinline)) void set_singl_mskd()
+__attribute__((noinline)) void set_singl_mskd_operator()
 {
-    SERIAL2->config.datalen = 1;
-    SERIAL2->config.datalen = 1;
+    SERIAL2->config.datalen |= 1;
 }
 
 
 
-__attribute__((noinline)) void clr_singl_mskd()
+__attribute__((noinline)) void set_singl_mskd_method()
 {
-    SERIAL2->config.datalen = 0;
-    SERIAL2->config.datalen = 0;
+    SERIAL2->config.datalen |= 1;
 }
 
 
 
-__attribute__((noinline)) void equ_singl_bits()
+__attribute__((noinline)) void clr_singl_mskd_operator()
 {
+    SERIAL2->config.datalen &= ~SERIAL_CONFIG_POLARITY;
+}
+
+
+
+__attribute__((noinline)) void clr_singl_mskd_method()
+{
+    SERIAL2->config.datalen &= ~SERIAL_CONFIG_POLARITY;
+}
+
+
+
+__attribute__((noinline)) void equ_singl_bits_operator()
+{
+    SERIAL2->config.word     = 0                     ;
     SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY;
+}
+
+
+
+__attribute__((noinline)) void equ_singl_bits_method()
+{
+    SERIAL2->config.word     = 0                     ;
     SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY;
 }
 
 
 
-__attribute__((noinline)) void equ_singl_mskd()
+__attribute__((noinline)) void equ_singl_mskd_operator()
 {
-    SERIAL2->config.word    = 0                            ;
+    SERIAL2->config.word     = 0                     ;
     SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
 }
 
 
 
-__attribute__((noinline)) void flp_singl_bits()
+__attribute__((noinline)) void equ_singl_mskd_method()
 {
-    SERIAL2->config.polarity = !SERIAL2->config.polarity;
-    SERIAL2->config.polarity = !SERIAL2->config.polarity;
+    SERIAL2->config.word     = 0                     ;
+    SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+}
+
+
+
+__attribute__((noinline)) void flp_singl_bits_operator()
+{
     SERIAL2->config.polarity = !SERIAL2->config.polarity;
 }
 
 
 
-__attribute__((noinline)) void flp_singl_mskd()
+__attribute__((noinline)) void flp_singl_bits_method()
 {
-    SERIAL2->config.datalen ^= SERIAL_CONFIG_DATALEN_16_BITS;
-    SERIAL2->config.datalen ^= SERIAL_CONFIG_DATALEN_16_BITS;
+    SERIAL2->config.polarity = !SERIAL2->config.polarity;
+}
+
+
+
+__attribute__((noinline)) void flp_singl_mskd_operator()
+{
     SERIAL2->config.datalen ^= SERIAL_CONFIG_DATALEN_16_BITS;
 }
 
 
 
-__attribute__((noinline)) void ins_singl_mskd()
+__attribute__((noinline)) void flp_singl_mskd_method()
+{
+    SERIAL2->config.datalen ^= SERIAL_CONFIG_DATALEN_16_BITS;
+}
+
+
+
+__attribute__((noinline)) void ins_singl_mskd_operator()
 {
     SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+
+
+__attribute__((noinline)) void ins_singl_mskd_method()
+{
     SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
 }
 
 
 
-__attribute__((noinline)) void set_multi_bits()
+__attribute__((noinline)) void set_multi_bits_operator()
 {
-    SERIAL2->config.endian = 1;
     SERIAL2->config.mode   = 1;
     SERIAL2->config.endian = 1;
-    SERIAL2->config.mode   = 1;
 }
 
 
 
-__attribute__((noinline)) void ins_multi_mskd()
+__attribute__((noinline)) void set_multi_bits_method()
 {
-    SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
-    SERIAL2->config.rxport   = 3;
-    SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
-    SERIAL2->config.rxport   = 3;
+    SERIAL2->config.mode   = 1;
+    SERIAL2->config.endian = 1;
 }
 
 
 
-__attribute__((noinline)) void equ_multi_bits()
+__attribute__((noinline)) void ins_multi_mskd_operator()
+{
+    SERIAL2->config.rxport   = 3;
+    SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
+}
+
+
+
+__attribute__((noinline)) void ins_multi_mskd_method()
+{
+    SERIAL2->config.rxport   = 3;
+    SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
+}
+
+
+
+__attribute__((noinline)) void equ_multi_bits_operator()
 {
     SERIAL2->config.word     = 0                     ;
     SERIAL2->config.endian   = SERIAL_CONFIG_ENDIAN  ;
     SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY;
+}
 
+
+
+__attribute__((noinline)) void equ_multi_bits_method()
+{
     SERIAL2->config.word     = 0                     ;
     SERIAL2->config.endian   = SERIAL_CONFIG_ENDIAN  ;
     SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY;
@@ -140,24 +230,26 @@ __attribute__((noinline)) void equ_multi_bits()
 
 
 
-__attribute__((noinline)) void equ_multi_mskd()
+__attribute__((noinline)) void equ_multi_mskd_operator()
 {
-    SERIAL2->config.word     = 0;
-    SERIAL2->config.parity   = SERIAL_CONFIG_PARITY_EVEN;
-    SERIAL2->config.rxport   = 6;
-
     SERIAL2->config.word     = 0;
     SERIAL2->config.parity   = SERIAL_CONFIG_PARITY_EVEN;
     SERIAL2->config.rxport   = 6;
 }
 
 
-__attribute__((noinline)) void equ_bits_mskd()
+
+__attribute__((noinline)) void equ_multi_mskd_method()
 {
     SERIAL2->config.word     = 0;
-    SERIAL2->config.endian   = SERIAL_CONFIG_ENDIAN  ;
-    SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
+    SERIAL2->config.parity   = SERIAL_CONFIG_PARITY_EVEN;
+    SERIAL2->config.rxport   = 6;
+}
 
+
+
+__attribute__((noinline)) void equ_bits_mskd_operator()
+{
     SERIAL2->config.word     = 0;
     SERIAL2->config.endian   = SERIAL_CONFIG_ENDIAN  ;
     SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
@@ -165,12 +257,26 @@ __attribute__((noinline)) void equ_bits_mskd()
 
 
 
-__attribute__((noinline)) void equ_mskd_bits()
+__attribute__((noinline)) void equ_bits_mskd_method()
+{
+    SERIAL2->config.word     = 0;
+    SERIAL2->config.endian   = SERIAL_CONFIG_ENDIAN  ;
+    SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_16_BITS;
+}
+
+
+
+__attribute__((noinline)) void equ_mskd_bits_operator()
 {
     SERIAL2->config.word     = 0;
     SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_32_BITS;
     SERIAL2->config.polarity = 1;
+}
 
+
+
+__attribute__((noinline)) void equ_mskd_bits_method()
+{
     SERIAL2->config.word     = 0;
     SERIAL2->config.datalen  = SERIAL_CONFIG_DATALEN_32_BITS;
     SERIAL2->config.polarity = 1;
@@ -208,16 +314,22 @@ __attribute__((noinline)) void equ_mskd_var()
 
 
 
-__attribute__((noinline)) void cmp_zero()
+__attribute__((noinline)) void cmp_equ_zero()
 {
-    SERIAL2->config.word = 0;
     SERIAL2->config.word = 0;
 
     TIMER1->prescale.word = 0;
     if (SERIAL2->config.word == 0)
-        TIMER1->prescale.prescaler = 43;
+        TIMER1->prescale.prescaler_high = 29;
     else
-        TIMER1->prescale.prescaler = 17;
+        TIMER1->prescale.prescaler_high = 17;
+}
+
+
+
+__attribute__((noinline)) void cmp_neq_zero()
+{
+    SERIAL2->config.word   =  0;
 
     if (SERIAL2->config.word != 0)
         SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
@@ -227,15 +339,24 @@ __attribute__((noinline)) void cmp_zero()
 
 
 
-__attribute__((noinline)) void cmp_bits()
+__attribute__((noinline)) void cmp_equ_bits()
 {
     SERIAL2->config.word     = 0;
     SERIAL2->config.polarity = 1;
 
     if (SERIAL2->config.polarity)
-        TIMER1->prescale.prescaler = 11;
+        TIMER1->prescale.prescaler_high = 11;
     else
-        TIMER1->prescale.prescaler = 67;
+        TIMER1->prescale.prescaler_high = 13;
+
+}
+
+
+
+__attribute__((noinline)) void cmp_neq_bits()
+{
+    SERIAL2->config.word     = 0;
+    SERIAL2->config.polarity = 1;
 
     if (!SERIAL2->config.polarity) {
         SERIAL2->config.word     = 0;
@@ -249,15 +370,23 @@ __attribute__((noinline)) void cmp_bits()
 
 
 
-__attribute__((noinline)) void cmp_mskd()
+__attribute__((noinline)) void cmp_equ_mskd()
 {
     SERIAL2->config.word   =  0;
     SERIAL2->config.txport = 29;
 
     if (SERIAL2->config.txport == 17)
-        TIMER1->prescale.prescaler = 113;
+        TIMER1->prescale.prescaler_high = 7;
     else
-        TIMER1->prescale.prescaler = 173;
+        TIMER1->prescale.prescaler_high = 17;
+}
+
+
+
+__attribute__((noinline)) void cmp_neq_mskd()
+{
+    SERIAL2->config.word   =  0;
+    SERIAL2->config.txport = 29;
 
     if (SERIAL2->config.txport != 17)
         SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
@@ -267,7 +396,7 @@ __attribute__((noinline)) void cmp_mskd()
 
 
 
-__attribute__((noinline)) void cmp_reg()
+__attribute__((noinline)) void cmp_equ_reg()
 {
     SERIAL2->config.word    = 0                              ;
     SERIAL2->config.endian  = 1                              ;
@@ -280,13 +409,22 @@ __attribute__((noinline)) void cmp_reg()
         && SERIAL2->config.polarity == 0
         && SERIAL2->config.rxport    == 0
         && SERIAL2->config.txport    == 0) {
-        TIMER1->prescale.word      = 0  ;
-        TIMER1->prescale.prescaler = 223;
+        TIMER1->prescale.word           = 0 ;
+        TIMER1->prescale.prescaler_high = 21;
     }
     else {
-        TIMER1->prescale.word      = 0  ;
-        TIMER1->prescale.prescaler = 241;
+        TIMER1->prescale.word           = 0 ;
+        TIMER1->prescale.prescaler_high = 23;
     }
+}
+
+
+
+__attribute__((noinline)) void cmp_neq_reg()
+{
+    SERIAL2->config.word    = 0                              ;
+    SERIAL2->config.endian  = 1                              ;
+    SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
 
     if (!(   SERIAL2->config.mode      == 0
           && SERIAL2->config.datalen  == SERIAL_CONFIG_DATALEN_16_BITS
@@ -330,9 +468,23 @@ const uint32_t              value)
 
 
 
+__attribute__((noinline)) void call_bits_val_const()
+{
+    bits_val(POLARITY, SERIAL_CONFIG_POLARITY);
+}
+
+
+
+__attribute__((noinline)) void call_bits_val_var()
+{
+    bits_val(POLARITY, SERIAL_CONFIG_POLARITY);
+}
+
+
+
 __attribute__((noinline)) void constexpr_bits_array()
 {
-    GPIO1->bytes[3]   = 0x6;
+    GPIO1->words[3]   = 0x6;
     GPIO1->set.word   = 0;
     GPIO1->set.port13 = 1;
 }
@@ -343,19 +495,12 @@ __attribute__((noinline)) void runtime_bits_array()
 {
     volatile unsigned   index = 3;
 
-    GPIO1->bytes[index] = 0x21;
+    GPIO1->words[index] = 0x21;
 
     index = 7;
 
     GPIO1->set.word  = 0;
     if (index == 7) GPIO1->set.port7 = 1;
-}
-
-
-
-__attribute__((noinline)) void call_bits_val()
-{
-    bits_val(POLARITY, SERIAL_CONFIG_POLARITY);
 }
 
 
@@ -385,13 +530,24 @@ const uint32_t              *value)
 
 
 
-__attribute__((noinline)) void call_bits_ref()
+__attribute__((noinline)) void call_bits_ref_const()
 {
     const enum SERIAL_CONFIG    config = MODE              ;
     const uint32_t              value  = SERIAL_CONFIG_MODE;
 
     bits_ref(&config, &value);
 }
+
+
+
+__attribute__((noinline)) void call_bits_ref_var()
+{
+    const enum SERIAL_CONFIG    config = MODE              ;
+    const uint32_t              value  = SERIAL_CONFIG_MODE;
+
+    bits_ref(&config, &value);
+}
+
 
 
 __attribute__((noinline)) void mskd_val(
@@ -434,7 +590,17 @@ const uint32_t              value)
 
 
 
-__attribute__((noinline)) void call_mskd_val()
+__attribute__((noinline)) void call_mskd_val_const()
+{
+    uint32_t    bits = SERIAL_CONFIG_DATALEN_16_BITS;
+
+    mskd_val(DATALEN, bits                          );
+    mskd_val(DATALEN, SERIAL_CONFIG_DATALEN_16_BITS);
+}
+
+
+
+__attribute__((noinline)) void call_mskd_val_var()
 {
     uint32_t    bits = SERIAL_CONFIG_DATALEN_16_BITS;
 
@@ -485,127 +651,216 @@ const uint32_t              *value)
 
 
 
-__attribute__((noinline)) void call_mskd_ref()
+__attribute__((noinline)) void call_mskd_ref_const()
 {
-    const enum SERIAL_CONFIG    config_a = DATALEN                      ,
-                                config_b = DATALEN                      ;
-    const uint32_t              value_a  = SERIAL_CONFIG_DATALEN_16_BITS,
-                                value_b  = SERIAL_CONFIG_DATALEN_32_BITS;
+    const enum SERIAL_CONFIG    config = DATALEN                      ;
+    const uint32_t              value  = SERIAL_CONFIG_DATALEN_32_BITS;
 
-    mskd_ref(&config_a, &value_a);
-    mskd_ref(&config_b, &value_b);
-
-    SERIAL2->config.polarity = 0;  // clear for periph_reg_bits_val
+    mskd_ref(&config, &value);
 }
 
 
 
-__attribute__((noinline)) void periph_reg_bits_val(
-      serial_t*             serial  ,
-const enum SERIAL_CONFIG    polarity,
-const uint32_t              bit     )
+__attribute__((noinline)) void call_mskd_ref_var()
+{
+    const enum SERIAL_CONFIG    config = DATALEN                      ;
+    const uint32_t              value  = SERIAL_CONFIG_DATALEN_16_BITS;
+
+    mskd_ref(&config, &value);
+}
+
+
+
+__attribute__((noinline)) void periph_bits(
+serial_t*               serial)
+{
+    serial->config.polarity = 1;
+}
+
+__attribute__((noinline)) void call_periph_bits()
+{
+    periph_bits(SERIAL2);
+}
+
+
+
+__attribute__((noinline)) void periph_bits_val(
+serial_t*                   serial  ,
+const enum SERIAL_CONFIG    polarity)
 {
     switch (polarity) {
         case POLARITY:
-            SERIAL2->config.polarity = bit;
-            SERIAL2->config.polarity = bit;
-            serial ->config.polarity = bit;
-            serial ->config.polarity = bit;
+            serial->config.polarity = 1;
             break;
         default:
             break;
     }
 }
 
-
-
-__attribute__((noinline)) void call_periph_reg_bits_val()
+__attribute__((noinline)) void call_periph_bits_val()
 {
-    periph_reg_bits_val(SERIAL2, POLARITY, SERIAL_CONFIG_POLARITY);
+    periph_bits_val(SERIAL2, POLARITY);
 }
 
 
 
-__attribute__((noinline)) void periph_reg_bits_ref(
-         serial_t*              serial  ,
-const    enum SERIAL_CONFIG*    polarity,
-const    uint32_t* const        bit     )
+__attribute__((noinline)) void reg_bits_val(
+union SERIAL_CONFIG_T       *config  ,
+const enum SERIAL_CONFIG     polarity)
+{
+    switch (polarity) {
+        case POLARITY:
+            config->polarity = 1;
+            break;
+        default:
+            break;
+    }
+}
+
+__attribute__((noinline)) void call_reg_bits_val()
+{
+    reg_bits_val(&SERIAL2->config, POLARITY);
+}
+
+
+
+__attribute__((noinline)) void periph_bits_ref(
+serial_t                    *serial ,
+const enum SERIAL_CONFIG    *polarity)
 {
     switch (*polarity) {
         case POLARITY:
-            SERIAL2->config.polarity = *bit;
-            SERIAL2->config.polarity = *bit;
-            serial ->config.polarity = *bit;
-            serial ->config.polarity = *bit;
+            serial->config.polarity = 1;
             break;
         default:
             break;
     }
 }
 
-
-
-__attribute__((noinline)) void call_periph_reg_bits_ref()
+__attribute__((noinline)) void call_periph_bits_ref()
 {
-    const enum SERIAL_CONFIG    polarity = POLARITY              ;
-    const uint32_t              bit      = SERIAL_CONFIG_POLARITY;
+    const enum SERIAL_CONFIG    polarity = POLARITY;
 
-    periph_reg_bits_ref(SERIAL2, &polarity, &bit);
+    periph_bits_ref(SERIAL2, &polarity);
 }
 
 
 
-__attribute__((noinline)) void periph_reg_mskd_val(
-         serial_t*              serial ,
-const    enum SERIAL_CONFIG     datalen,
-const    uint32_t               mskd   )
+__attribute__((noinline)) void reg_bits_ref(
+union SERIAL_CONFIG_T       *config  ,
+const enum SERIAL_CONFIG     *polarity)
+{
+    switch (*polarity) {
+        case POLARITY:
+            config->polarity = 1;
+            break;
+        default:
+            break;
+    }
+}
+
+__attribute__((noinline)) void call_reg_bits_ref()
+{
+    const enum SERIAL_CONFIG    polarity = POLARITY;
+
+    reg_bits_ref(&SERIAL2->config, &polarity);
+}
+
+
+
+__attribute__((noinline)) void periph_mskd(
+serial_t*               serial)
+{
+    serial->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+}
+
+__attribute__((noinline)) void call_periph_mskd()
+{
+    periph_mskd(SERIAL2);
+}
+
+
+
+__attribute__((noinline)) void periph_mskd_val(
+serial_t*                   serial  ,
+const enum SERIAL_CONFIG    datalen)
 {
     switch (datalen) {
         case DATALEN:
-            SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
-            SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
-            serial ->config.datalen = mskd;
-            serial ->config.datalen = mskd;
+            serial->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
             break;
         default:
             break;
     }
 }
 
-
-
-__attribute__((noinline)) void call_periph_reg_mskd_val()
+__attribute__((noinline)) void call_periph_mskd_val()
 {
-    periph_reg_mskd_val(SERIAL2, DATALEN, SERIAL_CONFIG_DATALEN_16_BITS);
+    periph_mskd_val(SERIAL2, DATALEN);
 }
 
 
 
-__attribute__((noinline)) void periph_reg_mskd_ref(
-         serial_t*              serial ,
-const    enum SERIAL_CONFIG*    datalen,
-const    uint32_t*              mskd   )
+__attribute__((noinline)) void reg_mskd_val(
+union SERIAL_CONFIG_T       *config  ,
+const enum SERIAL_CONFIG     datalen)
+{
+    switch (datalen) {
+        case DATALEN:
+            config->datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+            break;
+        default:
+            break;
+    }
+}
+
+__attribute__((noinline)) void call_reg_mskd_val()
+{
+    reg_mskd_val(&SERIAL2->config, DATALEN);
+}
+
+
+
+__attribute__((noinline)) void periph_mskd_ref(
+serial_t                    *serial ,
+const enum SERIAL_CONFIG    *datalen)
 {
     switch (*datalen) {
         case DATALEN:
-            SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
-            SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
-            serial ->config.datalen = *mskd;
-            serial ->config.datalen = *mskd;
+            serial->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
             break;
         default:
             break;
     }
 }
 
-
-
-__attribute__((noinline)) void call_periph_reg_mskd_ref()
+__attribute__((noinline)) void call_periph_mskd_ref()
 {
-    const enum SERIAL_CONFIG    config = DATALEN                      ;
-    const uint32_t              mskd   = SERIAL_CONFIG_DATALEN_32_BITS;
+    const enum SERIAL_CONFIG    datalen = DATALEN;
 
-    periph_reg_mskd_ref(SERIAL2, &config, &mskd);
+    periph_mskd_ref(SERIAL2, &datalen);
+}
+
+
+
+__attribute__((noinline)) void reg_mskd_ref(
+union SERIAL_CONFIG_T       *config  ,
+const enum SERIAL_CONFIG     *datalen)
+{
+    switch (*datalen) {
+        case DATALEN:
+            config->datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+            break;
+        default:
+            break;
+    }
+}
+
+__attribute__((noinline)) void call_reg_mskd_ref()
+{
+    const enum SERIAL_CONFIG    datalen = DATALEN;
+
+    reg_mskd_ref(&SERIAL2->config, &datalen);
 }
 
 
@@ -621,10 +876,12 @@ __attribute__((noinline)) void call_return_bits()
 {
     uint32_t    config_bits = return_bits();
 
+    TIMER1->prescale.word = 0;
+
     if (config_bits == SERIAL_CONFIG_ENDIAN)
-        TIMER1->prescale.prescaler  = 83;
+        TIMER1->prescale.prescaler_high = 21;
     else
-        TIMER1->prescale.prescaler  = 89;
+        TIMER1->prescale.prescaler_high = 31;
 }
 
 
@@ -646,15 +903,17 @@ __attribute__((noinline)) void call_return_mskd()
 
     return_mskd(&config, &bits);
 
+    TIMER1->prescale.word = 0;
+
     if (config == PARITY && bits == SERIAL_CONFIG_PARITY_EVEN)
-        TIMER1->prescale.prescaler  = 157;
+        TIMER1->prescale.prescaler_high = 17;
     else
-        TIMER1->prescale.prescaler  = 163;
+        TIMER1->prescale.prescaler_high = 19;
 }
 
 
 
-__attribute__((noinline)) volatile union CONFIG_T* return_reg()
+__attribute__((noinline)) volatile union SERIAL_CONFIG_T* return_reg()
 {
     SERIAL2->config.word     = 0;
     SERIAL2->config.polarity = 1;
@@ -666,12 +925,14 @@ __attribute__((noinline)) volatile union CONFIG_T* return_reg()
 
 __attribute__((noinline)) void call_return_reg()
 {
-    volatile union CONFIG_T     *config= return_reg();
+    volatile union SERIAL_CONFIG_T      *config= return_reg();
+
+    TIMER1->prescale.word = 0;
 
     if (config->polarity)
-        TIMER1->prescale.prescaler  = 53;
+        TIMER1->prescale.prescaler_high = 15;
     else
-        TIMER1->prescale.prescaler  = 59;
+        TIMER1->prescale.prescaler_high = 23;
 }
 
 
@@ -691,9 +952,9 @@ __attribute__((noinline)) void call_return_periph()
     serial_t*   serial = return_periph();
 
     if (serial->config.polarity)
-        TIMER1->prescale.prescaler  = 199;
+        TIMER1->prescale.prescaler_high = 19;
     else
-        TIMER1->prescale.prescaler  = 211;
+        TIMER1->prescale.prescaler_high = 21;
 }
 
 
@@ -702,11 +963,11 @@ __attribute__((noinline)) void pos_val(
 const enum SERIAL_CONFIG    pos)
 {
     if (pos == ENDIAN)
-        GPIO1->bytes[3] = 0x33;
+        GPIO1->words[3] = 0x33;
     else if (pos == POLARITY)
-        GPIO1->bytes[3] = 0x44;
+        GPIO1->words[3] = 0x44;
     else
-        GPIO1->bytes[3] = 0x55;
+        GPIO1->words[3] = 0x55;
 }
 
 
@@ -726,11 +987,11 @@ __attribute__((noinline)) void pos_ref(
 const enum SERIAL_CONFIG        *pos)
 {
     if (*pos == ENDIAN)
-        GPIO1->bytes[3] = 0x66;
+        GPIO1->words[3] = 0x66;
     else if (*pos == POLARITY)
-        GPIO1->bytes[3] = 0x77;
+        GPIO1->words[3] = 0x77;
     else
-        GPIO1->bytes[3] = 0x88;
+        GPIO1->words[3] = 0x88;
 }
 
 
@@ -757,7 +1018,6 @@ uint8_t     txport)
 __attribute__((noinline)) void call_range_val(
 unsigned    port)
 {
-    SERIAL2->config.rxport = port;
     runtime_range_val(port);
 }
 
@@ -782,7 +1042,6 @@ unsigned    *txport)
 __attribute__((noinline)) void call_range_ref(
 unsigned    port)
 {
-    SERIAL2->config.rxport = port;
     runtime_range_ref(&port);
 }
 
@@ -799,9 +1058,9 @@ __attribute__((noinline)) void check_array_range_pass(
 const unsigned  port)
 {
     if (port <= GPIO_MAX_PORT_NUM)
-        GPIO1->bytes[3] = 127;
+        GPIO1->words[3] = 127;
     else
-        GPIO1->bytes[3] = 131;
+        GPIO1->words[3] = 131;
 }
 
 
@@ -810,9 +1069,9 @@ __attribute__((noinline)) void check_array_range_fail(
 const unsigned  port)
 {
     if (port <= GPIO_MAX_PORT_NUM)
-        GPIO1->bytes[3] = 149;
+        GPIO1->words[3] = 149;
     else
-        GPIO1->bytes[3] = 151;
+        GPIO1->words[3] = 151;
 }
 
 
@@ -821,9 +1080,9 @@ __attribute__((noinline)) void check_bits_range_pass(
 const unsigned  bit_num)
 {
     if (bit_num <= sizeof(uint32_t) * 4 - 1)
-        GPIO1->bytes[3] = 157;
+        GPIO1->words[3] = 157;
     else
-        GPIO1->bytes[3] = 163;
+        GPIO1->words[3] = 163;
 }
 
 
@@ -832,9 +1091,9 @@ __attribute__((noinline)) void check_bits_range_fail(
 const unsigned  bit_num)
 {
     if (bit_num <= sizeof(uint32_t) * 4 - 1)
-        GPIO1->bytes[3] = 167;
+        GPIO1->words[3] = 167;
     else
-        GPIO1->bytes[3] = 173;
+        GPIO1->words[3] = 173;
 }
 
 
@@ -843,9 +1102,9 @@ __attribute__((noinline)) void check_mskd_range_pass(
 unsigned port)
 {
     if (port <= SERIAL_MAX_PORT_NUM)
-        GPIO1->bytes[3] = 179;
+        GPIO1->words[3] = 179;
     else
-        GPIO1->bytes[3] = 181;
+        GPIO1->words[3] = 181;
 }
 
 
@@ -854,143 +1113,571 @@ __attribute__((noinline)) void check_mskd_range_fail(
 unsigned port)
 {
     if (port <= SERIAL_MAX_PORT_NUM)
-        GPIO1->bytes[3] = 191;
+        GPIO1->words[3] = 191;
     else
-        GPIO1->bytes[3] = 193;
+        GPIO1->words[3] = 193;
 }
 
 
 
-__attribute__((noinline)) void check_bits_extract()
+__attribute__((noinline)) void prescaler_low()
 {
-    SERIAL2->config.polarity = 1;
-    SERIAL2->config.endian   = 1;
+    TIMER1->prescale.prescaler_low = 119;
 
-    union CONFIG_T  extracted                          ;
-                    extracted.word = SERIAL_CONFIG_MODE;
+    GPIO1->words[3] = TIMER1->prescale.prescaler_low;
+}
 
-    extracted.word = SERIAL2->config.word;
 
-    if (extracted.polarity && extracted.endian)
-        GPIO1->bytes[3] = 199;
-    else
-        GPIO1->bytes[3] = 227;
+
+__attribute__((noinline)) void prescaler_high()
+{
+    TIMER1->prescale.prescaler_high = 29;
+
+    GPIO1->words[3] = TIMER1->prescale.prescaler_high;
+}
+
+
+
+__attribute__((noinline)) void reg_mskd_lss()
+{
+    TIMER1->prescale.prescaler_high = 27;
 
     SERIAL2->config.word = 0;
-    SERIAL2->config.mode = 1;
 
-    extracted.word = SERIAL2->config.word;
-
-    if (!extracted.mode) {
-        SERIAL2->config.word   = 0;
-        SERIAL2->config.endian = 1;
-    }
-    else {
-        SERIAL2->config.word    = 0                            ;
-        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
-    }
-}
-
-
-
-__attribute__((noinline)) void check_mskd_extract()
-{
-    SERIAL2->config.rxport = 23;
-
-    union CONFIG_T  extracted;
-                    extracted.rxport = 11;
-
-    extracted.word = SERIAL2->config.word;
-
-    if (extracted.rxport == 23)
-        GPIO1->bytes[3] = 229;
+    if (TIMER1->prescale.prescaler_high < 28)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
     else
-        GPIO1->bytes[3] = 233;
-
-
-    SERIAL2->config.rxport = 7                   ;
-    extracted.word         = SERIAL2->config.word;
-
-    if (extracted.rxport != 7) {
-        SERIAL2->config.word   = 0                       ;
-        SERIAL2->config.parity = SERIAL_CONFIG_PARITY_CRC;
-    }
-    else {
-        SERIAL2->config.word   = 0;
-        SERIAL2->config.endian = 1;
-    }
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
 }
 
-
-
-
-
-
-extern void unittest_record_registers(unsigned,
-                                      uint32_t,
-                                      uint32_t,
-                                      uint8_t ,
-                                      uint32_t);
-
-__attribute__((noinline)) void record_registers(
-unsigned    test_num)
+__attribute__((noinline)) void reg_mskd_leq()
 {
-    unittest_record_registers(test_num,
-                              SERIAL2->config  .word,
-                              TIMER1 ->prescale.word,
-                              GPIO1  ->bytes    [3] ,
-                              GPIO1  ->set     .word);
+    TIMER1->prescale.prescaler_high = 23;
+
+    SERIAL2->config.word = 0;
+
+    if (   TIMER1->prescale.prescaler_high <= 23
+        && TIMER1->prescale.prescaler_high <= 24)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
 }
 
+__attribute__((noinline)) void reg_mskd_gtr()
+{
+    TIMER1->prescale.prescaler_high = 19;
+
+    SERIAL2->config.word = 0;
+
+    if (TIMER1->prescale.prescaler_high > 18)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void reg_mskd_geq()
+{
+    TIMER1->prescale.prescaler_high = 17;
+
+    SERIAL2->config.word = 0;
+
+    if (   TIMER1->prescale.prescaler_high >= 16
+        && TIMER1->prescale.prescaler_high >= 17)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+
+
+__attribute__((noinline)) void pos_cmp_eq()
+{
+    SERIAL2->config.word = 0;
+
+    uint32_t    duplicate = ENDIAN;
+
+    if (duplicate == ENDIAN)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void pos_cmp_ne()
+{
+    SERIAL2->config.word = 0;
+
+    uint32_t    duplicate = POLARITY;
+
+    if (duplicate == POLARITY)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+
+
+__attribute__((noinline)) void bits_extract_eq()
+{
+    SERIAL2->config.polarity = 1;
+
+    union SERIAL_CONFIG_T   extracted;
+                            extracted.word = SERIAL2->config.word;
+
+    SERIAL2->config.word = 0;
+
+    if (extracted.polarity)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void bits_extract_ne()
+{
+    SERIAL2->config.endian = 1;
+
+    union SERIAL_CONFIG_T   extracted;
+                            extracted.word = SERIAL2->config.word;
+
+    SERIAL2->config.word = 0;
+
+    if (!extracted.endian)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+
+
+__attribute__((noinline)) void mskd_extract_eq()
+{
+    SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+
+    union SERIAL_CONFIG_T   extracted;
+                            extracted.word = SERIAL2->config.word;
+
+    SERIAL2->config.word = 0;
+
+    if (extracted.datalen == SERIAL_CONFIG_DATALEN_16_BITS)
+        SERIAL2->config.endian = 1;
+    else
+        SERIAL2->config.polarity = 1;
+}
+
+__attribute__((noinline)) void mskd_extract_ne()
+{
+    SERIAL2->config.word    = 0                            ;
+    SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+
+    union SERIAL_CONFIG_T   extracted;
+                            extracted.word = SERIAL2->config.word;
+
+    SERIAL2->config.word = 0;
+
+    if (extracted.datalen != SERIAL_CONFIG_DATALEN_32_BITS)
+        SERIAL2->config.endian = 1;
+    else
+        SERIAL2->config.polarity = 1;
+}
+
+__attribute__((noinline)) void mskd_extract_lss()
+{
+    TIMER1->prescale.   word        =  0;
+    TIMER1->prescale.prescaler_high = 11;
+
+    union TIMER_PRESCALE_T  extracted;
+                            extracted.word = TIMER1->prescale.word;
+
+    SERIAL2->config.word = 0;
+
+    if (extracted.prescaler_high < 12)
+        SERIAL2->config.endian = 1;
+    else
+        SERIAL2->config.polarity = 1;
+}
+
+__attribute__((noinline)) void mskd_extract_leq()
+{
+    TIMER1->prescale.word           =  0;
+    TIMER1->prescale.prescaler_high = 23;
+
+    union TIMER_PRESCALE_T  extracted;
+                            extracted.word = TIMER1->prescale.word;
+
+    SERIAL2->config.word = 0;
+
+    if (   extracted.prescaler_high <= 23
+        && extracted.prescaler_high <= 24)
+        SERIAL2->config.endian = 1;
+    else
+        SERIAL2->config.polarity = 1;
+}
+
+__attribute__((noinline)) void mskd_extract_gtr()
+{
+    TIMER1->prescale.word           =  0;
+    TIMER1->prescale.prescaler_high = 19;
+
+    union TIMER_PRESCALE_T  extracted;
+                            extracted.word = TIMER1->prescale.word;
+
+    SERIAL2->config.word = 0;
+
+    if (extracted.prescaler_high > 18)
+        SERIAL2->config.endian = 1;
+    else
+        SERIAL2->config.polarity = 1;
+}
+
+__attribute__((noinline)) void mskd_extract_geq()
+{
+    TIMER1->prescale.word           =  0;
+    TIMER1->prescale.prescaler_high = 11;
+
+    union TIMER_PRESCALE_T  extracted;
+                            extracted.word = TIMER1->prescale.word;
+
+    SERIAL2->config.word = 0;
+
+    if (   extracted.prescaler_high >= 10
+        && extracted.prescaler_high >= 11)
+        SERIAL2->config.endian = 1;
+    else
+        SERIAL2->config.polarity = 1;
+}
+
+
+
+__attribute__((noinline)) void set_bits_global()
+{
+    if (SERIAL_CONFIG_BITS == POLARITY)
+        SERIAL2->config.polarity = 1;
+}
+
+__attribute__((noinline)) void ins_mskd_global()
+{
+
+    if (SERIAL_CONFIG_MSKD == DATALEN)
+        SERIAL2->config.datalen = SERIAL_CONFIG_MSKD;
+}
+
+__attribute__((noinline)) void assign_array_global()
+{
+    *GPIO_WORDS = 189;
+}
+
+__attribute__((noinline)) void shifted_global()
+{
+    TIMER1->prescale.prescaler_high = 23;
+
+    if (TIMER_PRESCALER_SHIFT == PRESCALER_HIGH)
+        GPIO1->words[3] = TIMER1->prescale.prescaler_high;
+}
+
+__attribute__((noinline)) void assign_register_global()
+{
+    SERIAL->config.word    = 0                            ;
+    SERIAL->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+
+
+__attribute__((noinline)) void call_pos_val_global()
+{
+    pos_val(SERIAL_CONFIG_BITS);
+}
+
+__attribute__((noinline)) void call_pos_ref_global()
+{
+    enum SERIAL_CONFIG  serial_config_bits = SERIAL_CONFIG_BITS;
+
+    pos_ref(&serial_config_bits);
+}
+
+__attribute__((noinline)) void call_bits_val_global()
+{
+    bits_val(SERIAL_CONFIG_BITS, SERIAL_CONFIG_POLARITY);
+}
+
+__attribute__((noinline)) void call_bits_ref_global()
+{
+    enum SERIAL_CONFIG  serial_config_bits     = SERIAL_CONFIG_BITS    ;
+    uint32_t            serial_config_polarity = SERIAL_CONFIG_POLARITY;
+
+    bits_ref(&serial_config_bits, &serial_config_polarity);
+}
+
+__attribute__((noinline)) void call_mskd_val_global()
+{
+    mskd_val(SERIAL_CONFIG_MASK, SERIAL_CONFIG_MSKD);
+}
+
+__attribute__((noinline)) void call_mskd_ref_global()
+{
+    enum SERIAL_CONFIG  serial_config_mask = SERIAL_CONFIG_MASK;
+    uint32_t            serial_config_mskd = SERIAL_CONFIG_MSKD;
+
+    mskd_ref(&serial_config_mask, &serial_config_mskd);
+}
+
+
+__attribute__((noinline)) void shifted_val(
+const enum TIMER_PRESCALE   shift)
+{
+    TIMER1->prescale.word           =  0;
+    TIMER1->prescale.prescaler_high = 23;
+
+    if (shift == PRESCALER_HIGH)
+        GPIO1->words[3] = TIMER1->prescale.prescaler_high;
+}
+
+__attribute__((noinline)) void call_shifted_const_val()
+{
+    shifted_val(PRESCALER_HIGH);
+}
+
+__attribute__((noinline)) void call_shifted_var_val()
+{
+    enum TIMER_PRESCALE     shift = PRESCALER_HIGH;
+
+    shifted_val(shift);
+}
+
+__attribute__((noinline)) void call_shifted_global_val()
+{
+    shifted_val(TIMER_PRESCALER_SHIFT);
+}
+
+__attribute__((noinline)) void shifted_ref(
+const enum TIMER_PRESCALE   *shift)
+{
+    TIMER1->prescale.word           =  0;
+    TIMER1->prescale.prescaler_high = 23;
+
+    if (*shift == PRESCALER_HIGH)
+        GPIO1->words[3] = TIMER1->prescale.prescaler_high;
+}
+
+__attribute__((noinline)) void call_shifted_const_ref()
+{
+    enum TIMER_PRESCALE     shift = PRESCALER_HIGH;
+
+    shifted_ref(&shift);
+}
+
+__attribute__((noinline)) void call_shifted_var_ref()
+{
+    enum TIMER_PRESCALE     shift = PRESCALER_HIGH;
+
+    shifted_ref(&shift);
+}
+
+__attribute__((noinline)) void call_shifted_global_ref()
+{
+    enum TIMER_PRESCALE     timer_prescaler_shift = TIMER_PRESCALER_SHIFT;
+
+    shifted_ref(&timer_prescaler_shift);
+}
+
+
+
+__attribute__((noinline)) void copy_bits_equ()
+{
+    SERIAL2->config.word     = 0;
+    SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY;
+
+    uint32_t     copy = SERIAL2->config.polarity;
+
+    SERIAL2->config.word = 0;
+
+    if (copy == SERIAL_CONFIG_POLARITY)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_bits_neq()
+{
+    SERIAL2->config.word     = 0                       ;
+    SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY ;
+
+    uint32_t     copy = SERIAL2->config.polarity;
+
+    SERIAL2->config.word = 0;
+
+    if (copy != SERIAL_CONFIG_POLARITY)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_mskd_equ()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 11;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high;
+
+    SERIAL2->config.word = 0;
+
+    if (copy == 11)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_mskd_neq()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 13;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high;
+
+    SERIAL2->config.word = 0;
+
+    if (copy != 13)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_mskd_lss()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 27;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high;
+
+    SERIAL2->config.word = 0;
+
+    if (copy < 28)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_mskd_leq()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 23;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high;
+
+    SERIAL2->config.word = 0;
+
+    if (   copy <= 23
+        && copy <= 24)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_mskd_gtr()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 19;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high;
+
+    SERIAL2->config.word = 0;
+
+    if (copy > 18)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_mskd_geq()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 17;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high;
+
+    SERIAL2->config.word = 0;
+
+    if (   copy >= 16
+        && copy >= 17)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_shifted()
+{
+    TIMER1->prescale.word      =  0;
+    TIMER1->prescale.prescaler_high = 11;
+
+    uint32_t     copy = TIMER1->prescale.prescaler_high ;
+
+    SERIAL2->config.word = 0;
+
+    if (copy == 11)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void copy_bits_val(
+const uint32_t      copy)
+{
+    SERIAL2->config.word = 0;
+
+    if (copy == SERIAL_CONFIG_POLARITY)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void call_copy_bits_val()
+{
+    SERIAL2->config.word     = 0                       ;
+    SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY ;
+
+    uint32_t     copy = SERIAL2->config.polarity;
+
+    copy_bits_val(copy);
+}
+
+__attribute__((noinline)) void copy_bits_ref(
+uint32_t    *copy)
+{
+    SERIAL2->config.word = 0;
+
+    if (*copy == SERIAL_CONFIG_POLARITY)
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_16_BITS;
+    else
+        SERIAL2->config.datalen = SERIAL_CONFIG_DATALEN_32_BITS;
+}
+
+__attribute__((noinline)) void call_copy_bits_ref()
+{
+    SERIAL2->config.word     = 0                     ;
+    SERIAL2->config.polarity = SERIAL_CONFIG_POLARITY;
+
+    uint32_t     copy = SERIAL2->config.polarity;
+
+    copy_bits_ref(&copy);
+}
+
+
+
+
+
+
+extern void do_test(void                        (*test)(),
+                    volatile uint32_t* const      regster,
+                    uint32_t                      testnum);
 
 
 __attribute__((noinline)) void run()
 {
-    zero();                     record_registers( 0);
-    set_singl_bits();           record_registers( 1);
-    clr_singl_bits();           record_registers( 2);
-    set_singl_mskd();           record_registers( 3);
-    clr_singl_mskd();           record_registers( 4);
-    equ_singl_bits();           record_registers( 5);
-    equ_singl_mskd();           record_registers( 6);
-    flp_singl_bits();           record_registers( 7);
-    flp_singl_mskd();           record_registers( 8);
-    ins_singl_mskd();           record_registers( 9);
-    set_multi_bits();           record_registers(10);
-    ins_multi_mskd();           record_registers(11);
-    equ_multi_bits();           record_registers(12);
-    equ_multi_mskd();           record_registers(13);
-    equ_bits_mskd();            record_registers(14);
-    equ_mskd_bits();            record_registers(15);
-    equ_bits_var();             record_registers(16);
-    equ_mskd_var();             record_registers(17);
-    cmp_zero();                 record_registers(18);
-    cmp_bits();                 record_registers(19);
-    cmp_mskd();                 record_registers(20);
-    cmp_reg();                  record_registers(21);
-    constexpr_bits_array();     record_registers(22);
-    runtime_bits_array();       record_registers(23);
-    call_bits_val();            record_registers(24);
-    call_bits_ref();            record_registers(25);
-    call_mskd_val();            record_registers(26);
-    call_mskd_ref();            record_registers(27);
-    call_periph_reg_bits_val(); record_registers(28);
-    call_periph_reg_bits_ref(); record_registers(39);
-    call_periph_reg_mskd_val(); record_registers(30);
-    call_periph_reg_mskd_ref(); record_registers(31);
-    call_return_bits();         record_registers(32);
-    call_return_mskd();         record_registers(33);
-    call_return_reg();          record_registers(34);
-    call_return_periph();       record_registers(35);
-    call_pos_val();             record_registers(36);
-    call_pos_ref();             record_registers(37);
-    check_array_range_pass(22); record_registers(38);
-    check_array_range_fail(23); record_registers(39);
-    check_bits_range_pass (31); record_registers(40);
-    check_bits_range_fail (32); record_registers(41);
-    check_mskd_range_pass (31); record_registers(42);
-    check_mskd_range_fail (32); record_registers(43);
-    check_bits_extract();       record_registers(44);
-    check_mskd_extract();       record_registers(45);
+    typedef volatile uint32_t* const        ptr_t;
+
+    static ptr_t    serial2_config  = (ptr_t)(&SERIAL2->config  .word),
+                    timer1_prescale = (ptr_t)(&TIMER1 ->prescale.word),
+                    gpio1_words_3   = (ptr_t)(&GPIO1  ->words[3]     ),
+                    gpio1_set       = (ptr_t)(&GPIO1  ->set     .word);
+
+#include "do_tests.inl"
 
 }  // run()

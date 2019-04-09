@@ -23,15 +23,31 @@
 
 namespace regbits {
 
+// forward refs
+template<typename MSKD_WORD, typename MSKD_CLSS> class Mskd;
+template<typename COPY_WORD, typename COPY_CLSS> class Copy ;
+template<typename REG_WORD,  typename  REG_CLSS> class Reg ;
+
+
+
 template<typename WORD, typename CLSS> class Pos {
   public:
     // friends
     template <typename BITS_WORD, typename BITS_CLSS> friend class Bits;
-    template <typename BITS_WORD, typename BITS_CLSS> friend class Mskd;
+    template <typename MSKD_WORD, typename MSKD_CLSS> friend class Mskd;
+    template <typename SHFT_WORD, typename SHFT_CLSS> friend class Shft;
+    template <typename COPY_WORD, typename COPY_CLSS> friend class Copy;
+    template <typename  REG_WORD, typename  REG_CLSS> friend class Reg ;
 
 
     // constructors
     //
+    explicit
+    constexpr
+    Pos()
+    :   _pos(static_cast<WORD>(0))
+    {}
+
     explicit
     constexpr
     Pos(
@@ -39,7 +55,7 @@ template<typename WORD, typename CLSS> class Pos {
     :   _pos(pos)
     {}
 
-#ifdef REGPOS_COPY_CTOR  // implementing this impacts object passing performance
+#ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
     constexpr
     Pos(
     const Pos<WORD, CLSS>   &other)
@@ -53,6 +69,15 @@ template<typename WORD, typename CLSS> class Pos {
     const
     {
         return *this;  // don't need: return Pos(_pos);
+    }
+
+
+    // resettter
+    Pos<WORD, CLSS> &operator()(
+    const WORD  pos)
+    {
+        _pos = pos;
+        return *this;
     }
 
 
@@ -108,18 +133,21 @@ template<typename WORD, typename CLSS> class Pos {
 
 
 
-// forward ref
-template<typename MSKD_WORD, typename MSKD_CLSS> class Mskd;
-
 template<typename WORD, typename CLSS> class Bits {
   public:
     // friends
     template <typename MSKD_WORD, typename MSKD_CLSS> friend class Mskd;
-    template <typename REG_WORD, typename REG_CLSS> friend class Reg;
+    template <typename COPY_WORD, typename COPY_CLSS> friend class Copy;
+    template <typename REG_WORD,  typename  REG_CLSS> friend class Reg ;
 
 
     // constructors
     //
+    constexpr
+    Bits()
+    :   _bits(static_cast<WORD>(0))
+    {}
+
     constexpr
     Bits(
     const WORD  bits)
@@ -131,6 +159,16 @@ template<typename WORD, typename CLSS> class Bits {
     const     WORD          bits,
     const Pos<WORD, CLSS>   pos )
     :   _bits(bits << pos._pos)
+    {}
+
+    Bits(
+    Mskd<WORD, CLSS>        mskd)
+    :   _bits(mskd._bits)
+    {}
+
+    Bits(
+    Reg<WORD, CLSS>     reg)
+    :   _bits(reg._word)
     {}
 
 #ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
@@ -146,6 +184,15 @@ template<typename WORD, typename CLSS> class Bits {
     const
     {
         return *this;  // don't need: return Bits(_bits)
+    }
+
+
+    // resettter
+    Bits<WORD, CLSS> &operator()(
+    const WORD  bits)
+    {
+        _bits = bits;
+        return *this;
     }
 
 
@@ -165,19 +212,23 @@ template<typename WORD, typename CLSS> class Bits {
         return *this;
     }
 
+    Bits<WORD, CLSS> operator=(
+    const Reg<WORD, CLSS>   &reg)
+    {
+        _bits = reg._word;
+        return *this;
+    }
+
+    Bits<WORD, CLSS> operator=(
+    const Mskd<WORD, CLSS>  &mskd)
+    {
+        _bits = mskd._bits;
+        return *this;
+    }
+
 
     // accessor
     constexpr WORD bits() const { return _bits; }
-
-
-    // converter (must be explicit)
-    //
-    explicit
-    constexpr
-    operator Mskd<WORD, CLSS>()
-    {
-        return Mskd<WORD, CLSS>(_bits, _bits);
-    }
 
 
     // bitwise operators
@@ -245,17 +296,22 @@ template<typename WORD, typename CLSS> class Bits {
 
 
 
-
-// #warning could derive from Bits
 template<typename WORD, typename CLSS> class Mskd {
   public:
     // friends
-    template <typename BIT_WORD, typename BIT_CLSS> friend class Bits;
-    template <typename REG_WORD, typename REG_CLSS> friend class Reg;
+    template <typename BITS_WORD, typename BITS_CLSS> friend class Bits;
+    template <typename COPY_WORD, typename COPY_CLSS> friend class Copy;
+    template <typename  REG_WORD, typename  REG_CLSS> friend class Reg ;
 
 
     // constructors
     //
+    constexpr
+    Mskd()
+    :   _mask(static_cast<WORD>(0)),
+        _bits(static_cast<WORD>(0))
+    {}
+
     constexpr
     Mskd(
     const     WORD          mask,
@@ -273,10 +329,17 @@ template<typename WORD, typename CLSS> class Mskd {
         _bits(bits)
     {}
 
+    constexpr
+    Mskd(
+    const Bits<WORD, CLSS>  bits)
+    :   _mask(bits._bits),
+        _bits(bits._bits)
+    {}
+
 #ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
     constexpr
     Mskd(
-    const Mskd<WORD, CLSS> &other)
+    const Mskd<WORD, CLSS>  &other)
     :   _mask(other._mask),
         _bits(other._bits)
     {}
@@ -304,7 +367,7 @@ template<typename WORD, typename CLSS> class Mskd {
     // assignments
     //
     Mskd<WORD, CLSS> &operator=(
-    const Mskd<WORD, CLSS> &other)
+    const Mskd<WORD, CLSS>  &other)
     {
         _mask = other._mask;
         _bits = other._bits;
@@ -319,26 +382,25 @@ template<typename WORD, typename CLSS> class Mskd {
         return *this;
     }
 
+    Mskd<WORD, CLSS> &operator=(
+    const Reg<WORD, CLSS>   &reg)
+    {
+        _bits = reg._word;
+        // do not modify _mask
+        return *this;
+    }
+
 
     // accessors
     constexpr WORD mask() const { return _mask; }
     constexpr WORD bits() const { return _bits; }
 
 
-    // converter (must be explicit)
-    explicit
-    constexpr
-    operator Bits<WORD, CLSS>()
-    {
-        return Bits<WORD, CLSS>(_bits);
-    }
-
-
     // bitwise operators
     //
     constexpr
     Mskd<WORD, CLSS> operator|(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return Mskd<WORD, CLSS>(_mask | other._mask, _bits | other._bits);
@@ -353,7 +415,7 @@ template<typename WORD, typename CLSS> class Mskd {
     }
 
     Mskd<WORD, CLSS> operator|=(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     {
         _mask |= other._mask;
         _bits |= other._bits;
@@ -369,12 +431,11 @@ template<typename WORD, typename CLSS> class Mskd {
     }
 
 
-
     // comparisons
     //
     constexpr
     bool operator==(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return other._mask == _mask && other._bits == _bits;
@@ -382,7 +443,7 @@ template<typename WORD, typename CLSS> class Mskd {
 
     constexpr
     bool operator!=(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return  other._mask != _mask || other._bits != _bits;
@@ -390,7 +451,7 @@ template<typename WORD, typename CLSS> class Mskd {
 
     constexpr
     bool operator<(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return _bits < other._bits;
@@ -398,7 +459,7 @@ template<typename WORD, typename CLSS> class Mskd {
 
     constexpr
     bool operator<=(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return _bits <= other._bits;
@@ -406,7 +467,7 @@ template<typename WORD, typename CLSS> class Mskd {
 
     constexpr
     bool operator>(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return _bits > other._bits;
@@ -414,7 +475,7 @@ template<typename WORD, typename CLSS> class Mskd {
 
     constexpr
     bool operator>=(
-    const Mskd<WORD, CLSS>  &other)
+    const Mskd<WORD, CLSS>  other)
     const
     {
         return _bits >= other._bits;
@@ -434,51 +495,101 @@ template<typename WORD, typename CLSS> class Mskd {
 
 
 
+template<typename WORD, typename CLSS> class Shft {
+  public:
+    // friends
+    template <typename COPY_WORD, typename COPY_CLSS> friend class Copy;
+    template <typename  REG_WORD, typename  REG_CLSS> friend class Reg ;
+
+    // constructors
+    //
+    constexpr
+    Shft()
+    :   _mask(static_cast<WORD>(0)),
+        _pos (static_cast<WORD>(0))
+    {}
+
+    constexpr
+    Shft(
+    const     WORD          mask,
+    const Pos<WORD,CLSS>    pos )
+    :   _mask(mask << pos._pos),
+        _pos(pos              )
+    {}
+
+#ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
+    constexpr
+    Shft(
+    const Shft<WORD, CLSS>  &other)
+    :   _mask(other._mask),
+        _pos (other._pos )
+    {}
+#endif
+
+    // for passing constexpr instance by value without requiring storage
+    constexpr
+    Shft<WORD, CLSS> operator+()
+    const
+    {
+        return *this;
+    }
+
+
+    // resettter
+    Shft<WORD, CLSS> &operator()(
+    const WORD  mask,
+    const WORD  pos )
+    {
+        _mask = mask;
+        _pos  = pos ;
+        return *this;
+    }
+
+
+    // assignments
+    //
+    Shft<WORD, CLSS> &operator=(
+    const Shft<WORD, CLSS>  &other)
+    {
+        _mask = other._mask;
+        _pos  = other._pos ;
+        return *this;
+    }
+
+
+    // accessors
+    uint32_t        mask() const { return _mask; }
+    Pos<WORD, CLSS> pos () const { return _pos ; }
+
+
+  protected:
+    uint32_t            _mask;
+    Pos<WORD, CLSS>     _pos;
+
+};  // template<typename WORD, typename CLSS> class Shft
+
+
+
 template<typename WORD,  typename CLSS> class Reg {
   public:
-    // constructor
-    constexpr Reg<WORD, CLSS>() {};
+    // friends
+    template <typename BITS_WORD, typename BITS_CLSS> friend class Bits;
+    template <typename MSKD_WORD, typename MSKD_CLSS> friend class Mskd;
+    template <typename COPY_WORD, typename COPY_CLSS> friend class Copy;
 
 
-    // accessor
-    WORD word() { return _word; }
+    // no constructor -- use only as pointer to hardware register
+    Reg<WORD, CLSS>() = delete;
 
 
-    // extractors
-    //
-    Bits<WORD, CLSS> &operator>>=(
-    Bits<WORD, CLSS>    &bits)
-    const
-    {
-        bits._bits = _word;
-        return bits;
-    }
+#ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
+    constexpr
+    Reg<WORD, CLSS>(
+    const Reg<WORD, CLSS>   &other)
+    :   _word(other._word)
+    {}
+#endif
 
-    Bits<WORD, CLSS> &get(
-    Bits<WORD, CLSS>    &dest)
-    const
-    {
-        dest._bits = _word;
-        return dest;
-    }
-
-    Mskd<WORD, CLSS> &operator>>=(
-    Mskd<WORD, CLSS>    &mskd)
-    const
-    {
-    //  mskd._mask = _word; // leave alone
-        mskd._bits = _word & mskd._mask;
-        return mskd;
-    }
-
-    Mskd<WORD, CLSS> &get(
-    Mskd<WORD, CLSS>    &dest)
-    const
-    {
-    //  dest._mask = _word;  // leave alone
-        dest._bits = _word & dest._mask;
-        return dest;
-    }
 
     // assignments
     //
@@ -489,13 +600,6 @@ template<typename WORD,  typename CLSS> class Reg {
         _word = word;
     }
 
-    void zero(
-    const WORD  word)
-    volatile
-    {
-        _word =static_cast<WORD>(0);
-    }
-
     void operator=(
     const Bits<WORD, CLSS>  bits)
     volatile
@@ -523,6 +627,10 @@ template<typename WORD,  typename CLSS> class Reg {
     {
         _word = mskd._bits;
     }
+
+
+    // accessor
+    WORD word() volatile { return _word; }
 
 
     // bitwise operators
@@ -613,7 +721,7 @@ template<typename WORD,  typename CLSS> class Reg {
         _word ^= mskd._bits;
     }
 
-    void operator<<=(
+    void operator/=(
     const Mskd<WORD, CLSS>  &mskd)
     volatile
     {
@@ -628,31 +736,153 @@ template<typename WORD,  typename CLSS> class Reg {
     }
 
 
-    // comparisons
-    //
-    constexpr
-    bool zero()
-    const
+    // extractor
+    WORD shifted(
+    const Shft<WORD, CLSS>  shft)
+    volatile
     {
-        return _word == static_cast<WORD>(0);
+        return (_word & shft._mask) >> shft._pos._pos;
     }
 
-    constexpr
+
+    // comparisons
+    //
     bool operator==(
     const WORD      word)
+    volatile
     {
         return word == _word;
     }
 
-    constexpr
     bool operator!=(
     const WORD      word)
+    volatile
     {
         return word != _word;
     }
 
+    bool operator==(
+    const Bits<WORD, CLSS>  bits)
+    volatile
+    {
+        return _word & bits._bits;
+    }
 
+    bool operator!=(
+    const Bits<WORD, CLSS>  bits)
+    volatile
+    {
+        return !(_word & bits._bits);
+    }
+
+    bool operator==(
+    const Mskd<WORD, CLSS>  &mskd)
+    volatile
+    {
+        return (_word & mskd._mask) == mskd._bits;
+    }
+
+    bool operator!=(
+    const Mskd<WORD, CLSS>  &mskd)
+    volatile
+    {
+        return (_word & mskd._mask) != mskd._bits;
+    }
+
+    bool operator<(
+    const Mskd<WORD, CLSS>  &mskd)
+    volatile
+    {
+        return (_word & mskd._mask) < mskd._bits;
+    }
+
+    bool operator<=(
+    const Mskd<WORD, CLSS>  &mskd)
+    volatile
+    {
+        return (_word & mskd._mask) <= mskd._bits;
+    }
+
+    bool operator>(
+    const Mskd<WORD, CLSS>  &mskd)
+    volatile
+    {
+        return (_word & mskd._mask) > mskd._bits;
+    }
+
+    bool operator>=(
+    const Mskd<WORD, CLSS>  &mskd)
+    volatile
+    {
+        return (_word & mskd._mask) >= mskd._bits;
+    }
+
+
+  protected:
+    volatile WORD   _word;
+
+
+  private:
+    // do not implement this, even as private
+    // operator WORD() {}
+
+};  // template<typename BITS, typename MSKD> class Reg
+
+
+
+template<typename WORD,  typename CLSS> class Copy {
+  public:
+    // no bare constructor -- use only as non-volatile copy of Reg
+    Copy<WORD, CLSS>() = delete;
+
+    Copy<WORD, CLSS>(
+    const Reg<WORD, CLSS>   &reg)
+    :   _word(reg._word)
+    {}
+
+    Copy<WORD, CLSS>(
+    const WORD  word)
+    :   _word(word)
+    {}
+
+
+#ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
     constexpr
+    Copy<WORD, CLSS>(
+    const Copy<WORD, CLSS>  &other)
+    :   _word(other._word)
+    {}
+#endif
+
+
+    // accessor
+    WORD word() { return _word; }
+
+
+    // extractor
+    WORD shifted(
+    const Shft<WORD, CLSS>  shft)
+    {
+        return (_word & shft._mask) >> shft._pos._pos;
+    }
+
+
+    // comparisons
+    //
+    bool operator==(
+    const WORD      word)
+    const
+    {
+        return word == _word;
+    }
+
+    bool operator!=(
+    const WORD      word)
+    const
+    {
+        return word != _word;
+    }
+
     bool operator==(
     const Bits<WORD, CLSS>  bits)
     const
@@ -681,80 +911,119 @@ template<typename WORD,  typename CLSS> class Reg {
         return (_word & mskd._mask) != mskd._bits;
     }
 
+    bool operator<(
+    const Mskd<WORD, CLSS>  &mskd)
+    const
+    {
+        return (_word & mskd._mask) < mskd._bits;
+    }
+
+    bool operator<=(
+    const Mskd<WORD, CLSS>  &mskd)
+    const
+    {
+        return (_word & mskd._mask) <= mskd._bits;
+    }
+
+    bool operator>(
+    const Mskd<WORD, CLSS>  &mskd)
+    const
+    {
+        return (_word & mskd._mask) > mskd._bits;
+    }
+
+    bool operator>=(
+    const Mskd<WORD, CLSS>  &mskd)
+    const
+    {
+        return (_word & mskd._mask) >= mskd._bits;
+    }
 
 
   protected:
-    volatile WORD   _word;
+    const WORD  _word;
 
 
   private:
     // do not implement this, even as private
     // operator WORD() {}
 
-};  // template<typename BITS, typename MSKD> class Reg
-
-}  // namespace regbits
+};  // template<typename BITS, typename MSKD> class Copy
 
 
 
 // macro for generating functions returning Bits (constexpr and non-)
 // assumes pos_t and bits_ have been typedef'd/using'd
 //
-#define REGBITS_BITS_RANGE(CLASS, CONSTEXPR_FUNC, RUNTIME_FUNC, VALID_FUNC, WORD) \
-template<unsigned BIT_NUM> static constexpr bits_t CONSTEXPR_FUNC() { \
+#define REGBITS_BITS_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, WORD) \
+template<unsigned BIT_NUM> static constexpr bits_t CONSTEXPR_NAME() { \
     static_assert(BIT_NUM < sizeof(WORD) * 8, \
-                  CLASS "::" #CONSTEXPR_FUNC "<BIT_NUM> out of range"); \
+                  CLASS "::" #CONSTEXPR_NAME "<BIT_NUM> out of range"); \
     return bits_t(1, pos_t(BIT_NUM)); \
 } \
-static const bits_t RUNTIME_FUNC( \
+\
+static const bits_t RUNTIME_NAME( \
 const unsigned  bit_num) \
 { \
     return bits_t(1, pos_t(bit_num)); \
 } \
-static bool VALID_FUNC( \
+\
+static bool RUNTIME_NAME##_valid( \
 const unsigned  bit_num) \
 { \
     return bit_num < sizeof(WORD) * 4; \
 }
 
 
+
 // macro for generating functions returning Mskd (constexpr and non-)
-// assumes mskd_t has been typedef'd/using'd
+// assumes shft_t and mskd_t have been typedef'd/using'd
 //
-#define REGBITS_MSKD_RANGE(CLASS, CONSTEXPR_FUNC, RUNTIME_FUNC, VALID_FUNC, MASK, POS, LIMIT) \
-template<unsigned BITS> static constexpr mskd_t CONSTEXPR_FUNC() { \
-    static_assert(BITS <= LIMIT, \
-                  CLASS "::" #CONSTEXPR_FUNC "<BITS> out of range"); \
+#define REGBITS_MSKD_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, MASK, POS, LIMIT) \
+static constexpr shft_t       CONSTEXPR_NAME##_SHFT          \
+                            = shft_t(CONSTEXPR_NAME##_MASK,  \
+                                     CONSTEXPR_NAME##_POS ); \
+\
+template<unsigned BITS> static constexpr mskd_t CONSTEXPR_NAME() { \
+    static_assert(BITS <= (LIMIT), \
+                  CLASS "::" #CONSTEXPR_NAME "<BITS> out of range"); \
     return mskd_t(MASK, BITS, POS); \
 } \
-static const mskd_t RUNTIME_FUNC( \
+\
+static const mskd_t RUNTIME_NAME( \
 const unsigned  bits) \
 { \
     return mskd_t(MASK << POS.pos(), bits << POS.pos()); \
 } \
-static bool VALID_FUNC( \
+\
+static bool RUNTIME_NAME##_valid( \
 const unsigned  bits) \
 { \
-    return bits <= LIMIT; \
+    return bits <= (LIMIT); \
 }
 
 
 // macro for generating functions returning array member (constexpr and non-)
-#define REGBITS_ARRAY_RANGE(CLASS, CONSTEXPR_FUNC, RUNTIME_FUNC, VALID_FUNC, DATATYPE, ARRAY, LIMIT) \
-template<unsigned INDEX> DATATYPE& CONSTEXPR_FUNC() { \
-    static_assert(INDEX <= LIMIT, \
-                  CLASS "::" #CONSTEXPR_FUNC "<INDEX> out of range"); \
+#define REGBITS_ARRAY_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, DATATYPE, ARRAY, LIMIT) \
+template<unsigned INDEX> volatile DATATYPE& CONSTEXPR_NAME() { \
+    static_assert(INDEX <= (LIMIT), \
+                  CLASS "::" #CONSTEXPR_NAME "<INDEX> out of range"); \
     return ARRAY[INDEX]; \
 } \
-DATATYPE& RUNTIME_FUNC( \
+\
+volatile DATATYPE& RUNTIME_NAME( \
 const unsigned index) \
 { \
     return ARRAY[index]; \
 } \
-static bool VALID_FUNC( \
+\
+static bool RUNTIME_NAME##_valid( \
 const unsigned  index) \
 { \
-    return index <= LIMIT; \
+    return index <= (LIMIT); \
 }
+
+
+}  // namespace regbits
 
 #endif  // ifndef regbits_hxx

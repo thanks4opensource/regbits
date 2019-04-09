@@ -41,12 +41,12 @@ struct Gpio {
         REGBITS_ARRAY_RANGE("Gpio::Bytes",
                             BYTES,
                             bytes,
-                            valid,
                             uint8_t,
                             _bytes,
                             MAX_PORT_NUM);
+
       private:
-        uint8_t _bytes[NUM_BYTE_REGS];
+        volatile uint8_t _bytes[NUM_BYTE_REGS];
     };  // struct Bytes
     Bytes   bytes;
     static_assert(sizeof(Bytes) == 32, "sizeof(Bytes)");
@@ -55,14 +55,15 @@ struct Gpio {
         REGBITS_ARRAY_RANGE("Gpio::Words",
                             WORDS,
                             words,
-                            valid,
                             uint32_t,
                             _words,
                             MAX_PORT_NUM);
+
       private:
-        uint32_t    _words[NUM_WORD_REGS];
+        volatile uint32_t   _words[NUM_WORD_REGS];
     };  // struct Words
     Words   words;
+    static_assert(sizeof(Words) == 128, "sizeof(Words)");
 
     struct Set {
         using  pos_t = Pos <uint32_t, Set>;
@@ -71,7 +72,6 @@ struct Gpio {
         REGBITS_BITS_RANGE("Gpio::Set",
                            SET,
                            set,
-                           valid,
                            uint32_t);
     };  // struct Set
     using set_t = Reg<uint32_t, Set>;
@@ -84,7 +84,6 @@ struct Gpio {
         REGBITS_BITS_RANGE("Gpio::Clr",
                            CLR,
                            clr,
-                           valid,
                            uint32_t);
     };  // struct Clr
     using clr_t = Reg<uint32_t, Clr>;
@@ -127,19 +126,27 @@ struct Timer {
     struct Prescale {
         using  pos_t = Pos <uint32_t, Prescale>;
         using mskd_t = Mskd<uint32_t, Prescale>;
+        using shft_t = Shft<uint32_t, Prescale>;
 
-        static constexpr pos_t  PRESCALER_POS = pos_t(24);
+        static constexpr pos_t      PRESCALER_LOW_POS   = pos_t( 0),
+                                    PRESCALER_HIGH_POS  = pos_t(25);
 
-        static constexpr uint32_t   MAX_PRESCALER_VAL = 0xff;
-        static const     uint32_t   PRESCALER_MASK    = 0xff;
+        static const     uint32_t   PRESCALER_LOW_MASK  = 0x7f,
+                                    PRESCALER_HIGH_MASK = 0x1f;
 
         REGBITS_MSKD_RANGE("Timer::Prescale",
-                           PRESCALER,
-                           prescaler,
-                           valid,
-                           PRESCALER_MASK,
-                           PRESCALER_POS,
-                           MAX_PRESCALER_VAL);
+                           PRESCALER_LOW,
+                           prescaler_low,
+                           PRESCALER_LOW_MASK,
+                           PRESCALER_LOW_POS,
+                           PRESCALER_LOW_MASK);
+
+        REGBITS_MSKD_RANGE("Timer::Prescale",
+                           PRESCALER_HIGH,
+                           prescaler_high,
+                           PRESCALER_HIGH_MASK,
+                           PRESCALER_HIGH_POS,
+                           PRESCALER_HIGH_MASK);
     };  // struct Prescale
     using prescale_t = Reg<uint32_t, Prescale>;
     prescale_t      prescale;
@@ -147,19 +154,19 @@ struct Timer {
     struct Autoreload {
         using  pos_t = Pos <uint32_t, Autoreload>;
         using mskd_t = Mskd<uint32_t, Autoreload>;
+        using shft_t = Shft<uint32_t, Autoreload>;
 
         static constexpr pos_t  AUTORELOADER_POS = pos_t(0);
 
-        static constexpr uint32_t   MAX_AUTORELOAD_VAL = 0x00ffffff;
-        static const     uint32_t   AUTORELOAD_MASK    = 0x00ffffff;
+        static constexpr uint32_t   MAX_AUTORELOADER_VAL = 0x00ffffff;
+        static const     uint32_t   AUTORELOADER_MASK    = 0x00ffffff;
 
         REGBITS_MSKD_RANGE("Timer::Prescale",
                            AUTORELOADER,
                            autoreloader,
-                           valid,
-                           AUTORELOAD_MASK,
+                           AUTORELOADER_MASK,
                            AUTORELOADER_POS,
-                           MAX_AUTORELOAD_VAL);
+                           MAX_AUTORELOADER_VAL);
     };  // struct Autoreload
     using autoreload_t = Reg<uint32_t, Autoreload>;
     autoreload_t    autoreload;
@@ -197,9 +204,17 @@ struct Timer {
 
         static constexpr pos_t  COUNT_POS = pos_t(   8);
 
-        using bits_t = Bits<uint32_t, Counter>;
+        static const uint32_t   COUNT_MASK = 0xffffff;
 
-        static constexpr bits_t COUNT = bits_t(1, COUNT_POS);
+        using mskd_t = Mskd<uint32_t, Counter>;
+        using shft_t = Shft<uint32_t, Counter>;
+
+        REGBITS_MSKD_RANGE("Timer::Counter",
+                           COUNT,
+                           count,
+                           COUNT_MASK,
+                           COUNT_POS,
+                           COUNT_MASK);
     };  // struct Counter
     using counter_t = Reg<uint32_t, Counter>;
     counter_t   counter;
@@ -245,6 +260,7 @@ struct Serial {
 
         using bits_t = Bits<uint32_t, Config>;
         using mskd_t = Mskd<uint32_t, Config>;
+        using shft_t = Shft<uint32_t, Config>;
 
         static constexpr bits_t MODE        = bits_t(1, MODE_POS    ),
                                 ENDIAN      = bits_t(1, ENDIAN_POS  ),
@@ -263,7 +279,6 @@ struct Serial {
         REGBITS_MSKD_RANGE("Serial::Config",
                            RXPORT,
                            rxport,
-                           valid_rxport,
                            RXPORT_MASK,
                            RXPORT_POS,
                            MAX_PORT_NUM);
@@ -271,7 +286,6 @@ struct Serial {
         REGBITS_MSKD_RANGE("Serial::Config",
                            TXPORT,
                            txport,
-                           valid_txport,
                            TXPORT_MASK,
                            TXPORT_POS,
                            MAX_PORT_NUM);
@@ -343,13 +357,13 @@ static_assert(sizeof(Serial) == 24, "sizeof(Serial)");
 
 
 
-#ifndef PERIPH_BASE
-#error Must define PERIPH_BASE via -DPERIPH_BASE=xxxx on commandline
+#ifndef REGBITS_PERIPH_BASE
+#error Must define REGBITS_PERIPH_BASE via -DPERIPH_BASE=xxxx on commandline
 #endif
 
-#define GPIO_BASE       ((PERIPH_BASE) + 0x00000000)
-#define TIMER_BASE      ((PERIPH_BASE) + 0x00000200)
-#define SERIAL_BASE     ((PERIPH_BASE) + 0x00000280)
+#define GPIO_BASE       ((REGBITS_PERIPH_BASE) + 0x00000000)
+#define TIMER_BASE      ((REGBITS_PERIPH_BASE) + 0x00000200)
+#define SERIAL_BASE     ((REGBITS_PERIPH_BASE) + 0x00000280)
 
 #define GPIO0_BASE      ((GPIO_BASE)   + 0x00000000)
 #define GPIO1_BASE      ((GPIO_BASE)   + 0x00000100)

@@ -46,7 +46,7 @@ CXXOPTS =  -Wall		\
 	  $(INCLUDES)		\
 	  $(EXTRA_CXX)		\
 	  $(GOOD)		\
-	  -DPERIPH_BASE=$(PERIPH_BASE)
+	  -DREGBITS_PERIPH_BASE=$(PERIPH_BASE)
 
 %.o: %.cxx
 	@- if $(CXX) -c $(CXXOPTS) $< -o $@			\

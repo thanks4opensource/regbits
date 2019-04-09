@@ -8,37 +8,39 @@ ELF Header:
   Type:                              EXEC (Executable file)
   Machine:                           ARM
   Version:                           0x1
-  Entry point address:               0x100000d1
+  Entry point address:               0x100015e1
   Start of program headers:          52 (bytes into file)
-  Start of section headers:          134160 (bytes into file)
+  Start of section headers:          152480 (bytes into file)
   Flags:                             0x600, GNU EABI, software FP, VFP
   Size of this header:               52 (bytes)
   Size of program headers:           32 (bytes)
   Number of program headers:         1
   Size of section headers:           40 (bytes)
-  Number of section headers:         18
-  Section header string table index: 15
+  Number of section headers:         20
+  Section header string table index: 17
 
 Section Headers:
   [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
   [ 0]                   NULL            00000000 000000 000000 00      0   0  0
-  [ 1] .text             PROGBITS        10000000 010000 000bb8 00  AX  0   0  4
-  [ 2] .rodata           PROGBITS        10000bb8 010bb8 000010 00   A  0   0  4
-  [ 3] .data             PROGBITS        10000bc8 010bc8 000000 00  WA  0   0  1
-  [ 4] .bss              NOBITS          10000bc8 010bc8 0002e8 00  WA  0   0  4
-  [ 5] .debug_info       PROGBITS        00000000 010bc8 001c72 00      0   0  1
-  [ 6] .debug_abbrev     PROGBITS        00000000 01283a 000565 00      0   0  1
-  [ 7] .debug_loc        PROGBITS        00000000 012d9f 0003ea 00      0   0  1
-  [ 8] .debug_aranges    PROGBITS        00000000 013189 000060 00      0   0  1
-  [ 9] .debug_macro      PROGBITS        00000000 0131e9 001efb 00      0   0  1
-  [10] .debug_line       PROGBITS        00000000 0150e4 00135c 00      0   0  1
-  [11] .debug_str        PROGBITS        00000000 016440 008948 01  MS  0   0  1
-  [12] .comment          PROGBITS        00000000 01ed88 000075 01  MS  0   0  1
-  [13] .ARM.attributes   ARM_ATTRIBUTES  00000000 01edfd 00001c 00      0   0  1
-  [14] .debug_frame      PROGBITS        00000000 01ee1c 000770 00      0   0  4
-  [15] .shstrtab         STRTAB          00000000 020b5b 0000b2 00      0   0  1
-  [16] .symtab           SYMTAB          00000000 01f58c 000ff0 10     17 145  4
-  [17] .strtab           STRTAB          00000000 02057c 0005df 00      0   0  1
+  [ 1] .text             PROGBITS        10000000 010000 00160c 00  AX  0   0  4
+  [ 2] .text.startup     PROGBITS        1000160c 01160c 000038 00  AX  0   0  4
+  [ 3] .rodata           PROGBITS        10001644 011644 000018 00   A  0   0  4
+  [ 4] .data             PROGBITS        1000165c 01165c 000000 00  WA  0   0  1
+  [ 5] .bss              NOBITS          1000165c 01165c 000398 00  WA  0   0  4
+  [ 6] .debug_info       PROGBITS        00000000 01165c 002ff8 00      0   0  1
+  [ 7] .debug_abbrev     PROGBITS        00000000 014654 0005be 00      0   0  1
+  [ 8] .debug_loc        PROGBITS        00000000 014c12 000417 00      0   0  1
+  [ 9] .debug_aranges    PROGBITS        00000000 015029 000068 00      0   0  1
+  [10] .debug_macro      PROGBITS        00000000 015091 001f13 00      0   0  1
+  [11] .debug_line       PROGBITS        00000000 016fa4 001cfa 00      0   0  1
+  [12] .debug_str        PROGBITS        00000000 018c9e 008e16 01  MS  0   0  1
+  [13] .comment          PROGBITS        00000000 021ab4 000075 01  MS  0   0  1
+  [14] .ARM.attributes   ARM_ATTRIBUTES  00000000 021b29 00001c 00      0   0  1
+  [15] .debug_frame      PROGBITS        00000000 021b48 000d70 00      0   0  4
+  [16] .debug_ranges     PROGBITS        00000000 0228b8 000018 00      0   0  1
+  [17] .shstrtab         STRTAB          00000000 0252d0 0000ce 00      0   0  1
+  [18] .symtab           SYMTAB          00000000 0228d0 001dc0 10     19 286  4
+  [19] .strtab           STRTAB          00000000 024690 000c40 00      0   0  1
 Key to Flags:
   W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
   L (link order), O (extra OS processing required), G (group), T (TLS),
@@ -49,11 +51,11 @@ There are no section groups in this file.
 
 Program Headers:
   Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
-  LOAD           0x010000 0x10000000 0x10000000 0x00bc8 0x00eb0 RWE 0x10000
+  LOAD           0x010000 0x10000000 0x10000000 0x0165c 0x019f4 RWE 0x10000
 
  Section to Segment mapping:
   Segment Sections...
-   00     .text .rodata .bss 
+   00     .text .text.startup .rodata .bss 
 
 There is no dynamic section in this file.
 
@@ -61,14 +63,14 @@ There are no relocations in this file.
 
 There are no unwind sections in this file.
 
-Symbol table '.symtab' contains 255 entries:
+Symbol table '.symtab' contains 476 entries:
    Num:    Value  Size Type    Bind   Vis      Ndx Name
      0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
      1: 10000000     0 SECTION LOCAL  DEFAULT    1 
-     2: 10000bb8     0 SECTION LOCAL  DEFAULT    2 
-     3: 10000bc8     0 SECTION LOCAL  DEFAULT    3 
-     4: 10000bc8     0 SECTION LOCAL  DEFAULT    4 
-     5: 00000000     0 SECTION LOCAL  DEFAULT    5 
+     2: 1000160c     0 SECTION LOCAL  DEFAULT    2 
+     3: 10001644     0 SECTION LOCAL  DEFAULT    3 
+     4: 1000165c     0 SECTION LOCAL  DEFAULT    4 
+     5: 1000165c     0 SECTION LOCAL  DEFAULT    5 
      6: 00000000     0 SECTION LOCAL  DEFAULT    6 
      7: 00000000     0 SECTION LOCAL  DEFAULT    7 
      8: 00000000     0 SECTION LOCAL  DEFAULT    8 
@@ -78,246 +80,467 @@ Symbol table '.symtab' contains 255 entries:
     12: 00000000     0 SECTION LOCAL  DEFAULT   12 
     13: 00000000     0 SECTION LOCAL  DEFAULT   13 
     14: 00000000     0 SECTION LOCAL  DEFAULT   14 
-    15: 00000000     0 FILE    LOCAL  DEFAULT  ABS lpc8xx_ram_init.c
-    16: 1000009c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    17: 100000f4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    18: 10000000     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    19: 00000000     0 FILE    LOCAL  DEFAULT  ABS raw.c
-    20: 10000104     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    21: 10000118     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    22: 10000128     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    23: 1000013c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    24: 10000140     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    25: 10000154     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    26: 10000158     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    27: 1000016c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    28: 10000170     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    29: 10000184     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    30: 10000188     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    31: 10000194     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    32: 10000198     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    33: 100001a4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    34: 100001a8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    35: 100001c0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    36: 100001c4     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    37: 100001dc     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    38: 100001e0     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    39: 100001fc     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    40: 10000200     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    41: 10000214     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    42: 10000218     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    43: 10000234     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    44: 1000023c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    45: 10000248     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    46: 1000024c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    47: 10000258     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    48: 1000025c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    49: 10000268     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    50: 1000026c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    51: 10000278     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    52: 1000027c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    53: 10000288     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    54: 1000028c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    55: 1000029c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    56: 100002a0     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    57: 100002d8     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    58: 100002e0     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    59: 10000318     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    60: 10000320     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    61: 10000388     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    62: 10000390     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    63: 100003c8     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    64: 100003d0     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    65: 100003e0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    66: 100003e4     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    67: 100003f4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    68: 100003fc     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    69: 1000040c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    70: 10000414     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    71: 1000043c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    72: 10000444     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    73: 10000464     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    74: 10000468     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    75: 1000049c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    76: 100004a0     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    77: 100004d0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    78: 100004d4     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    79: 10000504     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    80: 1000050c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    81: 1000052c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    82: 10000530     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    83: 10000540     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    84: 10000548     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    85: 1000056c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    86: 10000570     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    87: 10000588     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    88: 10000590     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    89: 100005bc     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    90: 100005c0     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    91: 100005d0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    92: 100005d8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    93: 1000060c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    94: 10000610     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    95: 1000062c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    96: 10000634     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    97: 10000658     0 NOTYPE  LOCAL  DEFAULT    1 $d
-    98: 1000065c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-    99: 10000694     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   100: 10000698     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   101: 100006a0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   102: 100006a4     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   103: 100006c4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   104: 100006c8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   105: 100006d4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   106: 100006dc     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   107: 100006fc     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   108: 10000700     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   109: 10000724     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   110: 10000728     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   111: 1000075c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   112: 10000760     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   113: 10000788     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   114: 1000078c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   115: 100007b0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   116: 100007b8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   117: 100007d4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   118: 100007d8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   119: 10000804     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   120: 1000080c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   121: 1000082c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   122: 10000830     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   123: 10000844     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   124: 10000848     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   125: 1000085c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   126: 10000860     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   127: 10000874     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   128: 10000878     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   129: 1000088c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   130: 10000890     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   131: 100008a4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   132: 100008a8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   133: 100008e0     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   134: 100008e8     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   135: 10000930     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   136: 10000938     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   137: 1000095c     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   138: 1000096c     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   139: 10000bb8     0 NOTYPE  LOCAL  DEFAULT    2 $d
-   140: 00000000     0 FILE    LOCAL  DEFAULT  ABS main.c
-   141: 10000b48     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   142: 10000b74     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   143: 10000b78     0 NOTYPE  LOCAL  DEFAULT    1 $t
-   144: 10000ba4     0 NOTYPE  LOCAL  DEFAULT    1 $d
-   145: 100001a9    28 FUNC    GLOBAL DEFAULT    1 flp_singl_bits
-   146: 100000a1     2 FUNC    GLOBAL DEFAULT    1 SVCall_Handler
-   147: 10000729    16 FUNC    GLOBAL DEFAULT    1 call_pos_val
-   148: 10000635     4 FUNC    GLOBAL DEFAULT    1 return_bits
-   149: 100000b7     2 FUNC    GLOBAL DEFAULT    1 CMP_IRQHandler
-   150: 100000cf     2 FUNC    GLOBAL DEFAULT    1 PININT7_IRQHandler
-   151: 10000699    12 FUNC    GLOBAL DEFAULT    1 return_reg
-   152: 1000044f    26 FUNC    GLOBAL DEFAULT    1 bits_ref
-   153: 10000eb0     0 NOTYPE  GLOBAL DEFAULT    4 BSS_END
-   154: 10000639    36 FUNC    GLOBAL DEFAULT    1 call_return_bits
-   155: 1000009f     2 FUNC    GLOBAL DEFAULT    1 HardFault_Handler
-   156: 10000591    48 FUNC    GLOBAL DEFAULT    1 periph_reg_mskd_val
-   157: 10000571    32 FUNC    GLOBAL DEFAULT    1 call_periph_reg_bits_ref
-   158: 100000bd     2 FUNC    GLOBAL DEFAULT    1 WKT_IRQHandler
-   159: 100000c5     2 FUNC    GLOBAL DEFAULT    1 PININT2_IRQHandler
-   160: 100000a5     2 FUNC    GLOBAL DEFAULT    1 SysTick_Handler
-   161: 10000bc8     0 NOTYPE  GLOBAL DEFAULT    3 BSS_START
-   162: 100004b5    32 FUNC    GLOBAL DEFAULT    1 mskd_ref
-   163: 100000c3     2 FUNC    GLOBAL DEFAULT    1 PININT1_IRQHandler
-   164: 100000a3     2 FUNC    GLOBAL DEFAULT    1 PendSV_Handler
-   165: 1000009d     2 FUNC    GLOBAL DEFAULT    1 NMI_Handler
-   166: 10000445    10 FUNC    GLOBAL DEFAULT    1 call_bits_val
-   167: 100000b5     2 FUNC    GLOBAL DEFAULT    1 MRT_IRQHandler
-   168: 1000023d    16 FUNC    GLOBAL DEFAULT    1 equ_multi_bits
-   169: 100000ad     2 FUNC    GLOBAL DEFAULT    1 UART1_IRQHandler
-   170: 10000199    16 FUNC    GLOBAL DEFAULT    1 equ_singl_mskd
-   171: 10000939    52 FUNC    GLOBAL DEFAULT    1 record_registers
-   172: 10000219    36 FUNC    GLOBAL DEFAULT    1 ins_multi_mskd
-   173: 100002e1    64 FUNC    GLOBAL DEFAULT    1 cmp_bits
-   174: 10000bc8   736 OBJECT  GLOBAL DEFAULT    4 registers
-   175: 00000020     0 NOTYPE  GLOBAL DEFAULT  ABS MINIMUM_STACK_SIZE
-   176: 100000ab     2 FUNC    GLOBAL DEFAULT    1 UART0_IRQHandler
-   177: 10000ea8     4 OBJECT  GLOBAL DEFAULT    4 finish
-   178: 100008a9    64 FUNC    GLOBAL DEFAULT    1 check_bits_extract
-   179: 10000817    26 FUNC    GLOBAL DEFAULT    1 check_array_range_pass
-   180: 100000a9     2 FUNC    GLOBAL DEFAULT    1 SPI1_IRQHandler
-   181: 100003d1    20 FUNC    GLOBAL DEFAULT    1 bits_val
-   182: 10000000   156 OBJECT  GLOBAL DEFAULT    1 INTERRUPT_VECTORS
-   183: 10000549    40 FUNC    GLOBAL DEFAULT    1 periph_reg_bits_ref
-   184: 1000050d    36 FUNC    GLOBAL DEFAULT    1 periph_reg_bits_val
-   185: 100001e1    32 FUNC    GLOBAL DEFAULT    1 ins_singl_mskd
-   186: 10000739    40 FUNC    GLOBAL DEFAULT    1 pos_ref
-   187: 100004a1    20 FUNC    GLOBAL DEFAULT    1 call_mskd_val
-   188: 10000321   112 FUNC    GLOBAL DEFAULT    1 cmp_mskd
-   189: 10000129    24 FUNC    GLOBAL DEFAULT    1 set_singl_bits
-   190: 10000189    16 FUNC    GLOBAL DEFAULT    1 equ_singl_bits
-   191: 100000c7     2 FUNC    GLOBAL DEFAULT    1 PININT3_IRQHandler
-   192: 100000bf     2 FUNC    GLOBAL DEFAULT    1 Reserved11_IRQHandler
-   193: 10000eb0     0 NOTYPE  GLOBAL DEFAULT    4 end
-   194: 10000831    24 FUNC    GLOBAL DEFAULT    1 check_array_range_fail
-   195: 100000af     2 FUNC    GLOBAL DEFAULT    1 UART2_IRQHandler
-   196: 100000cb     2 FUNC    GLOBAL DEFAULT    1 PININT5_IRQHandler
-   197: 10002000     0 NOTYPE  GLOBAL DEFAULT    4 TOP_OF_STACK
-   198: 10000849    24 FUNC    GLOBAL DEFAULT    1 check_bits_range_pass
-   199: 10000701    40 FUNC    GLOBAL DEFAULT    1 pos_val
-   200: 100003e5    24 FUNC    GLOBAL DEFAULT    1 bytes
-   201: 100001c5    28 FUNC    GLOBAL DEFAULT    1 flp_singl_mskd
-   202: 10000891    24 FUNC    GLOBAL DEFAULT    1 check_mskd_range_fail
-   203: 10000171    24 FUNC    GLOBAL DEFAULT    1 clr_singl_mskd
-   204: 100006c9    20 FUNC    GLOBAL DEFAULT    1 return_periph
-   205: 10000000     0 NOTYPE  GLOBAL DEFAULT    4 RAM_BASE_ADDR
-   206: 10000415    48 FUNC    GLOBAL DEFAULT    1 runtime_bits_array
-   207: 100000b1     2 FUNC    GLOBAL DEFAULT    1 Reserved1_IRQHandler
-   208: 100005d9    56 FUNC    GLOBAL DEFAULT    1 periph_reg_mskd_ref
-   209: 100000c9     2 FUNC    GLOBAL DEFAULT    1 PININT4_IRQHandler
-   210: 10000483    30 FUNC    GLOBAL DEFAULT    1 mskd_val
-   211: 10000159    24 FUNC    GLOBAL DEFAULT    1 set_singl_mskd
-   212: 100000c1     2 FUNC    GLOBAL DEFAULT    1 PININT0_IRQHandler
-   213: 100000d1    52 FUNC    GLOBAL DEFAULT    1 init
-   214: 100000bb     2 FUNC    GLOBAL DEFAULT    1 BOD_IRQHandler
-   215: 1000026d    16 FUNC    GLOBAL DEFAULT    1 equ_mskd_bits
-   216: 1000027d    16 FUNC    GLOBAL DEFAULT    1 equ_bits_var
-   217: 100000b3     2 FUNC    GLOBAL DEFAULT    1 SCT_IRQHandler
-   218: 00000000     0 NOTYPE  GLOBAL DEFAULT    4 FLASH_BASE_ADDR
-   219: 10000b49    20 FUNC    GLOBAL DEFAULT    1 memset
-   220: 10000b79    64 FUNC    GLOBAL DEFAULT    1 main
-   221: 100006dd    36 FUNC    GLOBAL DEFAULT    1 call_return_periph
-   222: 10000611    36 FUNC    GLOBAL DEFAULT    1 call_periph_reg_mskd_ref
-   223: 100007b9    10 FUNC    GLOBAL DEFAULT    1 call_range_val_port
-   224: 10000141    24 FUNC    GLOBAL DEFAULT    1 clr_singl_bits
-   225: 100000b9     2 FUNC    GLOBAL DEFAULT    1 WDT_IRQHandler
-   226: 100003fd    24 FUNC    GLOBAL DEFAULT    1 constexpr_bits_array
-   227: 10000391    64 FUNC    GLOBAL DEFAULT    1 cmp_reg
-   228: 100006a5    36 FUNC    GLOBAL DEFAULT    1 call_return_reg
-   229: 1000096d   476 FUNC    GLOBAL DEFAULT    1 run
-   230: 10000105    36 FUNC    GLOBAL DEFAULT    1 zero
-   231: 100004d5    56 FUNC    GLOBAL DEFAULT    1 call_mskd_ref
-   232: 10000667    50 FUNC    GLOBAL DEFAULT    1 call_return_mskd
-   233: 10000531    24 FUNC    GLOBAL DEFAULT    1 call_periph_reg_bits_val
-   234: 1000024d    16 FUNC    GLOBAL DEFAULT    1 equ_multi_mskd
-   235: 100008e9    80 FUNC    GLOBAL DEFAULT    1 check_mskd_extract
-   236: 10000861    24 FUNC    GLOBAL DEFAULT    1 check_bits_range_fail
-   237: 10000201    24 FUNC    GLOBAL DEFAULT    1 set_multi_bits
-   238: 10000761    28 FUNC    GLOBAL DEFAULT    1 call_pos_ref
-   239: 100000cd     2 FUNC    GLOBAL DEFAULT    1 PININT6_IRQHandler
-   240: 100000a7     2 FUNC    GLOBAL DEFAULT    1 SPI0_IRQHandler
-   241: 1000028d    20 FUNC    GLOBAL DEFAULT    1 equ_mskd_var
-   242: 100007d9    52 FUNC    GLOBAL DEFAULT    1 call_range_ref
-   243: 10000879    24 FUNC    GLOBAL DEFAULT    1 check_mskd_range_pass
-   244: 10000b5d    28 FUNC    GLOBAL DEFAULT    1 unittest_record_registers
-   245: 1000077d    16 FUNC    GLOBAL DEFAULT    1 runtime_range_val
-   246: 10000469    26 FUNC    GLOBAL DEFAULT    1 call_bits_ref
-   247: 10000eac     4 OBJECT  GLOBAL DEFAULT    4 start
-   248: 1000065d    10 FUNC    GLOBAL DEFAULT    1 return_mskd
-   249: 100007c3    22 FUNC    GLOBAL DEFAULT    1 runtime_range_ref
-   250: 1000078d    44 FUNC    GLOBAL DEFAULT    1 call_range_val
-   251: 1000025d    16 FUNC    GLOBAL DEFAULT    1 equ_bits_mskd
-   252: 100005c1    24 FUNC    GLOBAL DEFAULT    1 call_periph_reg_mskd_val
-   253: 1000080d    10 FUNC    GLOBAL DEFAULT    1 call_range_ref_port
-   254: 100002a1    64 FUNC    GLOBAL DEFAULT    1 cmp_zero
+    15: 00000000     0 SECTION LOCAL  DEFAULT   15 
+    16: 00000000     0 SECTION LOCAL  DEFAULT   16 
+    17: 00000000     0 FILE    LOCAL  DEFAULT  ABS lpc8xx_ram_init.c
+    18: 10001578     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    19: 100015fc     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    20: 10000000     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    21: 00000000     0 FILE    LOCAL  DEFAULT  ABS raw.c
+    22: 1000009c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    23: 100000a4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    24: 100000a8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    25: 100000b0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    26: 100000b4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    27: 100000c0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    28: 100000c4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    29: 100000d0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    30: 100000d4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    31: 100000e0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    32: 100000e4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    33: 100000f0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    34: 100000f4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    35: 10000100     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    36: 10000104     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    37: 10000110     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    38: 10000114     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    39: 10000120     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    40: 10000124     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    41: 10000130     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    42: 10000134     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    43: 1000013c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    44: 10000140     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    45: 10000148     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    46: 1000014c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    47: 10000154     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    48: 10000158     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    49: 10000160     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    50: 10000164     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    51: 10000170     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    52: 10000174     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    53: 10000180     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    54: 10000184     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    55: 10000190     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    56: 10000194     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    57: 100001a0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    58: 100001a4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    59: 100001b4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    60: 100001b8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    61: 100001c8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    62: 100001cc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    63: 100001d8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    64: 100001dc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    65: 100001e8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    66: 100001ec     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    67: 10000200     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    68: 10000208     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    69: 1000021c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    70: 10000224     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    71: 1000022c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    72: 10000230     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    73: 10000238     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    74: 1000023c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    75: 10000248     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    76: 1000024c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    77: 10000258     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    78: 1000025c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    79: 10000264     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    80: 10000268     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    81: 10000270     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    82: 10000274     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    83: 1000027c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    84: 10000280     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    85: 10000288     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    86: 1000028c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    87: 10000298     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    88: 1000029c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    89: 100002ac     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    90: 100002b0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    91: 100002d0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    92: 100002d8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    93: 100002f0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    94: 100002f4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    95: 10000314     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    96: 1000031c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    97: 10000334     0 NOTYPE  LOCAL  DEFAULT    1 $d
+    98: 10000338     0 NOTYPE  LOCAL  DEFAULT    1 $t
+    99: 10000374     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   100: 10000380     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   101: 100003b0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   102: 100003b4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   103: 100003d4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   104: 100003dc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   105: 100003f4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   106: 100003f8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   107: 10000408     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   108: 10000410     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   109: 10000438     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   110: 10000440     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   111: 10000454     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   112: 1000045c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   113: 10000470     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   114: 10000478     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   115: 100004a0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   116: 100004ac     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   117: 100004dc     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   118: 100004e4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   119: 1000050c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   120: 10000514     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   121: 10000544     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   122: 10000554     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   123: 1000055c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   124: 10000560     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   125: 10000568     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   126: 1000056c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   127: 10000584     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   128: 10000588     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   129: 100005a4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   130: 100005a8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   131: 100005c4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   132: 100005c8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   133: 100005f0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   134: 100005fc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   135: 10000620     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   136: 10000628     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   137: 10000650     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   138: 10000658     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   139: 10000664     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   140: 10000668     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   141: 10000678     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   142: 1000067c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   143: 10000684     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   144: 10000688     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   145: 1000069c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   146: 100006a4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   147: 100006ac     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   148: 100006b0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   149: 100006c8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   150: 100006cc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   151: 100006e4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   152: 100006e8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   153: 1000070c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   154: 10000714     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   155: 10000738     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   156: 10000740     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   157: 10000768     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   158: 10000774     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   159: 10000798     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   160: 100007a0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   161: 100007c8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   162: 100007d0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   163: 100007f8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   164: 10000804     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   165: 10000828     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   166: 10000830     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   167: 10000831    24 FUNC    LOCAL  DEFAULT    1 runtime_range_val.constpr
+   168: 10000840     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   169: 10000848     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   170: 10000849    12 FUNC    LOCAL  DEFAULT    1 call_range_val.constprop.
+   171: 1000085d    12 FUNC    LOCAL  DEFAULT    1 pos_ref.constprop.2
+   172: 10000864     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   173: 10000868     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   174: 10000869    12 FUNC    LOCAL  DEFAULT    1 pos_ref.constprop.3
+   175: 10000870     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   176: 10000874     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   177: 10000889    12 FUNC    LOCAL  DEFAULT    1 pos_val.constprop.4
+   178: 10000890     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   179: 10000894     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   180: 10000895    12 FUNC    LOCAL  DEFAULT    1 pos_val.constprop.5
+   181: 1000089c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   182: 100008a0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   183: 100008b5    20 FUNC    LOCAL  DEFAULT    1 mskd_val.constprop.6
+   184: 100008c4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   185: 100008c8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   186: 100008e9    16 FUNC    LOCAL  DEFAULT    1 bits_val.constprop.7
+   187: 100008f4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   188: 100008f8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   189: 1000091c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   190: 10000920     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   191: 1000092c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   192: 10000930     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   193: 10000978     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   194: 1000097c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   195: 1000098c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   196: 10000990     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   197: 100009a8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   198: 100009ac     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   199: 100009c4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   200: 100009c8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   201: 100009e0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   202: 100009e4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   203: 100009fc     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   204: 10000a00     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   205: 10000a14     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   206: 10000a18     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   207: 10000a2c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   208: 10000a30     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   209: 10000a50     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   210: 10000a54     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   211: 10000a74     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   212: 10000a78     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   213: 10000a94     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   214: 10000a98     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   215: 10000ab4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   216: 10000ab8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   217: 10000ad4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   218: 10000ad8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   219: 10000b04     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   220: 10000b0c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   221: 10000b38     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   222: 10000b40     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   223: 10000b60     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   224: 10000b64     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   225: 10000ba0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   226: 10000ba4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   227: 10000bac     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   228: 10000bb0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   229: 10000bd0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   230: 10000bd4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   231: 10000be0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   232: 10000be8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   233: 10000c08     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   234: 10000c0c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   235: 10000c2c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   236: 10000c30     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   237: 10000c54     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   238: 10000c58     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   239: 10000c80     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   240: 10000c84     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   241: 10000ca4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   242: 10000ca8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   243: 10000ce4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   244: 10000ce8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   245: 10000cfc     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   246: 10000d00     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   247: 10000d14     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   248: 10000d18     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   249: 10000d2c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   250: 10000d30     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   251: 10000d44     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   252: 10000d48     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   253: 10000d5c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   254: 10000d60     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   255: 10000d78     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   256: 10000d7c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   257: 10000da4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   258: 10000db0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   259: 10000dc4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   260: 10000dcc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   261: 10000e14     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   262: 10000e1c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   263: 10000e34     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   264: 10000e38     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   265: 10000e50     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   266: 10000e54     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   267: 10000e6c     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   268: 10000e70     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   269: 10000e84     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   270: 10000e88     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   271: 10000e98     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   272: 10000e9c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   273: 10000eb4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   274: 10000eb8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   275: 10000ed0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   276: 10000ed4     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   277: 100012d0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   278: 10001468     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   279: 100014f4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   280: 10001644     0 NOTYPE  LOCAL  DEFAULT    3 $d
+   281: 00000000     0 FILE    LOCAL  DEFAULT  ABS main.c
+   282: 1000152c     0 NOTYPE  LOCAL  DEFAULT    1 $t
+   283: 10001574     0 NOTYPE  LOCAL  DEFAULT    1 $d
+   284: 1000160c     0 NOTYPE  LOCAL  DEFAULT    2 $t
+   285: 10001634     0 NOTYPE  LOCAL  DEFAULT    2 $d
+   286: 100000e5    16 FUNC    GLOBAL DEFAULT    1 clr_singl_bits_method
+   287: 10000e39    28 FUNC    GLOBAL DEFAULT    1 call_shifted_var_ref
+   288: 10001581     2 FUNC    GLOBAL DEFAULT    1 SVCall_Handler
+   289: 100007d1    52 FUNC    GLOBAL DEFAULT    1 copy_mskd_geq
+   290: 100008a1    12 FUNC    GLOBAL DEFAULT    1 call_pos_val
+   291: 100006b1    28 FUNC    GLOBAL DEFAULT    1 copy_bits_equ
+   292: 10000b41     4 FUNC    GLOBAL DEFAULT    1 return_bits
+   293: 100015ad     2 FUNC    GLOBAL DEFAULT    1 CMP_IRQHandler
+   294: 10000d7d    52 FUNC    GLOBAL DEFAULT    1 mskd_extract_geq
+   295: 100015dd     2 FUNC    GLOBAL DEFAULT    1 PININT7_IRQHandler
+   296: 10000ba5    12 FUNC    GLOBAL DEFAULT    1 return_reg
+   297: 10000165    16 FUNC    GLOBAL DEFAULT    1 flp_singl_bits_operator
+   298: 100009f1    16 FUNC    GLOBAL DEFAULT    1 call_periph_bits
+   299: 10000921    16 FUNC    GLOBAL DEFAULT    1 bits_ref
+   300: 100019f4     0 NOTYPE  GLOBAL DEFAULT    5 BSS_END
+   301: 1000157d     2 FUNC    GLOBAL DEFAULT    1 HardFault_Handler
+   302: 10000b45    32 FUNC    GLOBAL DEFAULT    1 call_return_bits
+   303: 10000209    28 FUNC    GLOBAL DEFAULT    1 ins_multi_mskd_method
+   304: 100015b9     2 FUNC    GLOBAL DEFAULT    1 WKT_IRQHandler
+   305: 10000105    16 FUNC    GLOBAL DEFAULT    1 set_singl_mskd_method
+   306: 100009ad    28 FUNC    GLOBAL DEFAULT    1 call_mskd_ref_var
+   307: 100015c9     2 FUNC    GLOBAL DEFAULT    1 PININT2_IRQHandler
+   308: 10000e1d    28 FUNC    GLOBAL DEFAULT    1 call_shifted_const_ref
+   309: 10001589     2 FUNC    GLOBAL DEFAULT    1 SysTick_Handler
+   310: 1000165c     0 NOTYPE  GLOBAL DEFAULT    4 BSS_START
+   311: 1000097d    20 FUNC    GLOBAL DEFAULT    1 mskd_ref
+   312: 100015c5     2 FUNC    GLOBAL DEFAULT    1 PININT1_IRQHandler
+   313: 10000275    12 FUNC    GLOBAL DEFAULT    1 equ_mskd_bits_operator
+   314: 10001585     2 FUNC    GLOBAL DEFAULT    1 PendSV_Handler
+   315: 10001579     2 FUNC    GLOBAL DEFAULT    1 NMI_Handler
+   316: 100015a9     2 FUNC    GLOBAL DEFAULT    1 MRT_IRQHandler
+   317: 100000d5    16 FUNC    GLOBAL DEFAULT    1 clr_singl_bits_operator
+   318: 100006a5    12 FUNC    GLOBAL DEFAULT    1 assign_register_global
+   319: 10001599     2 FUNC    GLOBAL DEFAULT    1 UART1_IRQHandler
+   320: 10000dcd    14 FUNC    GLOBAL DEFAULT    1 call_shifted_const_val
+   321: 10000959    18 FUNC    GLOBAL DEFAULT    1 call_bits_ref_global
+   322: 10000115    16 FUNC    GLOBAL DEFAULT    1 clr_singl_mskd_operator
+   323: 100008f9     8 FUNC    GLOBAL DEFAULT    1 call_bits_val_const
+   324: 10000479    52 FUNC    GLOBAL DEFAULT    1 reg_mskd_lss
+   325: 100001cd    16 FUNC    GLOBAL DEFAULT    1 set_multi_bits_operator
+   326: 10000135    12 FUNC    GLOBAL DEFAULT    1 equ_singl_bits_operator
+   327: 100000f5    16 FUNC    GLOBAL DEFAULT    1 set_singl_mskd_operator
+   328: 10000715    44 FUNC    GLOBAL DEFAULT    1 copy_mskd_neq
+   329: 1000025d    12 FUNC    GLOBAL DEFAULT    1 equ_bits_mskd_operator
+   330: 10000185    16 FUNC    GLOBAL DEFAULT    1 flp_singl_mskd_operator
+   331: 100005a9    32 FUNC    GLOBAL DEFAULT    1 mskd_extract_ne
+   332: 00000020     0 NOTYPE  GLOBAL DEFAULT  ABS MINIMUM_STACK_SIZE
+   333: 10000a3d    24 FUNC    GLOBAL DEFAULT    1 call_periph_bits_ref
+   334: 10001595     2 FUNC    GLOBAL DEFAULT    1 UART0_IRQHandler
+   335: 10000159    12 FUNC    GLOBAL DEFAULT    1 equ_singl_mskd_method
+   336: 10000689    28 FUNC    GLOBAL DEFAULT    1 shifted_global
+   337: 10000231    12 FUNC    GLOBAL DEFAULT    1 equ_multi_bits_method
+   338: 10000d61    28 FUNC    GLOBAL DEFAULT    1 bits_extract_ne
+   339: 100005c9    52 FUNC    GLOBAL DEFAULT    1 mskd_extract_lss
+   340: 10000805    44 FUNC    GLOBAL DEFAULT    1 copy_shifted
+   341: 1000165c     4 OBJECT  GLOBAL DEFAULT    5 finish
+   342: 10000a89    16 FUNC    GLOBAL DEFAULT    1 call_periph_mskd
+   343: 10000ddd    14 FUNC    GLOBAL DEFAULT    1 call_shifted_var_val
+   344: 100003dd    28 FUNC    GLOBAL DEFAULT    1 cmp_neq_reg
+   345: 10000a19     8 FUNC    GLOBAL DEFAULT    1 reg_bits_val
+   346: 10000db1    28 FUNC    GLOBAL DEFAULT    1 shifted_val
+   347: 1000023d    16 FUNC    GLOBAL DEFAULT    1 equ_multi_mskd_operator
+   348: 10000cd1    24 FUNC    GLOBAL DEFAULT    1 check_array_range_pass
+   349: 10000931    18 FUNC    GLOBAL DEFAULT    1 call_bits_ref_const
+   350: 10000561    12 FUNC    GLOBAL DEFAULT    1 pos_cmp_ne
+   351: 10000ab9    10 FUNC    GLOBAL DEFAULT    1 reg_mskd_val
+   352: 100002d9    28 FUNC    GLOBAL DEFAULT    1 cmp_neq_zero
+   353: 100005fd    44 FUNC    GLOBAL DEFAULT    1 mskd_extract_leq
+   354: 10001591     2 FUNC    GLOBAL DEFAULT    1 SPI1_IRQHandler
+   355: 100008d5    12 FUNC    GLOBAL DEFAULT    1 call_mskd_val_var
+   356: 1000014d    12 FUNC    GLOBAL DEFAULT    1 equ_singl_mskd_operator
+   357: 10000a01     8 FUNC    GLOBAL DEFAULT    1 periph_bits_val
+   358: 10000a21    16 FUNC    GLOBAL DEFAULT    1 call_reg_bits_val
+   359: 10000911    16 FUNC    GLOBAL DEFAULT    1 bits_val
+   360: 10000000   156 OBJECT  GLOBAL DEFAULT    1 INTERRUPT_VECTORS
+   361: 100001dd    16 FUNC    GLOBAL DEFAULT    1 set_multi_bits_method
+   362: 100002f5    40 FUNC    GLOBAL DEFAULT    1 cmp_equ_bits
+   363: 10000b1d    36 FUNC    GLOBAL DEFAULT    1 call_reg_mskd_ref
+   364: 10000269    12 FUNC    GLOBAL DEFAULT    1 equ_bits_mskd_method
+   365: 10000659    16 FUNC    GLOBAL DEFAULT    1 set_bits_global
+   366: 10000c31    40 FUNC    GLOBAL DEFAULT    1 pos_ref
+   367: 100008c9    12 FUNC    GLOBAL DEFAULT    1 call_mskd_val_const
+   368: 100008ad     8 FUNC    GLOBAL DEFAULT    1 call_pos_val_global
+   369: 100004e5    48 FUNC    GLOBAL DEFAULT    1 reg_mskd_gtr
+   370: 100000a9    12 FUNC    GLOBAL DEFAULT    1 zero_array
+   371: 10000a55    10 FUNC    GLOBAL DEFAULT    1 reg_bits_ref
+   372: 10000945    18 FUNC    GLOBAL DEFAULT    1 call_bits_ref_var
+   373: 100008e1     8 FUNC    GLOBAL DEFAULT    1 call_mskd_val_global
+   374: 10001660   912 OBJECT  GLOBAL DEFAULT    5 results
+   375: 100015cd     2 FUNC    GLOBAL DEFAULT    1 PININT3_IRQHandler
+   376: 100009e5    10 FUNC    GLOBAL DEFAULT    1 periph_bits
+   377: 10000589    32 FUNC    GLOBAL DEFAULT    1 mskd_extract_eq
+   378: 1000009d    12 FUNC    GLOBAL DEFAULT    1 zero_reg
+   379: 100015bd     2 FUNC    GLOBAL DEFAULT    1 Reserved11_IRQHandler
+   380: 100019f4     0 NOTYPE  GLOBAL DEFAULT    5 end
+   381: 10000ce9    24 FUNC    GLOBAL DEFAULT    1 check_array_range_fail
+   382: 1000159d     2 FUNC    GLOBAL DEFAULT    1 UART2_IRQHandler
+   383: 10000a31    10 FUNC    GLOBAL DEFAULT    1 periph_bits_ref
+   384: 100015d5     2 FUNC    GLOBAL DEFAULT    1 PININT5_IRQHandler
+   385: 10000e71    24 FUNC    GLOBAL DEFAULT    1 copy_bits_val
+   386: 10002000     0 NOTYPE  GLOBAL DEFAULT    5 TOP_OF_STACK
+   387: 100004ad    56 FUNC    GLOBAL DEFAULT    1 reg_mskd_leq
+   388: 10000225    12 FUNC    GLOBAL DEFAULT    1 equ_multi_bits_operator
+   389: 10000d01    24 FUNC    GLOBAL DEFAULT    1 check_bits_range_pass
+   390: 10000c0d    36 FUNC    GLOBAL DEFAULT    1 pos_val
+   391: 10000d49    24 FUNC    GLOBAL DEFAULT    1 check_mskd_range_fail
+   392: 10000eb9    28 FUNC    GLOBAL DEFAULT    1 call_copy_bits_ref
+   393: 10000bd5    20 FUNC    GLOBAL DEFAULT    1 return_periph
+   394: 10000000     0 NOTYPE  GLOBAL DEFAULT    5 RAM_BASE_ADDR
+   395: 10000411    48 FUNC    GLOBAL DEFAULT    1 runtime_bits_array
+   396: 100001a5    20 FUNC    GLOBAL DEFAULT    1 ins_singl_mskd_operator
+   397: 100007a1    48 FUNC    GLOBAL DEFAULT    1 copy_mskd_gtr
+   398: 100006e9    44 FUNC    GLOBAL DEFAULT    1 copy_mskd_equ
+   399: 100015a1     2 FUNC    GLOBAL DEFAULT    1 Reserved1_IRQHandler
+   400: 10000741    52 FUNC    GLOBAL DEFAULT    1 copy_mskd_lss
+   401: 100000c5    16 FUNC    GLOBAL DEFAULT    1 set_singl_bits_method
+   402: 100015d1     2 FUNC    GLOBAL DEFAULT    1 PININT4_IRQHandler
+   403: 10000ad9    14 FUNC    GLOBAL DEFAULT    1 periph_mskd_ref
+   404: 1000096d    16 FUNC    GLOBAL DEFAULT    1 mskd_val
+   405: 100015c1     2 FUNC    GLOBAL DEFAULT    1 PININT0_IRQHandler
+   406: 10000381    52 FUNC    GLOBAL DEFAULT    1 cmp_neq_mskd
+   407: 100015e1    44 FUNC    GLOBAL DEFAULT    1 init
+   408: 100015b5     2 FUNC    GLOBAL DEFAULT    1 BOD_IRQHandler
+   409: 1000028d    16 FUNC    GLOBAL DEFAULT    1 equ_bits_var
+   410: 100015a5     2 FUNC    GLOBAL DEFAULT    1 SCT_IRQHandler
+   411: 10000ac5    20 FUNC    GLOBAL DEFAULT    1 call_reg_mskd_val
+   412: 00000000     0 NOTYPE  GLOBAL DEFAULT    5 FLASH_BASE_ADDR
+   413: 1000152d    20 FUNC    GLOBAL DEFAULT    1 memset
+   414: 1000160d    56 FUNC    GLOBAL DEFAULT    2 main
+   415: 1000024d    16 FUNC    GLOBAL DEFAULT    1 equ_multi_mskd_method
+   416: 10000be9    36 FUNC    GLOBAL DEFAULT    1 call_return_periph
+   417: 10000855     8 FUNC    GLOBAL DEFAULT    1 call_range_val_port
+   418: 100015b1     2 FUNC    GLOBAL DEFAULT    1 WDT_IRQHandler
+   419: 100003f9    24 FUNC    GLOBAL DEFAULT    1 constexpr_bits_array
+   420: 10000515    64 FUNC    GLOBAL DEFAULT    1 reg_mskd_geq
+   421: 10001541    56 FUNC    GLOBAL DEFAULT    1 do_test
+   422: 100006cd    28 FUNC    GLOBAL DEFAULT    1 copy_bits_neq
+   423: 10000775    44 FUNC    GLOBAL DEFAULT    1 copy_mskd_leq
+   424: 100002b1    40 FUNC    GLOBAL DEFAULT    1 cmp_equ_zero
+   425: 10000339    72 FUNC    GLOBAL DEFAULT    1 cmp_equ_mskd
+   426: 10000bb1    36 FUNC    GLOBAL DEFAULT    1 call_return_reg
+   427: 100009c9    28 FUNC    GLOBAL DEFAULT    1 call_mskd_ref_global
+   428: 10000ed5  1624 FUNC    GLOBAL DEFAULT    1 run
+   429: 10000875    20 FUNC    GLOBAL DEFAULT    1 call_pos_ref_global
+   430: 10000e89    20 FUNC    GLOBAL DEFAULT    1 call_copy_bits_val
+   431: 10000e55    28 FUNC    GLOBAL DEFAULT    1 call_shifted_global_ref
+   432: 10000b71    52 FUNC    GLOBAL DEFAULT    1 call_return_mskd
+   433: 10000ae9    36 FUNC    GLOBAL DEFAULT    1 call_periph_mskd_ref
+   434: 10000d19    24 FUNC    GLOBAL DEFAULT    1 check_bits_range_fail
+   435: 10000991    28 FUNC    GLOBAL DEFAULT    1 call_mskd_ref_const
+   436: 10000c59    28 FUNC    GLOBAL DEFAULT    1 call_pos_ref
+   437: 1000056d    28 FUNC    GLOBAL DEFAULT    1 bits_extract_eq
+   438: 10000441    28 FUNC    GLOBAL DEFAULT    1 prescaler_low
+   439: 10000aa5    20 FUNC    GLOBAL DEFAULT    1 call_periph_mskd_val
+   440: 100015d9     2 FUNC    GLOBAL DEFAULT    1 PININT6_IRQHandler
+   441: 1000158d     2 FUNC    GLOBAL DEFAULT    1 SPI0_IRQHandler
+   442: 1000029d    20 FUNC    GLOBAL DEFAULT    1 equ_mskd_var
+   443: 10000125    16 FUNC    GLOBAL DEFAULT    1 clr_singl_mskd_method
+   444: 1000067d    12 FUNC    GLOBAL DEFAULT    1 assign_array_global
+   445: 10000ca9    26 FUNC    GLOBAL DEFAULT    1 call_range_ref
+   446: 10000195    16 FUNC    GLOBAL DEFAULT    1 flp_singl_mskd_method
+   447: 10000d31    24 FUNC    GLOBAL DEFAULT    1 check_mskd_range_pass
+   448: 100003b5    40 FUNC    GLOBAL DEFAULT    1 cmp_equ_reg
+   449: 10000669    20 FUNC    GLOBAL DEFAULT    1 ins_mskd_global
+   450: 10000175    16 FUNC    GLOBAL DEFAULT    1 flp_singl_bits_method
+   451: 10000ded    14 FUNC    GLOBAL DEFAULT    1 call_shifted_global_val
+   452: 10000c75    16 FUNC    GLOBAL DEFAULT    1 runtime_range_val
+   453: 10000281    12 FUNC    GLOBAL DEFAULT    1 equ_mskd_bits_method
+   454: 100019f0     4 OBJECT  GLOBAL DEFAULT    5 start
+   455: 10000629    48 FUNC    GLOBAL DEFAULT    1 mskd_extract_gtr
+   456: 10000901     8 FUNC    GLOBAL DEFAULT    1 call_bits_val_var
+   457: 10000b0d    14 FUNC    GLOBAL DEFAULT    1 reg_mskd_ref
+   458: 10000b65    10 FUNC    GLOBAL DEFAULT    1 return_mskd
+   459: 10000c95    20 FUNC    GLOBAL DEFAULT    1 runtime_range_ref
+   460: 10000a99    10 FUNC    GLOBAL DEFAULT    1 periph_mskd_val
+   461: 10000c85    16 FUNC    GLOBAL DEFAULT    1 call_range_val
+   462: 10000a79    14 FUNC    GLOBAL DEFAULT    1 periph_mskd
+   463: 1000031d    28 FUNC    GLOBAL DEFAULT    1 cmp_neq_bits
+   464: 100001b9    20 FUNC    GLOBAL DEFAULT    1 ins_singl_mskd_method
+   465: 10000a09    16 FUNC    GLOBAL DEFAULT    1 call_periph_bits_val
+   466: 10000555    12 FUNC    GLOBAL DEFAULT    1 pos_cmp_eq
+   467: 100001ed    28 FUNC    GLOBAL DEFAULT    1 ins_multi_mskd_operator
+   468: 10000cc5    10 FUNC    GLOBAL DEFAULT    1 call_range_ref_port
+   469: 10000909     8 FUNC    GLOBAL DEFAULT    1 call_bits_val_global
+   470: 10000dfd    32 FUNC    GLOBAL DEFAULT    1 shifted_ref
+   471: 100000b5    16 FUNC    GLOBAL DEFAULT    1 set_singl_bits_operator
+   472: 10000141    12 FUNC    GLOBAL DEFAULT    1 equ_singl_bits_method
+   473: 10000a61    24 FUNC    GLOBAL DEFAULT    1 call_reg_bits_ref
+   474: 10000e9d    28 FUNC    GLOBAL DEFAULT    1 copy_bits_ref
+   475: 1000045d    28 FUNC    GLOBAL DEFAULT    1 prescaler_high
 
 No version information found in this file.
 Attribute Section: aeabi

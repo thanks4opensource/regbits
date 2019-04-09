@@ -66,6 +66,15 @@ enum TIMER_CONTROL {
     DIRECTION,
 };
 
+enum TIMER_PRESCALE {
+    PRESCALER_LOW,
+    PRESCALER_HIGH,
+};
+
+enum AUTORELOAD {
+    AUTORELOAD,
+};
+
 enum TIMER_INTERRUPTS_STATUS {
     TIMEOUT,
     UNDERFLOW,
@@ -194,15 +203,17 @@ typedef struct timer {
         };
     } control;
 
-    union PRESCALE_T {
+    union TIMER_PRESCALE_T {
         volatile uint32_t   word;
         volatile struct {
-            unsigned                    : 24,
-                        prescaler       :  8;
+            unsigned    prescaler_low   :  7,
+                                        : 18,
+                        prescaler_high  :  5,
+                                        :  2;
         };
     } prescale;
 
-    union AUTORELOAD_T {
+    union TIMER_AUTORELOAD_T {
         volatile uint32_t   word;
         volatile struct {
             unsigned    autoreload  : 24,
@@ -230,7 +241,7 @@ typedef struct timer {
         };
     } status;
 
-    union COUNTER_T {
+    union TIMER_COUNTER_T {
         volatile uint32_t   word;
         volatile struct {
             unsigned                    :  8,
@@ -253,7 +264,7 @@ typedef struct serial {
         };
     } control;
 
-    union CONFIG_T {
+    union SERIAL_CONFIG_T {
         volatile uint32_t   word;
         volatile struct {
             unsigned    mode            :  1,
@@ -311,13 +322,13 @@ _Static_assert(sizeof(serial_t) == 24, "sizeof(serial_t) != 24");
 
 
 
-#ifndef PERIPH_BASE
-#error Must define PERIPH_BASE via -DPERIPH_BASE=xxxx on commandline
+#ifndef REGBITS_PERIPH_BASE
+#error Must define REGBITS_PERIPH_BASE via -DPERIPH_BASE=xxxx on commandline
 #endif
 
-#define GPIO_BASE       ((PERIPH_BASE) + 0x00000000)
-#define TIMER_BASE      ((PERIPH_BASE) + 0x00000200)
-#define SERIAL_BASE     ((PERIPH_BASE) + 0x00000280)
+#define GPIO_BASE       ((REGBITS_PERIPH_BASE) + 0x00000000)
+#define TIMER_BASE      ((REGBITS_PERIPH_BASE) + 0x00000200)
+#define SERIAL_BASE     ((REGBITS_PERIPH_BASE) + 0x00000280)
 
 #define GPIO0_BASE      ((GPIO_BASE)   + 0x00000000)
 #define GPIO1_BASE      ((GPIO_BASE)   + 0x00000100)
@@ -388,7 +399,8 @@ static serial_t* const  SERIAL2 = (serial_t*)(SERIAL2_BASE);
 #define TIMER_CONTROL_CLOCK_SOURCE_CESIUM   0x5
 #define TIMER_CONTROL_DIRECTION             1
 
-#define TIMER_MAX_PRESCALER_VAL             0xff
+#define TIMER_MAX_PRESCALER_LOW_VAL         0x7f
+#define TIMER_MAX_PRESCALER_HIG_VAL         0x1f
 
 #define TIMER_MAX_AUTORELOAD_VAL            0x00ffffff
 

@@ -83,7 +83,7 @@ CXXOPTS =  -Wall		\
 	  $(INCLUDES)		\
 	  $(EXTRA_CXX)		\
 	  $(ARM_OPTS)		\
-	  -DPERIPH_BASE=$(PERIPH_BASE)
+	  -DREGBITS_PERIPH_BASE=$(PERIPH_BASE)
 
 %.o: %.cxx
 	@- if $(CXX) -c $(CXXOPTS) $< -o $@			\

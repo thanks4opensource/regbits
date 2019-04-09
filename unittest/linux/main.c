@@ -29,29 +29,30 @@
 extern void run();
 
 
-#define NUM_REGS_DEFINE      4
-#define NUM_TESTS_DEFINE    46
+#define NUM_TESTS_DEFINE    114
 
-static const unsigned   NUM_REGS  = NUM_REGS_DEFINE ,
-                        NUM_TESTS = NUM_TESTS_DEFINE,
+static const unsigned   NUM_TESTS = NUM_TESTS_DEFINE,
                         REPEATS   = 100000          ;
 
-uint32_t    registers[NUM_TESTS_DEFINE][NUM_REGS_DEFINE];
+uint32_t    results[NUM_TESTS_DEFINE * 2];
 
 
 
-void unittest_record_registers(
-unsigned    test_num ,
-uint32_t    register1,
-uint32_t    register2,
-uint8_t     byte     ,
-uint32_t    register3)
+
+void do_test(
+void                        (*test)(),
+volatile uint32_t* const      regster,
+const    uint32_t             testnum)
 {
-    registers[test_num][0] = register1;
-    registers[test_num][1] = register2;
-    registers[test_num][2] = byte     ;
-    registers[test_num][3] = register3;
+    *regster = 0x00000000;
+    test();
+    results[testnum * 2] = *regster;
+
+    *regster = 0xffffffff;
+    test();
+    results[testnum * 2 + 1] = *regster;
 }
+
 
 
 

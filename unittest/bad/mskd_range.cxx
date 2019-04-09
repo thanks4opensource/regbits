@@ -10,7 +10,7 @@
 //
 // The regbits program is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
 //
 // You should have received a copy of the GNU General Public
@@ -26,8 +26,8 @@ using namespace mcu;
 void mskd_range()
 {
 #ifdef GOOD
-    serial2->config <<= Serial::Config::RXPORT<31>();
+    timer1->prescale /= Timer::Prescale::PRESCALER_HIGH<13>();
 #else
-    serial2->config <<= Serial::Config::RXPORT<32>();
+    timer1->prescale /= Timer::Control::CLOCK_SOURCE_PLL;
 #endif
 }

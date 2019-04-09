@@ -10,7 +10,7 @@
 //
 // The regbits program is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.      See the GNU
 // General Public License for more details.
 //
 // You should have received a copy of the GNU General Public
@@ -28,6 +28,6 @@ void mskd_or_mskd_diff()
 #ifdef GOOD
     Serial::Config::DATALEN_16_BITS | Serial::Config::PARITY_EVEN;
 #else
-    Timer::Control::CLOCK_SOURCE_PLL | Timer::Prescale::PRESCALER<1>();
+    Timer::Control::CLOCK_SOURCE_PLL | Timer::Prescale::PRESCALER_HIGH<1>();
 #endif
 }

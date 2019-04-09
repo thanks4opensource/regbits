@@ -21,7 +21,8 @@
 CXX_STANDARD ?= c++11
 OPTIMIZE     ?= -O1
 DEBUG        ?= -g3
-EXTRA_CCC    ?=
+GCC_ARM_BUG  ?= -DGCC_ARM_BUG
+EXTRA_CC     ?=
 EXTRA_CXX    ?=
 PERIPH_BASE  ?= 0x700000
 BRK	     ?= 0x800000
@@ -30,19 +31,21 @@ BRK_MALLOC   ?= -DUSE_BRK
 C_ELFS   = $(subst ../,,$(wildcard ../*.c))
 CXX_ELFS = $(subst ../,,$(wildcard ../*.cxx))
 ELFS     = $(subst .c,.elf,$(C_ELFS)) $(subst .cxx,.elf,$(CXX_ELFS))
-DMPS     = $(subst .elf,.elf.dmp,$(ELFS))
+DMPS     = $(subst .elf,.elf.dmp,$(ELFS)) $(subst .elf,.o.dmp,$(ELFS))
 OUTS     = $(subst .elf,.out,$(ELFS))
 
-unittest: main.o $(ELFS) $(DMPS) $(OUTS)
-	@ ../unittest.py ../regbits.cxx *.out
+unittest: main.o ../do_tests.inl $(ELFS) $(DMPS) $(OUTS)
+	@ ../unittest.py intel '$(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../do_tests.inl *.out *.o.dmp
 
 # manual check that all tests change at least one tracked register
 uniq: regbits.out
 	uniq -f 1 --group regbits.out
 
-.PHONY: clean
-clean:
-	rm -f *.o *.elf *.dmp *.out
+.PHONY: clean cleanbin
+clean: cleanbin
+	rm -f *.dmp *.out
+cleanbin:
+	rm -f *.o *.elf
 
 
 .PRECIOUS: %.o %.elf
@@ -58,15 +61,16 @@ CCOPTS =  -Wall				\
 	  $(EXTRA_CC)			\
 	  -DBRK=$(BRK)			\
 	   $(BRK_MALLOC)		\
-	  -DPERIPH_BASE=$(PERIPH_BASE)
+	  -DREGBITS_PERIPH_BASE=$(PERIPH_BASE)
 
 CXXOPTS = -Wall				\
 	  -std=$(CXX_STANDARD)		\
 	  $(OPTIMIZE)			\
 	  $(DEBUG)			\
 	  $(INCLUDES)			\
+	  $(GCC_ARM_BUG)		\
 	  $(EXTRA_CXX)			\
-	  -DPERIPH_BASE=$(PERIPH_BASE)
+	  -DREGBITS_PERIPH_BASE=$(PERIPH_BASE)
 
 
 

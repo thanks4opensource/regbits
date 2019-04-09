@@ -20,7 +20,7 @@
 
 set height 0
 set logging on
-printf "size:    %d\n", &main - &zero
+printf "size:    %d\n", &main - &zero_reg
 printf "repeats: %d\n", REPEATS
 
 set logging off
@@ -37,14 +37,12 @@ printf "time:    %d.%09d\n", \
        finish.tv_nsec - start.tv_nsec
 
 set var $ndx = 0
-while $ndx < NUM_TESTS
-    printf "%-2d  %08x  %08x  %02x  %08x\n", \
-           $ndx, \
-           registers[$ndx][0], \
-           registers[$ndx][1], \
-           registers[$ndx][2], \
-           registers[$ndx][3]
-    set var $ndx = $ndx + 1
+while $ndx < NUM_TESTS * 2
+    printf "%-2d  %08x %08x\n", \
+           $ndx / 2, \
+           results[$ndx    ], \
+           results[$ndx + 1]
+    set var $ndx = $ndx + 2
 end
 
 set logging off
