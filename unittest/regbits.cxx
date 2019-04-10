@@ -919,7 +919,7 @@ __attribute__((noinline)) void prescaler_low()
     timer1->prescale = Timer::Prescale::PRESCALER_LOW<119>();
 
       gpio1->words.WORDS<3>()
-    = timer1->prescale.shifted(Timer::Prescale::PRESCALER_LOW_SHFT);
+    = timer1->prescale >> Timer::Prescale::PRESCALER_LOW_SHFT;
 }
 
 
@@ -929,7 +929,7 @@ __attribute__((noinline)) void prescaler_high()
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<29>();
 
       gpio1->words.WORDS<3>()
-    = timer1->prescale.shifted(Timer::Prescale::PRESCALER_HIGH_SHFT);
+    = timer1->prescale >> Timer::Prescale::PRESCALER_HIGH_SHFT;
 }
 
 

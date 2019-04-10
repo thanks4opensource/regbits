@@ -20,7 +20,7 @@
 
 set height 0
 set logging on
-printf "size:    %d\n", &main - &zero_reg
+printf "size:    %d\n", &do_test - &zero_reg
 printf "repeats: %d\n", REPEATS
 
 set logging off

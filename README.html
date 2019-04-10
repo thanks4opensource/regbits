@@ -313,7 +313,8 @@ These peripherals typically contain multiple <em>registers</em>: Sets of memory 
 
     Copy&lt;uint32_t, Usart::Rxdata&gt; copy(usart3-&gt;rxdata);
     if (copy == Usart::Rxdata::STATUS_DATA_RCVD)
-        return copy.shifted(Usart::Rxdata::DATA_SHIFTED);  // 0..255
+        return copy &gt;&gt; Usart::Rxdata::DATA_SHIFTED;  // 0..255
+         // or copy.shifted(Usart::Rxdata::DATA_SHIFTED);
 </code></pre>
 
 <h2>How is regbits implemented? <a name="how_is_regbits_implemented?"></a></h2>
@@ -1903,7 +1904,7 @@ Client code uses this to instantiate desired constant objects as follows:</p>
 <pre><code>          26        24 *      24 *      26      check_array_range_pass
 </code></pre>
 
-<p><em>regbits has <code>nop</code> for function address alignment</em></p>
+<p><em>regbits has</em> <code>nop</code> <em>for function address alignment</em></p>
 
 <pre><code>          44        40 *      48        56      runtime_bits_array
 </code></pre>

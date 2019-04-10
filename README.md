@@ -309,7 +309,8 @@ Regbits canonically works with multiple bit spans in their hardware-defined posi
                 
         Copy<uint32_t, Usart::Rxdata> copy(usart3->rxdata);
         if (copy == Usart::Rxdata::STATUS_DATA_RCVD)
-            return copy.shifted(Usart::Rxdata::DATA_SHIFTED);  // 0..255
+            return copy >> Usart::Rxdata::DATA_SHIFTED;  // 0..255
+             // or copy.shifted(Usart::Rxdata::DATA_SHIFTED);
 
 
 
@@ -1788,7 +1789,7 @@ Cases where regbits was larger/slower than the C structs or raw C pointers/offse
 
               26        24 *      24 *      26      check_array_range_pass
 
-*regbits has `nop` for function address alignment*
+*regbits has* `nop` *for function address alignment*
 
               44        40 *      48        56      runtime_bits_array
 

@@ -736,7 +736,15 @@ template<typename WORD,  typename CLSS> class Reg {
     }
 
 
-    // extractor
+    // extractors
+    //
+    WORD operator>>(
+    const Shft<WORD, CLSS>  shft)
+    volatile
+    {
+        return (_word & shft._mask) >> shft._pos._pos;
+    }
+
     WORD shifted(
     const Shft<WORD, CLSS>  shft)
     volatile
@@ -859,7 +867,14 @@ template<typename WORD,  typename CLSS> class Copy {
     WORD word() { return _word; }
 
 
-    // extractor
+    // extractors
+    //
+    WORD operator>>(
+    const Shft<WORD, CLSS>  shft)
+    {
+        return (_word & shft._mask) >> shft._pos._pos;
+    }
+
     WORD shifted(
     const Shft<WORD, CLSS>  shft)
     {
