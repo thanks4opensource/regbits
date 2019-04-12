@@ -773,14 +773,14 @@ template<typename WORD,  typename CLSS> class Reg {
     const Bits<WORD, CLSS>  bits)
     volatile
     {
-        return _word & bits._bits;
+        return (_word & bits._bits) == bits._bits;
     }
 
     bool operator!=(
     const Bits<WORD, CLSS>  bits)
     volatile
     {
-        return !(_word & bits._bits);
+        return (_word & bits._bits) !=  bits._bits;
     }
 
     bool operator==(
@@ -902,14 +902,14 @@ template<typename WORD,  typename CLSS> class Copy {
     const Bits<WORD, CLSS>  bits)
     const
     {
-        return _word & bits._bits;
+        return (_word & bits._bits) == bits._bits;
     }
 
     bool operator!=(
     const Bits<WORD, CLSS>  bits)
     const
     {
-        return !(_word & bits._bits);
+        return (_word & bits._bits) != bits._bits;
     }
 
     bool operator==(

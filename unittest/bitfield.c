@@ -370,6 +370,42 @@ __attribute__((noinline)) void cmp_neq_bits()
 
 
 
+__attribute__((noinline)) void cmp_equ_multi_bits()
+{
+    SERIAL2->config.word     = 0;
+    SERIAL2->config.endian   = 1;
+    SERIAL2->config.polarity = 1;
+
+    if (SERIAL2->config.endian && SERIAL2->config.polarity) {
+        TIMER1->prescale.word           =  0;
+        TIMER1->prescale.prescaler_high = 17;
+    }
+    else {
+        TIMER1->prescale.word           =  0;
+        TIMER1->prescale.prescaler_high = 23;
+    }
+}
+
+
+
+__attribute__((noinline)) void cmp_neq_multi_bits()
+{
+    SERIAL2->config.word     = 0;
+    SERIAL2->config.endian   = 1;
+    SERIAL2->config.polarity = 1;
+
+    if (!SERIAL2->config.endian && !SERIAL2->config.polarity) {
+        TIMER1->prescale.word           =  0;
+        TIMER1->prescale.prescaler_high = 29;
+    }
+    else {
+        TIMER1->prescale.word           =  0;
+        TIMER1->prescale.prescaler_high = 31;
+    }
+}
+
+
+
 __attribute__((noinline)) void cmp_equ_mskd()
 {
     SERIAL2->config.word   =  0;

@@ -326,7 +326,7 @@ Include the regbits.hxx templates:
 
         #include <regbits.hxx>
 
-Typically MCU regbits definition should go in their own namespace -- a manufacturer or chip name such as `stm32f767xx` or `lpc824` would replace the example's generic "mcu" namespace name:
+Typically, MCU regbits definitions should go in their own namespace -- a manufacturer or chip name such as `stm32f767xx` or `lpc824` would replace the example's generic "mcu" namespace name:
 
         namespace mcu {
 
@@ -459,7 +459,7 @@ source (.c) file:
 
         *(int*)(0x400080a2) = 0xc0;
 
-This is sadomasochism -- sadism inflicted on anyone else who has to work with the code, and masochism on the part of the original developer who needs to maintain or debug it in the future.
+This is sadomasochism: Sadism inflicted on anyone else who has to work with the code, and masochism on the part of the original developer who needs to maintain or debug it in the future.
 
 ##### pros:
 * no definition file needed
@@ -1687,10 +1687,12 @@ To understand the exact differences, the individual `*.elf.dmp` files should be 
               16 *      16 *      16 *      28      clr_singl_mskd_operator
               36 *      36 *      36 *      44      cmp_equ_bits
               48 *      48 *      48 *      52      cmp_equ_mskd
+              36 *      36 *      36 *      76      cmp_equ_multi_bits
               36 *      36 *      36 *     120      cmp_equ_reg
               40 *      40 *      40 *      48      cmp_equ_zero
               24 *      24 *      24 *      52      cmp_neq_bits
               44 *      44 *      44 *      52      cmp_neq_mskd
+              36 *      36 *      36 *      76      cmp_neq_multi_bits
               24 *      24 *      24 *     112      cmp_neq_reg
               28 *      28 *      28 *      36      cmp_neq_zero
               20 *      20 *      24        32      constexpr_bits_array
@@ -1760,7 +1762,7 @@ To understand the exact differences, the individual `*.elf.dmp` files should be 
               12 *      12 *      12 *      12 *    return_mskd
               12 *      12 *      20        24      return_periph
               20        20        12 *      28      return_reg
-            1232      1176 *    1176 *    1176 *    run
+            1252      1196 *    1196 *    1196 *    run
               44 *      44 *      48        60      runtime_bits_array
               20 *      28        28        20 *    runtime_range_ref
               20        20        20        16 *    runtime_range_val

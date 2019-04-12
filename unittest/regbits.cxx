@@ -361,6 +361,30 @@ __attribute__((noinline)) void cmp_neq_bits()
 
 
 
+__attribute__((noinline)) void cmp_equ_multi_bits()
+{
+    serial2->config = Serial::Config::ENDIAN | Serial::Config::POLARITY;
+
+    if (serial2->config == (Serial::Config::ENDIAN | Serial::Config::POLARITY))
+        timer1->prescale = Timer::Prescale::PRESCALER_HIGH<17>();
+    else
+        timer1->prescale = Timer::Prescale::PRESCALER_HIGH<23>();
+}
+
+
+
+__attribute__((noinline)) void cmp_neq_multi_bits()
+{
+    serial2->config = Serial::Config::ENDIAN | Serial::Config::POLARITY;
+
+    if (serial2->config != (Serial::Config::ENDIAN | Serial::Config::POLARITY))
+        timer1->prescale = Timer::Prescale::PRESCALER_HIGH<29>();
+    else
+        timer1->prescale = Timer::Prescale::PRESCALER_HIGH<31>();
+}
+
+
+
 __attribute__((noinline)) void cmp_equ_mskd()
 {
     serial2->config = Serial::Config::TXPORT<29>();

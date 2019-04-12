@@ -27,7 +27,7 @@
 extern void run();
 
 
-#define NUM_TESTS_DEFINE    114
+#define NUM_TESTS_DEFINE    116
 
 static const unsigned   NUM_TESTS __attribute__((unused)) = NUM_TESTS_DEFINE,
                         REPEATS                           = 1               ;

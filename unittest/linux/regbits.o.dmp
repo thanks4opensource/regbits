@@ -324,286 +324,286 @@ Disassembly of section .text:
      427:	40 00 00 00 
      42b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
      432:	a8 40                	test   $0x40,%al
-     434:	74 12                	je     448 <cmp_neq_bits()+0x28>
-     436:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-     43d:	20 00 00 00 
+     434:	75 12                	jne    448 <cmp_neq_bits()+0x28>
+     436:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     43d:	02 00 00 00 
      441:	c3                   	retq   
      442:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     448:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     44f:	02 00 00 00 
+     448:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+     44f:	20 00 00 00 
      453:	c3                   	retq   
      454:	66 90                	xchg   %ax,%ax
      456:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      45d:	00 00 00 
 
-0000000000000460 <cmp_equ_mskd()>:
-     460:	c7 04 25 c4 02 70 00 	movl   $0x1d000,0x7002c4
-     467:	00 d0 01 00 
+0000000000000460 <cmp_equ_multi_bits()>:
+     460:	c7 04 25 c4 02 70 00 	movl   $0x60,0x7002c4
+     467:	60 00 00 00 
      46b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     472:	25 00 f0 01 00       	and    $0x1f000,%eax
-     477:	3d 00 10 01 00       	cmp    $0x11000,%eax
-     47c:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     483:	74 1b                	je     4a0 <cmp_equ_mskd()+0x40>
-     485:	25 ff ff ff c1       	and    $0xc1ffffff,%eax
-     48a:	0d 00 00 00 22       	or     $0x22000000,%eax
-     48f:	89 04 25 24 02 70 00 	mov    %eax,0x700224
-     496:	c3                   	retq   
-     497:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     49e:	00 00 
-     4a0:	25 ff ff ff c1       	and    $0xc1ffffff,%eax
-     4a5:	0d 00 00 00 0e       	or     $0xe000000,%eax
-     4aa:	89 04 25 24 02 70 00 	mov    %eax,0x700224
-     4b1:	c3                   	retq   
-     4b2:	0f 1f 40 00          	nopl   0x0(%rax)
-     4b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     4bd:	00 00 00 
+     472:	83 e0 60             	and    $0x60,%eax
+     475:	83 f8 60             	cmp    $0x60,%eax
+     478:	74 16                	je     490 <cmp_equ_multi_bits()+0x30>
+     47a:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+     481:	00 00 00 2e 
+     485:	c3                   	retq   
+     486:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     48d:	00 00 00 
+     490:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
+     497:	00 00 00 22 
+     49b:	c3                   	retq   
+     49c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-00000000000004c0 <cmp_neq_mskd()>:
-     4c0:	c7 04 25 c4 02 70 00 	movl   $0x1d000,0x7002c4
-     4c7:	00 d0 01 00 
-     4cb:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     4d2:	25 00 f0 01 00       	and    $0x1f000,%eax
-     4d7:	3d 00 10 01 00       	cmp    $0x11000,%eax
-     4dc:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     4e3:	74 13                	je     4f8 <cmp_neq_mskd()+0x38>
-     4e5:	83 e0 f9             	and    $0xfffffff9,%eax
-     4e8:	83 c8 04             	or     $0x4,%eax
-     4eb:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     4f2:	c3                   	retq   
-     4f3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-     4f8:	83 c8 40             	or     $0x40,%eax
-     4fb:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     502:	c3                   	retq   
-     503:	0f 1f 00             	nopl   (%rax)
-     506:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     50d:	00 00 00 
+00000000000004a0 <cmp_neq_multi_bits()>:
+     4a0:	c7 04 25 c4 02 70 00 	movl   $0x60,0x7002c4
+     4a7:	60 00 00 00 
+     4ab:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     4b2:	83 e0 60             	and    $0x60,%eax
+     4b5:	83 f8 60             	cmp    $0x60,%eax
+     4b8:	74 16                	je     4d0 <cmp_neq_multi_bits()+0x30>
+     4ba:	c7 04 25 24 02 70 00 	movl   $0x3a000000,0x700224
+     4c1:	00 00 00 3a 
+     4c5:	c3                   	retq   
+     4c6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     4cd:	00 00 00 
+     4d0:	c7 04 25 24 02 70 00 	movl   $0x3e000000,0x700224
+     4d7:	00 00 00 3e 
+     4db:	c3                   	retq   
+     4dc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000510 <cmp_equ_reg()>:
-     510:	c7 04 25 c4 02 70 00 	movl   $0x22,0x7002c4
-     517:	22 00 00 00 
-     51b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     522:	83 f8 22             	cmp    $0x22,%eax
-     525:	74 11                	je     538 <cmp_equ_reg()+0x28>
-     527:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-     52e:	00 00 00 2e 
-     532:	c3                   	retq   
-     533:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-     538:	c7 04 25 24 02 70 00 	movl   $0x2a000000,0x700224
-     53f:	00 00 00 2a 
-     543:	c3                   	retq   
-     544:	66 90                	xchg   %ax,%ax
-     546:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     54d:	00 00 00 
+00000000000004e0 <cmp_equ_mskd()>:
+     4e0:	c7 04 25 c4 02 70 00 	movl   $0x1d000,0x7002c4
+     4e7:	00 d0 01 00 
+     4eb:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     4f2:	25 00 f0 01 00       	and    $0x1f000,%eax
+     4f7:	3d 00 10 01 00       	cmp    $0x11000,%eax
+     4fc:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     503:	74 1b                	je     520 <cmp_equ_mskd()+0x40>
+     505:	25 ff ff ff c1       	and    $0xc1ffffff,%eax
+     50a:	0d 00 00 00 22       	or     $0x22000000,%eax
+     50f:	89 04 25 24 02 70 00 	mov    %eax,0x700224
+     516:	c3                   	retq   
+     517:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     51e:	00 00 
+     520:	25 ff ff ff c1       	and    $0xc1ffffff,%eax
+     525:	0d 00 00 00 0e       	or     $0xe000000,%eax
+     52a:	89 04 25 24 02 70 00 	mov    %eax,0x700224
+     531:	c3                   	retq   
+     532:	0f 1f 40 00          	nopl   0x0(%rax)
+     536:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     53d:	00 00 00 
 
-0000000000000550 <cmp_neq_reg()>:
-     550:	c7 04 25 c4 02 70 00 	movl   $0x22,0x7002c4
-     557:	22 00 00 00 
-     55b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     562:	83 f8 22             	cmp    $0x22,%eax
-     565:	74 11                	je     578 <cmp_neq_reg()+0x28>
-     567:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     56e:	02 00 00 00 
+0000000000000540 <cmp_neq_mskd()>:
+     540:	c7 04 25 c4 02 70 00 	movl   $0x1d000,0x7002c4
+     547:	00 d0 01 00 
+     54b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     552:	25 00 f0 01 00       	and    $0x1f000,%eax
+     557:	3d 00 10 01 00       	cmp    $0x11000,%eax
+     55c:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     563:	74 13                	je     578 <cmp_neq_mskd()+0x38>
+     565:	83 e0 f9             	and    $0xfffffff9,%eax
+     568:	83 c8 04             	or     $0x4,%eax
+     56b:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
      572:	c3                   	retq   
      573:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-     578:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-     57f:	20 00 00 00 
-     583:	c3                   	retq   
-     584:	66 90                	xchg   %ax,%ax
+     578:	83 c8 40             	or     $0x40,%eax
+     57b:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     582:	c3                   	retq   
+     583:	0f 1f 00             	nopl   (%rax)
      586:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      58d:	00 00 00 
 
-0000000000000590 <constexpr_bits_array()>:
-     590:	c7 04 25 2c 01 70 00 	movl   $0x6,0x70012c
-     597:	06 00 00 00 
-     59b:	c7 04 25 a0 01 70 00 	movl   $0x2000,0x7001a0
-     5a2:	00 20 00 00 
-     5a6:	c3                   	retq   
-     5a7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     5ae:	00 00 
+0000000000000590 <cmp_equ_reg()>:
+     590:	c7 04 25 c4 02 70 00 	movl   $0x22,0x7002c4
+     597:	22 00 00 00 
+     59b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     5a2:	83 f8 22             	cmp    $0x22,%eax
+     5a5:	74 11                	je     5b8 <cmp_equ_reg()+0x28>
+     5a7:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+     5ae:	00 00 00 2e 
+     5b2:	c3                   	retq   
+     5b3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+     5b8:	c7 04 25 24 02 70 00 	movl   $0x2a000000,0x700224
+     5bf:	00 00 00 2a 
+     5c3:	c3                   	retq   
+     5c4:	66 90                	xchg   %ax,%ax
+     5c6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     5cd:	00 00 00 
 
-00000000000005b0 <runtime_bits_array()>:
-     5b0:	c7 44 24 fc 03 00 00 	movl   $0x3,-0x4(%rsp)
-     5b7:	00 
-     5b8:	8b 44 24 fc          	mov    -0x4(%rsp),%eax
-     5bc:	c7 04 85 20 01 70 00 	movl   $0x21,0x700120(,%rax,4)
-     5c3:	21 00 00 00 
-     5c7:	c7 44 24 fc 07 00 00 	movl   $0x7,-0x4(%rsp)
-     5ce:	00 
-     5cf:	b8 01 00 00 00       	mov    $0x1,%eax
-     5d4:	8b 4c 24 fc          	mov    -0x4(%rsp),%ecx
-     5d8:	d3 e0                	shl    %cl,%eax
-     5da:	89 04 25 a0 01 70 00 	mov    %eax,0x7001a0
-     5e1:	c3                   	retq   
-     5e2:	0f 1f 40 00          	nopl   0x0(%rax)
-     5e6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     5ed:	00 00 00 
+00000000000005d0 <cmp_neq_reg()>:
+     5d0:	c7 04 25 c4 02 70 00 	movl   $0x22,0x7002c4
+     5d7:	22 00 00 00 
+     5db:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     5e2:	83 f8 22             	cmp    $0x22,%eax
+     5e5:	74 11                	je     5f8 <cmp_neq_reg()+0x28>
+     5e7:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     5ee:	02 00 00 00 
+     5f2:	c3                   	retq   
+     5f3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+     5f8:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+     5ff:	20 00 00 00 
+     603:	c3                   	retq   
+     604:	66 90                	xchg   %ax,%ax
+     606:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     60d:	00 00 00 
 
-00000000000005f0 <prescaler_low()>:
-     5f0:	c7 04 25 24 02 70 00 	movl   $0x77,0x700224
-     5f7:	77 00 00 00 
-     5fb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     602:	83 e0 7f             	and    $0x7f,%eax
-     605:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
-     60c:	c3                   	retq   
-     60d:	0f 1f 00             	nopl   (%rax)
+0000000000000610 <constexpr_bits_array()>:
+     610:	c7 04 25 2c 01 70 00 	movl   $0x6,0x70012c
+     617:	06 00 00 00 
+     61b:	c7 04 25 a0 01 70 00 	movl   $0x2000,0x7001a0
+     622:	00 20 00 00 
+     626:	c3                   	retq   
+     627:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     62e:	00 00 
 
-0000000000000610 <prescaler_high()>:
-     610:	c7 04 25 24 02 70 00 	movl   $0x3a000000,0x700224
-     617:	00 00 00 3a 
-     61b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     622:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     627:	c1 e8 19             	shr    $0x19,%eax
-     62a:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
-     631:	c3                   	retq   
-     632:	0f 1f 40 00          	nopl   0x0(%rax)
-     636:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     63d:	00 00 00 
+0000000000000630 <runtime_bits_array()>:
+     630:	c7 44 24 fc 03 00 00 	movl   $0x3,-0x4(%rsp)
+     637:	00 
+     638:	8b 44 24 fc          	mov    -0x4(%rsp),%eax
+     63c:	c7 04 85 20 01 70 00 	movl   $0x21,0x700120(,%rax,4)
+     643:	21 00 00 00 
+     647:	c7 44 24 fc 07 00 00 	movl   $0x7,-0x4(%rsp)
+     64e:	00 
+     64f:	b8 01 00 00 00       	mov    $0x1,%eax
+     654:	8b 4c 24 fc          	mov    -0x4(%rsp),%ecx
+     658:	d3 e0                	shl    %cl,%eax
+     65a:	89 04 25 a0 01 70 00 	mov    %eax,0x7001a0
+     661:	c3                   	retq   
+     662:	0f 1f 40 00          	nopl   0x0(%rax)
+     666:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     66d:	00 00 00 
 
-0000000000000640 <reg_mskd_lss()>:
-     640:	c7 04 25 24 02 70 00 	movl   $0x36000000,0x700224
-     647:	00 00 00 36 
-     64b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     652:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     657:	3d ff ff ff 37       	cmp    $0x37ffffff,%eax
-     65c:	76 12                	jbe    670 <reg_mskd_lss()+0x30>
-     65e:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     665:	04 00 00 00 
-     669:	c3                   	retq   
-     66a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     670:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     677:	02 00 00 00 
-     67b:	c3                   	retq   
-     67c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000670 <prescaler_low()>:
+     670:	c7 04 25 24 02 70 00 	movl   $0x77,0x700224
+     677:	77 00 00 00 
+     67b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     682:	83 e0 7f             	and    $0x7f,%eax
+     685:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
+     68c:	c3                   	retq   
+     68d:	0f 1f 00             	nopl   (%rax)
 
-0000000000000680 <reg_mskd_leq()>:
-     680:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-     687:	00 00 00 2e 
-     68b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     692:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     697:	3d 00 00 00 2e       	cmp    $0x2e000000,%eax
-     69c:	77 22                	ja     6c0 <reg_mskd_leq()+0x40>
-     69e:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     6a5:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     6aa:	3d 00 00 00 30       	cmp    $0x30000000,%eax
-     6af:	77 0f                	ja     6c0 <reg_mskd_leq()+0x40>
-     6b1:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     6b8:	02 00 00 00 
-     6bc:	c3                   	retq   
-     6bd:	0f 1f 00             	nopl   (%rax)
-     6c0:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     6c7:	04 00 00 00 
-     6cb:	c3                   	retq   
-     6cc:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000690 <prescaler_high()>:
+     690:	c7 04 25 24 02 70 00 	movl   $0x3a000000,0x700224
+     697:	00 00 00 3a 
+     69b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     6a2:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     6a7:	c1 e8 19             	shr    $0x19,%eax
+     6aa:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
+     6b1:	c3                   	retq   
+     6b2:	0f 1f 40 00          	nopl   0x0(%rax)
+     6b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     6bd:	00 00 00 
 
-00000000000006d0 <reg_mskd_gtr()>:
-     6d0:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
-     6d7:	00 00 00 26 
-     6db:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     6e2:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     6e7:	3d 00 00 00 24       	cmp    $0x24000000,%eax
-     6ec:	77 12                	ja     700 <reg_mskd_gtr()+0x30>
-     6ee:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     6f5:	04 00 00 00 
-     6f9:	c3                   	retq   
-     6fa:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     700:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     707:	02 00 00 00 
-     70b:	c3                   	retq   
-     70c:	0f 1f 40 00          	nopl   0x0(%rax)
+00000000000006c0 <reg_mskd_lss()>:
+     6c0:	c7 04 25 24 02 70 00 	movl   $0x36000000,0x700224
+     6c7:	00 00 00 36 
+     6cb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     6d2:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     6d7:	3d ff ff ff 37       	cmp    $0x37ffffff,%eax
+     6dc:	76 12                	jbe    6f0 <reg_mskd_lss()+0x30>
+     6de:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     6e5:	04 00 00 00 
+     6e9:	c3                   	retq   
+     6ea:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+     6f0:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     6f7:	02 00 00 00 
+     6fb:	c3                   	retq   
+     6fc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000710 <reg_mskd_geq()>:
-     710:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
-     717:	00 00 00 22 
-     71b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     722:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     727:	3d ff ff ff 1f       	cmp    $0x1fffffff,%eax
-     72c:	76 22                	jbe    750 <reg_mskd_geq()+0x40>
-     72e:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     735:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     73a:	3d ff ff ff 21       	cmp    $0x21ffffff,%eax
-     73f:	76 0f                	jbe    750 <reg_mskd_geq()+0x40>
-     741:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     748:	02 00 00 00 
-     74c:	c3                   	retq   
-     74d:	0f 1f 00             	nopl   (%rax)
-     750:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     757:	04 00 00 00 
-     75b:	c3                   	retq   
-     75c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000700 <reg_mskd_leq()>:
+     700:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+     707:	00 00 00 2e 
+     70b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     712:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     717:	3d 00 00 00 2e       	cmp    $0x2e000000,%eax
+     71c:	77 22                	ja     740 <reg_mskd_leq()+0x40>
+     71e:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     725:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     72a:	3d 00 00 00 30       	cmp    $0x30000000,%eax
+     72f:	77 0f                	ja     740 <reg_mskd_leq()+0x40>
+     731:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     738:	02 00 00 00 
+     73c:	c3                   	retq   
+     73d:	0f 1f 00             	nopl   (%rax)
+     740:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     747:	04 00 00 00 
+     74b:	c3                   	retq   
+     74c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000760 <pos_cmp_eq()>:
-     760:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     767:	02 00 00 00 
-     76b:	c3                   	retq   
-     76c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000750 <reg_mskd_gtr()>:
+     750:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
+     757:	00 00 00 26 
+     75b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     762:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     767:	3d 00 00 00 24       	cmp    $0x24000000,%eax
+     76c:	77 12                	ja     780 <reg_mskd_gtr()+0x30>
+     76e:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     775:	04 00 00 00 
+     779:	c3                   	retq   
+     77a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+     780:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     787:	02 00 00 00 
+     78b:	c3                   	retq   
+     78c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000770 <pos_cmp_ne()>:
-     770:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     777:	02 00 00 00 
-     77b:	c3                   	retq   
-     77c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000790 <reg_mskd_geq()>:
+     790:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
+     797:	00 00 00 22 
+     79b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     7a2:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     7a7:	3d ff ff ff 1f       	cmp    $0x1fffffff,%eax
+     7ac:	76 22                	jbe    7d0 <reg_mskd_geq()+0x40>
+     7ae:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     7b5:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     7ba:	3d ff ff ff 21       	cmp    $0x21ffffff,%eax
+     7bf:	76 0f                	jbe    7d0 <reg_mskd_geq()+0x40>
+     7c1:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     7c8:	02 00 00 00 
+     7cc:	c3                   	retq   
+     7cd:	0f 1f 00             	nopl   (%rax)
+     7d0:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     7d7:	04 00 00 00 
+     7db:	c3                   	retq   
+     7dc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000780 <bits_extract_eq()>:
-     780:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-     787:	40 00 00 00 
-     78b:	83 3c 25 c4 02 70 00 	cmpl   $0x40,0x7002c4
-     792:	40 
-     793:	74 13                	je     7a8 <bits_extract_eq()+0x28>
-     795:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     79c:	04 00 00 00 
-     7a0:	c3                   	retq   
-     7a1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-     7a8:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     7af:	02 00 00 00 
-     7b3:	c3                   	retq   
-     7b4:	66 90                	xchg   %ax,%ax
-     7b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     7bd:	00 00 00 
+00000000000007e0 <pos_cmp_eq()>:
+     7e0:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     7e7:	02 00 00 00 
+     7eb:	c3                   	retq   
+     7ec:	0f 1f 40 00          	nopl   0x0(%rax)
 
-00000000000007c0 <mskd_extract_eq()>:
-     7c0:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     7c7:	02 00 00 00 
-     7cb:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     7d2:	83 f8 02             	cmp    $0x2,%eax
-     7d5:	74 11                	je     7e8 <mskd_extract_eq()+0x28>
-     7d7:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-     7de:	40 00 00 00 
-     7e2:	c3                   	retq   
-     7e3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-     7e8:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-     7ef:	20 00 00 00 
-     7f3:	c3                   	retq   
-     7f4:	66 90                	xchg   %ax,%ax
-     7f6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     7fd:	00 00 00 
+00000000000007f0 <pos_cmp_ne()>:
+     7f0:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     7f7:	02 00 00 00 
+     7fb:	c3                   	retq   
+     7fc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000800 <mskd_extract_ne()>:
-     800:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     807:	04 00 00 00 
-     80b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     812:	83 f8 04             	cmp    $0x4,%eax
-     815:	74 11                	je     828 <mskd_extract_ne()+0x28>
-     817:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-     81e:	20 00 00 00 
-     822:	c3                   	retq   
-     823:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-     828:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-     82f:	40 00 00 00 
+0000000000000800 <bits_extract_eq()>:
+     800:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+     807:	40 00 00 00 
+     80b:	83 3c 25 c4 02 70 00 	cmpl   $0x40,0x7002c4
+     812:	40 
+     813:	74 13                	je     828 <bits_extract_eq()+0x28>
+     815:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     81c:	04 00 00 00 
+     820:	c3                   	retq   
+     821:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+     828:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     82f:	02 00 00 00 
      833:	c3                   	retq   
      834:	66 90                	xchg   %ax,%ax
      836:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      83d:	00 00 00 
 
-0000000000000840 <mskd_extract_lss()>:
-     840:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
-     847:	00 00 00 16 
-     84b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     852:	3d ff ff ff 17       	cmp    $0x17ffffff,%eax
-     857:	76 0f                	jbe    868 <mskd_extract_lss()+0x28>
-     859:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-     860:	40 00 00 00 
-     864:	c3                   	retq   
-     865:	0f 1f 00             	nopl   (%rax)
+0000000000000840 <mskd_extract_eq()>:
+     840:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     847:	02 00 00 00 
+     84b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     852:	83 f8 02             	cmp    $0x2,%eax
+     855:	74 11                	je     868 <mskd_extract_eq()+0x28>
+     857:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+     85e:	40 00 00 00 
+     862:	c3                   	retq   
+     863:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
      868:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
      86f:	20 00 00 00 
      873:	c3                   	retq   
@@ -611,16 +611,16 @@ Disassembly of section .text:
      876:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      87d:	00 00 00 
 
-0000000000000880 <mskd_extract_leq()>:
-     880:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-     887:	00 00 00 2e 
-     88b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     892:	3d 00 00 00 2e       	cmp    $0x2e000000,%eax
-     897:	77 0f                	ja     8a8 <mskd_extract_leq()+0x28>
-     899:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-     8a0:	20 00 00 00 
-     8a4:	c3                   	retq   
-     8a5:	0f 1f 00             	nopl   (%rax)
+0000000000000880 <mskd_extract_ne()>:
+     880:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     887:	04 00 00 00 
+     88b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     892:	83 f8 04             	cmp    $0x4,%eax
+     895:	74 11                	je     8a8 <mskd_extract_ne()+0x28>
+     897:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+     89e:	20 00 00 00 
+     8a2:	c3                   	retq   
+     8a3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
      8a8:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
      8af:	40 00 00 00 
      8b3:	c3                   	retq   
@@ -628,12 +628,12 @@ Disassembly of section .text:
      8b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      8bd:	00 00 00 
 
-00000000000008c0 <mskd_extract_gtr()>:
-     8c0:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
-     8c7:	00 00 00 26 
+00000000000008c0 <mskd_extract_lss()>:
+     8c0:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
+     8c7:	00 00 00 16 
      8cb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     8d2:	3d 00 00 00 24       	cmp    $0x24000000,%eax
-     8d7:	77 0f                	ja     8e8 <mskd_extract_gtr()+0x28>
+     8d2:	3d ff ff ff 17       	cmp    $0x17ffffff,%eax
+     8d7:	76 0f                	jbe    8e8 <mskd_extract_lss()+0x28>
      8d9:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
      8e0:	40 00 00 00 
      8e4:	c3                   	retq   
@@ -645,122 +645,124 @@ Disassembly of section .text:
      8f6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      8fd:	00 00 00 
 
-0000000000000900 <set_bits_global()>:
-     900:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     907:	83 c8 40             	or     $0x40,%eax
-     90a:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     911:	c3                   	retq   
-     912:	0f 1f 40 00          	nopl   0x0(%rax)
-     916:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     91d:	00 00 00 
-
-0000000000000920 <ins_mskd_global()>:
-     920:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     927:	83 e0 f9             	and    $0xfffffff9,%eax
-     92a:	83 c8 02             	or     $0x2,%eax
-     92d:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     934:	c3                   	retq   
-     935:	90                   	nop
+0000000000000900 <mskd_extract_leq()>:
+     900:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+     907:	00 00 00 2e 
+     90b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     912:	3d 00 00 00 2e       	cmp    $0x2e000000,%eax
+     917:	77 0f                	ja     928 <mskd_extract_leq()+0x28>
+     919:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+     920:	20 00 00 00 
+     924:	c3                   	retq   
+     925:	0f 1f 00             	nopl   (%rax)
+     928:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+     92f:	40 00 00 00 
+     933:	c3                   	retq   
+     934:	66 90                	xchg   %ax,%ax
      936:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      93d:	00 00 00 
 
-0000000000000940 <assign_array_global()>:
-     940:	c7 04 25 2c 01 70 00 	movl   $0xbd,0x70012c
-     947:	bd 00 00 00 
-     94b:	c3                   	retq   
-     94c:	0f 1f 40 00          	nopl   0x0(%rax)
-
-0000000000000950 <shifted_global()>:
-     950:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-     957:	00 00 00 2e 
-     95b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     962:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     967:	c1 e8 19             	shr    $0x19,%eax
-     96a:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
-     971:	c3                   	retq   
-     972:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000940 <mskd_extract_gtr()>:
+     940:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
+     947:	00 00 00 26 
+     94b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     952:	3d 00 00 00 24       	cmp    $0x24000000,%eax
+     957:	77 0f                	ja     968 <mskd_extract_gtr()+0x28>
+     959:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+     960:	40 00 00 00 
+     964:	c3                   	retq   
+     965:	0f 1f 00             	nopl   (%rax)
+     968:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+     96f:	20 00 00 00 
+     973:	c3                   	retq   
+     974:	66 90                	xchg   %ax,%ax
      976:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      97d:	00 00 00 
 
-0000000000000980 <assign_register_global()>:
-     980:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     987:	04 00 00 00 
-     98b:	c3                   	retq   
-     98c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000980 <set_bits_global()>:
+     980:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     987:	83 c8 40             	or     $0x40,%eax
+     98a:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     991:	c3                   	retq   
+     992:	0f 1f 40 00          	nopl   0x0(%rax)
+     996:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     99d:	00 00 00 
 
-0000000000000990 <copy_bits_equ()>:
-     990:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-     997:	40 00 00 00 
-     99b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     9a2:	a8 40                	test   $0x40,%al
-     9a4:	75 12                	jne    9b8 <copy_bits_equ()+0x28>
-     9a6:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     9ad:	04 00 00 00 
-     9b1:	c3                   	retq   
-     9b2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     9b8:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     9bf:	02 00 00 00 
-     9c3:	c3                   	retq   
-     9c4:	66 90                	xchg   %ax,%ax
-     9c6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     9cd:	00 00 00 
+00000000000009a0 <ins_mskd_global()>:
+     9a0:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     9a7:	83 e0 f9             	and    $0xfffffff9,%eax
+     9aa:	83 c8 02             	or     $0x2,%eax
+     9ad:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     9b4:	c3                   	retq   
+     9b5:	90                   	nop
+     9b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     9bd:	00 00 00 
 
-00000000000009d0 <copy_bits_neq()>:
-     9d0:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-     9d7:	40 00 00 00 
-     9db:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     9e2:	a8 40                	test   $0x40,%al
-     9e4:	74 12                	je     9f8 <copy_bits_neq()+0x28>
-     9e6:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     9ed:	04 00 00 00 
+00000000000009c0 <assign_array_global()>:
+     9c0:	c7 04 25 2c 01 70 00 	movl   $0xbd,0x70012c
+     9c7:	bd 00 00 00 
+     9cb:	c3                   	retq   
+     9cc:	0f 1f 40 00          	nopl   0x0(%rax)
+
+00000000000009d0 <shifted_global()>:
+     9d0:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+     9d7:	00 00 00 2e 
+     9db:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     9e2:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     9e7:	c1 e8 19             	shr    $0x19,%eax
+     9ea:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
      9f1:	c3                   	retq   
-     9f2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     9f8:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     9ff:	02 00 00 00 
-     a03:	c3                   	retq   
-     a04:	66 90                	xchg   %ax,%ax
-     a06:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     a0d:	00 00 00 
+     9f2:	0f 1f 40 00          	nopl   0x0(%rax)
+     9f6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     9fd:	00 00 00 
 
-0000000000000a10 <copy_mskd_equ()>:
-     a10:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
-     a17:	00 00 00 16 
-     a1b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     a22:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     a27:	3d 00 00 00 16       	cmp    $0x16000000,%eax
-     a2c:	74 12                	je     a40 <copy_mskd_equ()+0x30>
-     a2e:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     a35:	04 00 00 00 
-     a39:	c3                   	retq   
-     a3a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     a40:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     a47:	02 00 00 00 
-     a4b:	c3                   	retq   
-     a4c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000a00 <assign_register_global()>:
+     a00:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     a07:	04 00 00 00 
+     a0b:	c3                   	retq   
+     a0c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000a50 <copy_mskd_neq()>:
-     a50:	c7 04 25 24 02 70 00 	movl   $0x1a000000,0x700224
-     a57:	00 00 00 1a 
-     a5b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-     a62:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     a67:	3d 00 00 00 1a       	cmp    $0x1a000000,%eax
-     a6c:	74 12                	je     a80 <copy_mskd_neq()+0x30>
-     a6e:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-     a75:	02 00 00 00 
-     a79:	c3                   	retq   
-     a7a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-     a80:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-     a87:	04 00 00 00 
-     a8b:	c3                   	retq   
-     a8c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000a10 <copy_bits_equ()>:
+     a10:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+     a17:	40 00 00 00 
+     a1b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     a22:	a8 40                	test   $0x40,%al
+     a24:	75 12                	jne    a38 <copy_bits_equ()+0x28>
+     a26:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     a2d:	04 00 00 00 
+     a31:	c3                   	retq   
+     a32:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+     a38:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     a3f:	02 00 00 00 
+     a43:	c3                   	retq   
+     a44:	66 90                	xchg   %ax,%ax
+     a46:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     a4d:	00 00 00 
 
-0000000000000a90 <copy_mskd_lss()>:
-     a90:	c7 04 25 24 02 70 00 	movl   $0x36000000,0x700224
-     a97:	00 00 00 36 
+0000000000000a50 <copy_bits_neq()>:
+     a50:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+     a57:	40 00 00 00 
+     a5b:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     a62:	a8 40                	test   $0x40,%al
+     a64:	75 12                	jne    a78 <copy_bits_neq()+0x28>
+     a66:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     a6d:	02 00 00 00 
+     a71:	c3                   	retq   
+     a72:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+     a78:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     a7f:	04 00 00 00 
+     a83:	c3                   	retq   
+     a84:	66 90                	xchg   %ax,%ax
+     a86:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     a8d:	00 00 00 
+
+0000000000000a90 <copy_mskd_equ()>:
+     a90:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
+     a97:	00 00 00 16 
      a9b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
      aa2:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     aa7:	3d ff ff ff 37       	cmp    $0x37ffffff,%eax
-     aac:	76 12                	jbe    ac0 <copy_mskd_lss()+0x30>
+     aa7:	3d 00 00 00 16       	cmp    $0x16000000,%eax
+     aac:	74 12                	je     ac0 <copy_mskd_equ()+0x30>
      aae:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
      ab5:	04 00 00 00 
      ab9:	c3                   	retq   
@@ -770,13 +772,13 @@ Disassembly of section .text:
      acb:	c3                   	retq   
      acc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000ad0 <copy_mskd_leq()>:
-     ad0:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-     ad7:	00 00 00 2e 
+0000000000000ad0 <copy_mskd_neq()>:
+     ad0:	c7 04 25 24 02 70 00 	movl   $0x1a000000,0x700224
+     ad7:	00 00 00 1a 
      adb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
      ae2:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     ae7:	3d 00 00 00 2e       	cmp    $0x2e000000,%eax
-     aec:	77 12                	ja     b00 <copy_mskd_leq()+0x30>
+     ae7:	3d 00 00 00 1a       	cmp    $0x1a000000,%eax
+     aec:	74 12                	je     b00 <copy_mskd_neq()+0x30>
      aee:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
      af5:	02 00 00 00 
      af9:	c3                   	retq   
@@ -786,13 +788,13 @@ Disassembly of section .text:
      b0b:	c3                   	retq   
      b0c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000b10 <copy_mskd_gtr()>:
-     b10:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
-     b17:	00 00 00 26 
+0000000000000b10 <copy_mskd_lss()>:
+     b10:	c7 04 25 24 02 70 00 	movl   $0x36000000,0x700224
+     b17:	00 00 00 36 
      b1b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
      b22:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     b27:	3d 00 00 00 24       	cmp    $0x24000000,%eax
-     b2c:	77 12                	ja     b40 <copy_mskd_gtr()+0x30>
+     b27:	3d ff ff ff 37       	cmp    $0x37ffffff,%eax
+     b2c:	76 12                	jbe    b40 <copy_mskd_lss()+0x30>
      b2e:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
      b35:	04 00 00 00 
      b39:	c3                   	retq   
@@ -802,13 +804,13 @@ Disassembly of section .text:
      b4b:	c3                   	retq   
      b4c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000b50 <copy_mskd_geq()>:
-     b50:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
-     b57:	00 00 00 22 
+0000000000000b50 <copy_mskd_leq()>:
+     b50:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+     b57:	00 00 00 2e 
      b5b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
      b62:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     b67:	3d ff ff ff 21       	cmp    $0x21ffffff,%eax
-     b6c:	76 12                	jbe    b80 <copy_mskd_geq()+0x30>
+     b67:	3d 00 00 00 2e       	cmp    $0x2e000000,%eax
+     b6c:	77 12                	ja     b80 <copy_mskd_leq()+0x30>
      b6e:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
      b75:	02 00 00 00 
      b79:	c3                   	retq   
@@ -818,13 +820,13 @@ Disassembly of section .text:
      b8b:	c3                   	retq   
      b8c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000b90 <copy_shifted()>:
-     b90:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
-     b97:	00 00 00 16 
+0000000000000b90 <copy_mskd_gtr()>:
+     b90:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
+     b97:	00 00 00 26 
      b9b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
      ba2:	25 00 00 00 3e       	and    $0x3e000000,%eax
-     ba7:	3d 00 00 00 16       	cmp    $0x16000000,%eax
-     bac:	74 12                	je     bc0 <copy_shifted()+0x30>
+     ba7:	3d 00 00 00 24       	cmp    $0x24000000,%eax
+     bac:	77 12                	ja     bc0 <copy_mskd_gtr()+0x30>
      bae:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
      bb5:	04 00 00 00 
      bb9:	c3                   	retq   
@@ -834,406 +836,392 @@ Disassembly of section .text:
      bcb:	c3                   	retq   
      bcc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000bd0 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.14]>:
-     bd0:	c7 04 25 2c 01 70 00 	movl   $0x66,0x70012c
-     bd7:	66 00 00 00 
-     bdb:	c3                   	retq   
-     bdc:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000000bd0 <copy_mskd_geq()>:
+     bd0:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
+     bd7:	00 00 00 22 
+     bdb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     be2:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     be7:	3d ff ff ff 21       	cmp    $0x21ffffff,%eax
+     bec:	76 12                	jbe    c00 <copy_mskd_geq()+0x30>
+     bee:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     bf5:	02 00 00 00 
+     bf9:	c3                   	retq   
+     bfa:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+     c00:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     c07:	04 00 00 00 
+     c0b:	c3                   	retq   
+     c0c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000be0 <call_pos_ref()>:
-     be0:	48 83 ec 18          	sub    $0x18,%rsp
-     be4:	48 89 e7             	mov    %rsp,%rdi
-     be7:	c7 04 24 05 00 00 00 	movl   $0x5,(%rsp)
-     bee:	e8 dd ff ff ff       	callq  bd0 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.14]>
-     bf3:	48 89 e7             	mov    %rsp,%rdi
-     bf6:	c7 04 24 05 00 00 00 	movl   $0x5,(%rsp)
-     bfd:	e8 ce ff ff ff       	callq  bd0 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.14]>
-     c02:	48 83 c4 18          	add    $0x18,%rsp
-     c06:	c3                   	retq   
-     c07:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     c0e:	00 00 
-
-0000000000000c10 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.15]>:
-     c10:	c7 04 25 2c 01 70 00 	movl   $0x77,0x70012c
-     c17:	77 00 00 00 
-     c1b:	c3                   	retq   
-     c1c:	0f 1f 40 00          	nopl   0x0(%rax)
-
-0000000000000c20 <call_pos_ref_global()>:
-     c20:	48 83 ec 18          	sub    $0x18,%rsp
-     c24:	48 89 e7             	mov    %rsp,%rdi
-     c27:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
-     c2e:	e8 dd ff ff ff       	callq  c10 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.15]>
-     c33:	48 83 c4 18          	add    $0x18,%rsp
-     c37:	c3                   	retq   
-     c38:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     c3f:	00 
-
-0000000000000c40 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.16]>:
-     c40:	c7 04 25 2c 01 70 00 	movl   $0x33,0x70012c
-     c47:	33 00 00 00 
+0000000000000c10 <copy_shifted()>:
+     c10:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
+     c17:	00 00 00 16 
+     c1b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+     c22:	25 00 00 00 3e       	and    $0x3e000000,%eax
+     c27:	3d 00 00 00 16       	cmp    $0x16000000,%eax
+     c2c:	74 12                	je     c40 <copy_shifted()+0x30>
+     c2e:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+     c35:	04 00 00 00 
+     c39:	c3                   	retq   
+     c3a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+     c40:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+     c47:	02 00 00 00 
      c4b:	c3                   	retq   
      c4c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000c50 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.17]>:
-     c50:	c7 04 25 2c 01 70 00 	movl   $0x44,0x70012c
-     c57:	44 00 00 00 
+0000000000000c50 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.14]>:
+     c50:	c7 04 25 2c 01 70 00 	movl   $0x66,0x70012c
+     c57:	66 00 00 00 
      c5b:	c3                   	retq   
      c5c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000c60 <call_pos_val()>:
-     c60:	48 83 ec 08          	sub    $0x8,%rsp
-     c64:	bf 05 00 00 00       	mov    $0x5,%edi
-     c69:	e8 d2 ff ff ff       	callq  c40 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.16]>
-     c6e:	bf 06 00 00 00       	mov    $0x6,%edi
-     c73:	e8 d8 ff ff ff       	callq  c50 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.17]>
-     c78:	48 83 c4 08          	add    $0x8,%rsp
-     c7c:	c3                   	retq   
-     c7d:	0f 1f 00             	nopl   (%rax)
+0000000000000c60 <call_pos_ref()>:
+     c60:	48 83 ec 18          	sub    $0x18,%rsp
+     c64:	48 89 e7             	mov    %rsp,%rdi
+     c67:	c7 04 24 05 00 00 00 	movl   $0x5,(%rsp)
+     c6e:	e8 dd ff ff ff       	callq  c50 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.14]>
+     c73:	48 89 e7             	mov    %rsp,%rdi
+     c76:	c7 04 24 05 00 00 00 	movl   $0x5,(%rsp)
+     c7d:	e8 ce ff ff ff       	callq  c50 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.14]>
+     c82:	48 83 c4 18          	add    $0x18,%rsp
+     c86:	c3                   	retq   
+     c87:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     c8e:	00 00 
 
-0000000000000c80 <call_pos_val_global()>:
-     c80:	48 83 ec 08          	sub    $0x8,%rsp
-     c84:	bf 06 00 00 00       	mov    $0x6,%edi
-     c89:	e8 c2 ff ff ff       	callq  c50 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.17]>
-     c8e:	48 83 c4 08          	add    $0x8,%rsp
-     c92:	c3                   	retq   
-     c93:	0f 1f 00             	nopl   (%rax)
-     c96:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     c9d:	00 00 00 
+0000000000000c90 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.15]>:
+     c90:	c7 04 25 2c 01 70 00 	movl   $0x77,0x70012c
+     c97:	77 00 00 00 
+     c9b:	c3                   	retq   
+     c9c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000ca0 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>:
-     ca0:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     ca7:	83 e0 f9             	and    $0xfffffff9,%eax
-     caa:	0b 47 04             	or     0x4(%rdi),%eax
-     cad:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     cb4:	c3                   	retq   
-     cb5:	90                   	nop
-     cb6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     cbd:	00 00 00 
+0000000000000ca0 <call_pos_ref_global()>:
+     ca0:	48 83 ec 18          	sub    $0x18,%rsp
+     ca4:	48 89 e7             	mov    %rsp,%rdi
+     ca7:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
+     cae:	e8 dd ff ff ff       	callq  c90 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&) [clone .constprop.15]>
+     cb3:	48 83 c4 18          	add    $0x18,%rsp
+     cb7:	c3                   	retq   
+     cb8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     cbf:	00 
 
-0000000000000cc0 <call_mskd_ref_const()>:
-     cc0:	48 83 ec 18          	sub    $0x18,%rsp
-     cc4:	48 89 e7             	mov    %rsp,%rdi
-     cc7:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
-     cce:	c7 44 24 04 04 00 00 	movl   $0x4,0x4(%rsp)
-     cd5:	00 
-     cd6:	e8 c5 ff ff ff       	callq  ca0 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>
-     cdb:	48 83 c4 18          	add    $0x18,%rsp
-     cdf:	c3                   	retq   
+0000000000000cc0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.16]>:
+     cc0:	c7 04 25 2c 01 70 00 	movl   $0x33,0x70012c
+     cc7:	33 00 00 00 
+     ccb:	c3                   	retq   
+     ccc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000ce0 <call_mskd_ref_var()>:
-     ce0:	48 83 ec 18          	sub    $0x18,%rsp
-     ce4:	48 89 e7             	mov    %rsp,%rdi
-     ce7:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
-     cee:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%rsp)
-     cf5:	00 
-     cf6:	e8 a5 ff ff ff       	callq  ca0 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>
-     cfb:	48 83 c4 18          	add    $0x18,%rsp
-     cff:	c3                   	retq   
+0000000000000cd0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.17]>:
+     cd0:	c7 04 25 2c 01 70 00 	movl   $0x44,0x70012c
+     cd7:	44 00 00 00 
+     cdb:	c3                   	retq   
+     cdc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000000d00 <call_mskd_ref_global()>:
-     d00:	48 83 ec 18          	sub    $0x18,%rsp
-     d04:	48 89 e7             	mov    %rsp,%rdi
-     d07:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
-     d0e:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%rsp)
-     d15:	00 
-     d16:	e8 85 ff ff ff       	callq  ca0 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>
-     d1b:	48 83 c4 18          	add    $0x18,%rsp
-     d1f:	c3                   	retq   
+0000000000000ce0 <call_pos_val()>:
+     ce0:	48 83 ec 08          	sub    $0x8,%rsp
+     ce4:	bf 05 00 00 00       	mov    $0x5,%edi
+     ce9:	e8 d2 ff ff ff       	callq  cc0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.16]>
+     cee:	bf 06 00 00 00       	mov    $0x6,%edi
+     cf3:	e8 d8 ff ff ff       	callq  cd0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.17]>
+     cf8:	48 83 c4 08          	add    $0x8,%rsp
+     cfc:	c3                   	retq   
+     cfd:	0f 1f 00             	nopl   (%rax)
 
-0000000000000d20 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>:
+0000000000000d00 <call_pos_val_global()>:
+     d00:	48 83 ec 08          	sub    $0x8,%rsp
+     d04:	bf 06 00 00 00       	mov    $0x6,%edi
+     d09:	e8 c2 ff ff ff       	callq  cd0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>) [clone .constprop.17]>
+     d0e:	48 83 c4 08          	add    $0x8,%rsp
+     d12:	c3                   	retq   
+     d13:	0f 1f 00             	nopl   (%rax)
+     d16:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     d1d:	00 00 00 
+
+0000000000000d20 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>:
      d20:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
      d27:	83 e0 f9             	and    $0xfffffff9,%eax
-     d2a:	83 c8 02             	or     $0x2,%eax
+     d2a:	0b 47 04             	or     0x4(%rdi),%eax
      d2d:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
      d34:	c3                   	retq   
      d35:	90                   	nop
      d36:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      d3d:	00 00 00 
 
-0000000000000d40 <call_mskd_val_const()>:
-     d40:	48 83 ec 08          	sub    $0x8,%rsp
-     d44:	48 bf 06 00 00 00 02 	movabs $0x200000006,%rdi
-     d4b:	00 00 00 
-     d4e:	e8 cd ff ff ff       	callq  d20 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>
-     d53:	48 83 c4 08          	add    $0x8,%rsp
-     d57:	c3                   	retq   
-     d58:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     d5f:	00 
+0000000000000d40 <call_mskd_ref_const()>:
+     d40:	48 83 ec 18          	sub    $0x18,%rsp
+     d44:	48 89 e7             	mov    %rsp,%rdi
+     d47:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
+     d4e:	c7 44 24 04 04 00 00 	movl   $0x4,0x4(%rsp)
+     d55:	00 
+     d56:	e8 c5 ff ff ff       	callq  d20 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>
+     d5b:	48 83 c4 18          	add    $0x18,%rsp
+     d5f:	c3                   	retq   
 
-0000000000000d60 <call_mskd_val_var()>:
-     d60:	48 83 ec 08          	sub    $0x8,%rsp
-     d64:	48 bf 06 00 00 00 02 	movabs $0x200000006,%rdi
-     d6b:	00 00 00 
-     d6e:	e8 ad ff ff ff       	callq  d20 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>
-     d73:	48 83 c4 08          	add    $0x8,%rsp
-     d77:	c3                   	retq   
-     d78:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     d7f:	00 
+0000000000000d60 <call_mskd_ref_var()>:
+     d60:	48 83 ec 18          	sub    $0x18,%rsp
+     d64:	48 89 e7             	mov    %rsp,%rdi
+     d67:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
+     d6e:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%rsp)
+     d75:	00 
+     d76:	e8 a5 ff ff ff       	callq  d20 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>
+     d7b:	48 83 c4 18          	add    $0x18,%rsp
+     d7f:	c3                   	retq   
 
-0000000000000d80 <call_mskd_val_global()>:
-     d80:	48 83 ec 08          	sub    $0x8,%rsp
-     d84:	48 bf 06 00 00 00 02 	movabs $0x200000006,%rdi
-     d8b:	00 00 00 
-     d8e:	e8 8d ff ff ff       	callq  d20 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>
-     d93:	48 83 c4 08          	add    $0x8,%rsp
-     d97:	c3                   	retq   
-     d98:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     d9f:	00 
+0000000000000d80 <call_mskd_ref_global()>:
+     d80:	48 83 ec 18          	sub    $0x18,%rsp
+     d84:	48 89 e7             	mov    %rsp,%rdi
+     d87:	c7 04 24 06 00 00 00 	movl   $0x6,(%rsp)
+     d8e:	c7 44 24 04 02 00 00 	movl   $0x2,0x4(%rsp)
+     d95:	00 
+     d96:	e8 85 ff ff ff       	callq  d20 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&) [clone .constprop.18]>
+     d9b:	48 83 c4 18          	add    $0x18,%rsp
+     d9f:	c3                   	retq   
 
-0000000000000da0 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>:
+0000000000000da0 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>:
      da0:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     da7:	83 c8 40             	or     $0x40,%eax
-     daa:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     db1:	c3                   	retq   
-     db2:	0f 1f 40 00          	nopl   0x0(%rax)
+     da7:	83 e0 f9             	and    $0xfffffff9,%eax
+     daa:	83 c8 02             	or     $0x2,%eax
+     dad:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     db4:	c3                   	retq   
+     db5:	90                   	nop
      db6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      dbd:	00 00 00 
 
-0000000000000dc0 <call_bits_val_const()>:
+0000000000000dc0 <call_mskd_val_const()>:
      dc0:	48 83 ec 08          	sub    $0x8,%rsp
-     dc4:	bf 40 00 00 00       	mov    $0x40,%edi
-     dc9:	e8 d2 ff ff ff       	callq  da0 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>
-     dce:	48 83 c4 08          	add    $0x8,%rsp
-     dd2:	c3                   	retq   
-     dd3:	0f 1f 00             	nopl   (%rax)
-     dd6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     ddd:	00 00 00 
+     dc4:	48 bf 06 00 00 00 02 	movabs $0x200000006,%rdi
+     dcb:	00 00 00 
+     dce:	e8 cd ff ff ff       	callq  da0 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>
+     dd3:	48 83 c4 08          	add    $0x8,%rsp
+     dd7:	c3                   	retq   
+     dd8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     ddf:	00 
 
-0000000000000de0 <call_bits_val_var()>:
+0000000000000de0 <call_mskd_val_var()>:
      de0:	48 83 ec 08          	sub    $0x8,%rsp
-     de4:	bf 40 00 00 00       	mov    $0x40,%edi
-     de9:	e8 b2 ff ff ff       	callq  da0 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>
-     dee:	48 83 c4 08          	add    $0x8,%rsp
-     df2:	c3                   	retq   
-     df3:	0f 1f 00             	nopl   (%rax)
-     df6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     dfd:	00 00 00 
+     de4:	48 bf 06 00 00 00 02 	movabs $0x200000006,%rdi
+     deb:	00 00 00 
+     dee:	e8 ad ff ff ff       	callq  da0 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>
+     df3:	48 83 c4 08          	add    $0x8,%rsp
+     df7:	c3                   	retq   
+     df8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     dff:	00 
 
-0000000000000e00 <call_bits_val_global()>:
+0000000000000e00 <call_mskd_val_global()>:
      e00:	48 83 ec 08          	sub    $0x8,%rsp
-     e04:	bf 40 00 00 00       	mov    $0x40,%edi
-     e09:	e8 92 ff ff ff       	callq  da0 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>
-     e0e:	48 83 c4 08          	add    $0x8,%rsp
-     e12:	c3                   	retq   
-     e13:	0f 1f 00             	nopl   (%rax)
-     e16:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-     e1d:	00 00 00 
+     e04:	48 bf 06 00 00 00 02 	movabs $0x200000006,%rdi
+     e0b:	00 00 00 
+     e0e:	e8 8d ff ff ff       	callq  da0 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>) [clone .constprop.19]>
+     e13:	48 83 c4 08          	add    $0x8,%rsp
+     e17:	c3                   	retq   
+     e18:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     e1f:	00 
 
-0000000000000e20 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>)>:
+0000000000000e20 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>:
      e20:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     e27:	09 c7                	or     %eax,%edi
-     e29:	89 3c 25 c4 02 70 00 	mov    %edi,0x7002c4
-     e30:	c3                   	retq   
-     e31:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+     e27:	83 c8 40             	or     $0x40,%eax
+     e2a:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     e31:	c3                   	retq   
+     e32:	0f 1f 40 00          	nopl   0x0(%rax)
      e36:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      e3d:	00 00 00 
 
-0000000000000e40 <bits_ref(regbits::Bits<unsigned int, mcu::Serial::Config> const&)>:
-     e40:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-     e47:	0b 07                	or     (%rdi),%eax
-     e49:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     e50:	c3                   	retq   
-     e51:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+0000000000000e40 <call_bits_val_const()>:
+     e40:	48 83 ec 08          	sub    $0x8,%rsp
+     e44:	bf 40 00 00 00       	mov    $0x40,%edi
+     e49:	e8 d2 ff ff ff       	callq  e20 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>
+     e4e:	48 83 c4 08          	add    $0x8,%rsp
+     e52:	c3                   	retq   
+     e53:	0f 1f 00             	nopl   (%rax)
      e56:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
      e5d:	00 00 00 
 
-0000000000000e60 <call_bits_ref_var()>:
-     e60:	48 83 ec 18          	sub    $0x18,%rsp
-     e64:	48 89 e7             	mov    %rsp,%rdi
-     e67:	c7 04 24 01 00 00 00 	movl   $0x1,(%rsp)
-     e6e:	e8 00 00 00 00       	callq  e73 <call_bits_ref_var()+0x13>
-     e73:	48 83 c4 18          	add    $0x18,%rsp
-     e77:	c3                   	retq   
-     e78:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     e7f:	00 
+0000000000000e60 <call_bits_val_var()>:
+     e60:	48 83 ec 08          	sub    $0x8,%rsp
+     e64:	bf 40 00 00 00       	mov    $0x40,%edi
+     e69:	e8 b2 ff ff ff       	callq  e20 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>
+     e6e:	48 83 c4 08          	add    $0x8,%rsp
+     e72:	c3                   	retq   
+     e73:	0f 1f 00             	nopl   (%rax)
+     e76:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     e7d:	00 00 00 
 
-0000000000000e80 <call_bits_ref_const()>:
-     e80:	48 83 ec 18          	sub    $0x18,%rsp
-     e84:	48 89 e7             	mov    %rsp,%rdi
-     e87:	c7 04 24 01 00 00 00 	movl   $0x1,(%rsp)
-     e8e:	e8 00 00 00 00       	callq  e93 <call_bits_ref_const()+0x13>
-     e93:	48 83 c4 18          	add    $0x18,%rsp
-     e97:	c3                   	retq   
-     e98:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     e9f:	00 
+0000000000000e80 <call_bits_val_global()>:
+     e80:	48 83 ec 08          	sub    $0x8,%rsp
+     e84:	bf 40 00 00 00       	mov    $0x40,%edi
+     e89:	e8 92 ff ff ff       	callq  e20 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>) [clone .constprop.20]>
+     e8e:	48 83 c4 08          	add    $0x8,%rsp
+     e92:	c3                   	retq   
+     e93:	0f 1f 00             	nopl   (%rax)
+     e96:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     e9d:	00 00 00 
 
-0000000000000ea0 <call_bits_ref_global()>:
-     ea0:	48 83 ec 18          	sub    $0x18,%rsp
-     ea4:	48 89 e7             	mov    %rsp,%rdi
-     ea7:	c7 04 24 40 00 00 00 	movl   $0x40,(%rsp)
-     eae:	e8 00 00 00 00       	callq  eb3 <call_bits_ref_global()+0x13>
-     eb3:	48 83 c4 18          	add    $0x18,%rsp
-     eb7:	c3                   	retq   
-     eb8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     ebf:	00 
+0000000000000ea0 <bits_val(regbits::Bits<unsigned int, mcu::Serial::Config>)>:
+     ea0:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     ea7:	09 c7                	or     %eax,%edi
+     ea9:	89 3c 25 c4 02 70 00 	mov    %edi,0x7002c4
+     eb0:	c3                   	retq   
+     eb1:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+     eb6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     ebd:	00 00 00 
 
-0000000000000ec0 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
-     ec0:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
-     ec7:	89 f8                	mov    %edi,%eax
-     ec9:	48 c1 ef 20          	shr    $0x20,%rdi
-     ecd:	f7 d0                	not    %eax
-     ecf:	21 d0                	and    %edx,%eax
-     ed1:	09 f8                	or     %edi,%eax
-     ed3:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-     eda:	c3                   	retq   
-     edb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+0000000000000ec0 <bits_ref(regbits::Bits<unsigned int, mcu::Serial::Config> const&)>:
+     ec0:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+     ec7:	0b 07                	or     (%rdi),%eax
+     ec9:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     ed0:	c3                   	retq   
+     ed1:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+     ed6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     edd:	00 00 00 
 
-0000000000000ee0 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&)>:
-     ee0:	8b 07                	mov    (%rdi),%eax
-     ee2:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
-     ee9:	f7 d0                	not    %eax
-     eeb:	21 d0                	and    %edx,%eax
-     eed:	0b 47 04             	or     0x4(%rdi),%eax
-     ef0:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+0000000000000ee0 <call_bits_ref_var()>:
+     ee0:	48 83 ec 18          	sub    $0x18,%rsp
+     ee4:	48 89 e7             	mov    %rsp,%rdi
+     ee7:	c7 04 24 01 00 00 00 	movl   $0x1,(%rsp)
+     eee:	e8 00 00 00 00       	callq  ef3 <call_bits_ref_var()+0x13>
+     ef3:	48 83 c4 18          	add    $0x18,%rsp
      ef7:	c3                   	retq   
      ef8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
      eff:	00 
 
-0000000000000f00 <periph_bits(mcu::Serial*)>:
-     f00:	8b 47 04             	mov    0x4(%rdi),%eax
-     f03:	83 c8 40             	or     $0x40,%eax
-     f06:	89 47 04             	mov    %eax,0x4(%rdi)
-     f09:	c3                   	retq   
-     f0a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+0000000000000f00 <call_bits_ref_const()>:
+     f00:	48 83 ec 18          	sub    $0x18,%rsp
+     f04:	48 89 e7             	mov    %rsp,%rdi
+     f07:	c7 04 24 01 00 00 00 	movl   $0x1,(%rsp)
+     f0e:	e8 00 00 00 00       	callq  f13 <call_bits_ref_const()+0x13>
+     f13:	48 83 c4 18          	add    $0x18,%rsp
+     f17:	c3                   	retq   
+     f18:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     f1f:	00 
 
-0000000000000f10 <call_periph_bits()>:
-     f10:	bf c0 02 70 00       	mov    $0x7002c0,%edi
-     f15:	eb e9                	jmp    f00 <periph_bits(mcu::Serial*)>
-     f17:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     f1e:	00 00 
+0000000000000f20 <call_bits_ref_global()>:
+     f20:	48 83 ec 18          	sub    $0x18,%rsp
+     f24:	48 89 e7             	mov    %rsp,%rdi
+     f27:	c7 04 24 40 00 00 00 	movl   $0x40,(%rsp)
+     f2e:	e8 00 00 00 00       	callq  f33 <call_bits_ref_global()+0x13>
+     f33:	48 83 c4 18          	add    $0x18,%rsp
+     f37:	c3                   	retq   
+     f38:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     f3f:	00 
 
-0000000000000f20 <periph_bits_val(mcu::Serial*, regbits::Bits<unsigned int, mcu::Serial::Config>)>:
-     f20:	8b 47 04             	mov    0x4(%rdi),%eax
-     f23:	09 c6                	or     %eax,%esi
-     f25:	89 77 04             	mov    %esi,0x4(%rdi)
-     f28:	c3                   	retq   
-     f29:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+0000000000000f40 <mskd_val(regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+     f40:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
+     f47:	89 f8                	mov    %edi,%eax
+     f49:	48 c1 ef 20          	shr    $0x20,%rdi
+     f4d:	f7 d0                	not    %eax
+     f4f:	21 d0                	and    %edx,%eax
+     f51:	09 f8                	or     %edi,%eax
+     f53:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+     f5a:	c3                   	retq   
+     f5b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
 
-0000000000000f30 <call_periph_bits_val()>:
-     f30:	48 83 ec 08          	sub    $0x8,%rsp
-     f34:	be 40 00 00 00       	mov    $0x40,%esi
-     f39:	bf c0 02 70 00       	mov    $0x7002c0,%edi
-     f3e:	e8 00 00 00 00       	callq  f43 <call_periph_bits_val()+0x13>
-     f43:	48 83 c4 08          	add    $0x8,%rsp
-     f47:	c3                   	retq   
-     f48:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-     f4f:	00 
-
-0000000000000f50 <reg_bits_val(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Bits<unsigned int, mcu::Serial::Config>)>:
-     f50:	8b 07                	mov    (%rdi),%eax
-     f52:	09 c6                	or     %eax,%esi
-     f54:	89 37                	mov    %esi,(%rdi)
-     f56:	c3                   	retq   
-     f57:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     f5e:	00 00 
-
-0000000000000f60 <call_reg_bits_val()>:
-     f60:	48 83 ec 08          	sub    $0x8,%rsp
-     f64:	be 40 00 00 00       	mov    $0x40,%esi
-     f69:	bf c4 02 70 00       	mov    $0x7002c4,%edi
-     f6e:	e8 00 00 00 00       	callq  f73 <call_reg_bits_val()+0x13>
-     f73:	48 83 c4 08          	add    $0x8,%rsp
+0000000000000f60 <mskd_ref(regbits::Mskd<unsigned int, mcu::Serial::Config> const&)>:
+     f60:	8b 07                	mov    (%rdi),%eax
+     f62:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
+     f69:	f7 d0                	not    %eax
+     f6b:	21 d0                	and    %edx,%eax
+     f6d:	0b 47 04             	or     0x4(%rdi),%eax
+     f70:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
      f77:	c3                   	retq   
      f78:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
      f7f:	00 
 
-0000000000000f80 <periph_bits_ref(mcu::Serial*, regbits::Bits<unsigned int, mcu::Serial::Config> const&)>:
+0000000000000f80 <periph_bits(mcu::Serial*)>:
      f80:	8b 47 04             	mov    0x4(%rdi),%eax
-     f83:	0b 06                	or     (%rsi),%eax
-     f85:	89 47 04             	mov    %eax,0x4(%rdi)
-     f88:	c3                   	retq   
-     f89:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+     f83:	83 c8 40             	or     $0x40,%eax
+     f86:	89 47 04             	mov    %eax,0x4(%rdi)
+     f89:	c3                   	retq   
+     f8a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
 
-0000000000000f90 <call_periph_bits_ref()>:
-     f90:	48 83 ec 18          	sub    $0x18,%rsp
-     f94:	bf c0 02 70 00       	mov    $0x7002c0,%edi
-     f99:	48 89 e6             	mov    %rsp,%rsi
-     f9c:	c7 04 24 40 00 00 00 	movl   $0x40,(%rsp)
-     fa3:	e8 00 00 00 00       	callq  fa8 <call_periph_bits_ref()+0x18>
-     fa8:	48 83 c4 18          	add    $0x18,%rsp
-     fac:	c3                   	retq   
-     fad:	0f 1f 00             	nopl   (%rax)
+0000000000000f90 <call_periph_bits()>:
+     f90:	bf c0 02 70 00       	mov    $0x7002c0,%edi
+     f95:	eb e9                	jmp    f80 <periph_bits(mcu::Serial*)>
+     f97:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     f9e:	00 00 
 
-0000000000000fb0 <reg_bits_ref(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Bits<unsigned int, mcu::Serial::Config> const&)>:
-     fb0:	8b 07                	mov    (%rdi),%eax
-     fb2:	0b 06                	or     (%rsi),%eax
-     fb4:	89 07                	mov    %eax,(%rdi)
-     fb6:	c3                   	retq   
-     fb7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     fbe:	00 00 
+0000000000000fa0 <periph_bits_val(mcu::Serial*, regbits::Bits<unsigned int, mcu::Serial::Config>)>:
+     fa0:	8b 47 04             	mov    0x4(%rdi),%eax
+     fa3:	09 c6                	or     %eax,%esi
+     fa5:	89 77 04             	mov    %esi,0x4(%rdi)
+     fa8:	c3                   	retq   
+     fa9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
 
-0000000000000fc0 <call_reg_bits_ref()>:
-     fc0:	48 83 ec 18          	sub    $0x18,%rsp
-     fc4:	bf c4 02 70 00       	mov    $0x7002c4,%edi
-     fc9:	48 89 e6             	mov    %rsp,%rsi
-     fcc:	c7 04 24 40 00 00 00 	movl   $0x40,(%rsp)
-     fd3:	e8 00 00 00 00       	callq  fd8 <call_reg_bits_ref()+0x18>
-     fd8:	48 83 c4 18          	add    $0x18,%rsp
-     fdc:	c3                   	retq   
-     fdd:	0f 1f 00             	nopl   (%rax)
+0000000000000fb0 <call_periph_bits_val()>:
+     fb0:	48 83 ec 08          	sub    $0x8,%rsp
+     fb4:	be 40 00 00 00       	mov    $0x40,%esi
+     fb9:	bf c0 02 70 00       	mov    $0x7002c0,%edi
+     fbe:	e8 00 00 00 00       	callq  fc3 <call_periph_bits_val()+0x13>
+     fc3:	48 83 c4 08          	add    $0x8,%rsp
+     fc7:	c3                   	retq   
+     fc8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     fcf:	00 
 
-0000000000000fe0 <periph_mskd(mcu::Serial*)>:
-     fe0:	8b 47 04             	mov    0x4(%rdi),%eax
-     fe3:	83 e0 f9             	and    $0xfffffff9,%eax
-     fe6:	83 c8 02             	or     $0x2,%eax
-     fe9:	89 47 04             	mov    %eax,0x4(%rdi)
-     fec:	c3                   	retq   
-     fed:	0f 1f 00             	nopl   (%rax)
+0000000000000fd0 <reg_bits_val(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Bits<unsigned int, mcu::Serial::Config>)>:
+     fd0:	8b 07                	mov    (%rdi),%eax
+     fd2:	09 c6                	or     %eax,%esi
+     fd4:	89 37                	mov    %esi,(%rdi)
+     fd6:	c3                   	retq   
+     fd7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     fde:	00 00 
 
-0000000000000ff0 <call_periph_mskd()>:
-     ff0:	bf c0 02 70 00       	mov    $0x7002c0,%edi
-     ff5:	eb e9                	jmp    fe0 <periph_mskd(mcu::Serial*)>
-     ff7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-     ffe:	00 00 
+0000000000000fe0 <call_reg_bits_val()>:
+     fe0:	48 83 ec 08          	sub    $0x8,%rsp
+     fe4:	be 40 00 00 00       	mov    $0x40,%esi
+     fe9:	bf c4 02 70 00       	mov    $0x7002c4,%edi
+     fee:	e8 00 00 00 00       	callq  ff3 <call_reg_bits_val()+0x13>
+     ff3:	48 83 c4 08          	add    $0x8,%rsp
+     ff7:	c3                   	retq   
+     ff8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     fff:	00 
 
-0000000000001000 <periph_mskd_val(mcu::Serial*, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
-    1000:	8b 57 04             	mov    0x4(%rdi),%edx
-    1003:	89 f0                	mov    %esi,%eax
-    1005:	48 c1 ee 20          	shr    $0x20,%rsi
-    1009:	f7 d0                	not    %eax
-    100b:	21 d0                	and    %edx,%eax
-    100d:	09 f0                	or     %esi,%eax
-    100f:	89 47 04             	mov    %eax,0x4(%rdi)
-    1012:	c3                   	retq   
-    1013:	0f 1f 00             	nopl   (%rax)
-    1016:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    101d:	00 00 00 
+0000000000001000 <periph_bits_ref(mcu::Serial*, regbits::Bits<unsigned int, mcu::Serial::Config> const&)>:
+    1000:	8b 47 04             	mov    0x4(%rdi),%eax
+    1003:	0b 06                	or     (%rsi),%eax
+    1005:	89 47 04             	mov    %eax,0x4(%rdi)
+    1008:	c3                   	retq   
+    1009:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
 
-0000000000001020 <call_periph_mskd_val()>:
-    1020:	48 83 ec 08          	sub    $0x8,%rsp
-    1024:	48 be 06 00 00 00 02 	movabs $0x200000006,%rsi
-    102b:	00 00 00 
-    102e:	bf c0 02 70 00       	mov    $0x7002c0,%edi
-    1033:	e8 00 00 00 00       	callq  1038 <call_periph_mskd_val()+0x18>
-    1038:	48 83 c4 08          	add    $0x8,%rsp
-    103c:	c3                   	retq   
-    103d:	0f 1f 00             	nopl   (%rax)
+0000000000001010 <call_periph_bits_ref()>:
+    1010:	48 83 ec 18          	sub    $0x18,%rsp
+    1014:	bf c0 02 70 00       	mov    $0x7002c0,%edi
+    1019:	48 89 e6             	mov    %rsp,%rsi
+    101c:	c7 04 24 40 00 00 00 	movl   $0x40,(%rsp)
+    1023:	e8 00 00 00 00       	callq  1028 <call_periph_bits_ref()+0x18>
+    1028:	48 83 c4 18          	add    $0x18,%rsp
+    102c:	c3                   	retq   
+    102d:	0f 1f 00             	nopl   (%rax)
 
-0000000000001040 <reg_mskd_val(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
-    1040:	8b 17                	mov    (%rdi),%edx
-    1042:	89 f0                	mov    %esi,%eax
-    1044:	48 c1 ee 20          	shr    $0x20,%rsi
-    1048:	f7 d0                	not    %eax
-    104a:	21 d0                	and    %edx,%eax
-    104c:	09 f0                	or     %esi,%eax
-    104e:	89 07                	mov    %eax,(%rdi)
-    1050:	c3                   	retq   
-    1051:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-    1056:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    105d:	00 00 00 
+0000000000001030 <reg_bits_ref(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Bits<unsigned int, mcu::Serial::Config> const&)>:
+    1030:	8b 07                	mov    (%rdi),%eax
+    1032:	0b 06                	or     (%rsi),%eax
+    1034:	89 07                	mov    %eax,(%rdi)
+    1036:	c3                   	retq   
+    1037:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    103e:	00 00 
 
-0000000000001060 <call_reg_mskd_val()>:
-    1060:	48 83 ec 08          	sub    $0x8,%rsp
-    1064:	48 be 06 00 00 00 02 	movabs $0x200000006,%rsi
-    106b:	00 00 00 
-    106e:	bf c4 02 70 00       	mov    $0x7002c4,%edi
-    1073:	e8 00 00 00 00       	callq  1078 <call_reg_mskd_val()+0x18>
-    1078:	48 83 c4 08          	add    $0x8,%rsp
-    107c:	c3                   	retq   
-    107d:	0f 1f 00             	nopl   (%rax)
+0000000000001040 <call_reg_bits_ref()>:
+    1040:	48 83 ec 18          	sub    $0x18,%rsp
+    1044:	bf c4 02 70 00       	mov    $0x7002c4,%edi
+    1049:	48 89 e6             	mov    %rsp,%rsi
+    104c:	c7 04 24 40 00 00 00 	movl   $0x40,(%rsp)
+    1053:	e8 00 00 00 00       	callq  1058 <call_reg_bits_ref()+0x18>
+    1058:	48 83 c4 18          	add    $0x18,%rsp
+    105c:	c3                   	retq   
+    105d:	0f 1f 00             	nopl   (%rax)
 
-0000000000001080 <periph_mskd_ref(mcu::Serial*, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+0000000000001060 <periph_mskd(mcu::Serial*)>:
+    1060:	8b 47 04             	mov    0x4(%rdi),%eax
+    1063:	83 e0 f9             	and    $0xfffffff9,%eax
+    1066:	83 c8 02             	or     $0x2,%eax
+    1069:	89 47 04             	mov    %eax,0x4(%rdi)
+    106c:	c3                   	retq   
+    106d:	0f 1f 00             	nopl   (%rax)
+
+0000000000001070 <call_periph_mskd()>:
+    1070:	bf c0 02 70 00       	mov    $0x7002c0,%edi
+    1075:	eb e9                	jmp    1060 <periph_mskd(mcu::Serial*)>
+    1077:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    107e:	00 00 
+
+0000000000001080 <periph_mskd_val(mcu::Serial*, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
     1080:	8b 57 04             	mov    0x4(%rdi),%edx
     1083:	89 f0                	mov    %esi,%eax
     1085:	48 c1 ee 20          	shr    $0x20,%rsi
@@ -1246,17 +1234,17 @@ Disassembly of section .text:
     1096:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
     109d:	00 00 00 
 
-00000000000010a0 <call_periph_mskd_ref()>:
+00000000000010a0 <call_periph_mskd_val()>:
     10a0:	48 83 ec 08          	sub    $0x8,%rsp
     10a4:	48 be 06 00 00 00 02 	movabs $0x200000006,%rsi
     10ab:	00 00 00 
     10ae:	bf c0 02 70 00       	mov    $0x7002c0,%edi
-    10b3:	e8 00 00 00 00       	callq  10b8 <call_periph_mskd_ref()+0x18>
+    10b3:	e8 00 00 00 00       	callq  10b8 <call_periph_mskd_val()+0x18>
     10b8:	48 83 c4 08          	add    $0x8,%rsp
     10bc:	c3                   	retq   
     10bd:	0f 1f 00             	nopl   (%rax)
 
-00000000000010c0 <reg_mskd_ref(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+00000000000010c0 <reg_mskd_val(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
     10c0:	8b 17                	mov    (%rdi),%edx
     10c2:	89 f0                	mov    %esi,%eax
     10c4:	48 c1 ee 20          	shr    $0x20,%rsi
@@ -1269,927 +1257,980 @@ Disassembly of section .text:
     10d6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
     10dd:	00 00 00 
 
-00000000000010e0 <call_reg_mskd_ref()>:
+00000000000010e0 <call_reg_mskd_val()>:
     10e0:	48 83 ec 08          	sub    $0x8,%rsp
     10e4:	48 be 06 00 00 00 02 	movabs $0x200000006,%rsi
     10eb:	00 00 00 
     10ee:	bf c4 02 70 00       	mov    $0x7002c4,%edi
-    10f3:	e8 00 00 00 00       	callq  10f8 <call_reg_mskd_ref()+0x18>
+    10f3:	e8 00 00 00 00       	callq  10f8 <call_reg_mskd_val()+0x18>
     10f8:	48 83 c4 08          	add    $0x8,%rsp
     10fc:	c3                   	retq   
     10fd:	0f 1f 00             	nopl   (%rax)
 
-0000000000001100 <return_bits()>:
-    1100:	b8 20 00 00 00       	mov    $0x20,%eax
-    1105:	c3                   	retq   
-    1106:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    110d:	00 00 00 
+0000000000001100 <periph_mskd_ref(mcu::Serial*, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+    1100:	8b 57 04             	mov    0x4(%rdi),%edx
+    1103:	89 f0                	mov    %esi,%eax
+    1105:	48 c1 ee 20          	shr    $0x20,%rsi
+    1109:	f7 d0                	not    %eax
+    110b:	21 d0                	and    %edx,%eax
+    110d:	09 f0                	or     %esi,%eax
+    110f:	89 47 04             	mov    %eax,0x4(%rdi)
+    1112:	c3                   	retq   
+    1113:	0f 1f 00             	nopl   (%rax)
+    1116:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    111d:	00 00 00 
 
-0000000000001110 <call_return_bits()>:
-    1110:	48 83 ec 08          	sub    $0x8,%rsp
-    1114:	e8 00 00 00 00       	callq  1119 <call_return_bits()+0x9>
-    1119:	83 f8 20             	cmp    $0x20,%eax
-    111c:	74 12                	je     1130 <call_return_bits()+0x20>
-    111e:	c7 04 25 24 02 70 00 	movl   $0x6000000,0x700224
-    1125:	00 00 00 06 
-    1129:	48 83 c4 08          	add    $0x8,%rsp
-    112d:	c3                   	retq   
-    112e:	66 90                	xchg   %ax,%ax
-    1130:	c7 04 25 24 02 70 00 	movl   $0x2a000000,0x700224
-    1137:	00 00 00 2a 
-    113b:	48 83 c4 08          	add    $0x8,%rsp
-    113f:	c3                   	retq   
+0000000000001120 <call_periph_mskd_ref()>:
+    1120:	48 83 ec 08          	sub    $0x8,%rsp
+    1124:	48 be 06 00 00 00 02 	movabs $0x200000006,%rsi
+    112b:	00 00 00 
+    112e:	bf c0 02 70 00       	mov    $0x7002c0,%edi
+    1133:	e8 00 00 00 00       	callq  1138 <call_periph_mskd_ref()+0x18>
+    1138:	48 83 c4 08          	add    $0x8,%rsp
+    113c:	c3                   	retq   
+    113d:	0f 1f 00             	nopl   (%rax)
 
-0000000000001140 <return_mskd()>:
-    1140:	48 b8 18 00 00 00 08 	movabs $0x800000018,%rax
-    1147:	00 00 00 
-    114a:	c3                   	retq   
-    114b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+0000000000001140 <reg_mskd_ref(regbits::Reg<unsigned int, mcu::Serial::Config>&, regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+    1140:	8b 17                	mov    (%rdi),%edx
+    1142:	89 f0                	mov    %esi,%eax
+    1144:	48 c1 ee 20          	shr    $0x20,%rsi
+    1148:	f7 d0                	not    %eax
+    114a:	21 d0                	and    %edx,%eax
+    114c:	09 f0                	or     %esi,%eax
+    114e:	89 07                	mov    %eax,(%rdi)
+    1150:	c3                   	retq   
+    1151:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    1156:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    115d:	00 00 00 
 
-0000000000001150 <call_return_mskd()>:
-    1150:	48 83 ec 08          	sub    $0x8,%rsp
-    1154:	e8 00 00 00 00       	callq  1159 <call_return_mskd()+0x9>
-    1159:	83 f8 18             	cmp    $0x18,%eax
-    115c:	74 12                	je     1170 <call_return_mskd()+0x20>
-    115e:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
-    1165:	00 00 00 26 
-    1169:	48 83 c4 08          	add    $0x8,%rsp
-    116d:	c3                   	retq   
-    116e:	66 90                	xchg   %ax,%ax
-    1170:	48 c1 e8 20          	shr    $0x20,%rax
-    1174:	83 f8 08             	cmp    $0x8,%eax
-    1177:	75 e5                	jne    115e <call_return_mskd()+0xe>
-    1179:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
-    1180:	00 00 00 22 
-    1184:	eb e3                	jmp    1169 <call_return_mskd()+0x19>
+0000000000001160 <call_reg_mskd_ref()>:
+    1160:	48 83 ec 08          	sub    $0x8,%rsp
+    1164:	48 be 06 00 00 00 02 	movabs $0x200000006,%rsi
+    116b:	00 00 00 
+    116e:	bf c4 02 70 00       	mov    $0x7002c4,%edi
+    1173:	e8 00 00 00 00       	callq  1178 <call_reg_mskd_ref()+0x18>
+    1178:	48 83 c4 08          	add    $0x8,%rsp
+    117c:	c3                   	retq   
+    117d:	0f 1f 00             	nopl   (%rax)
+
+0000000000001180 <return_bits()>:
+    1180:	b8 20 00 00 00       	mov    $0x20,%eax
+    1185:	c3                   	retq   
     1186:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
     118d:	00 00 00 
 
-0000000000001190 <return_reg()>:
-    1190:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-    1197:	40 00 00 00 
-    119b:	b8 c4 02 70 00       	mov    $0x7002c4,%eax
-    11a0:	c3                   	retq   
-    11a1:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-    11a6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    11ad:	00 00 00 
+0000000000001190 <call_return_bits()>:
+    1190:	48 83 ec 08          	sub    $0x8,%rsp
+    1194:	e8 00 00 00 00       	callq  1199 <call_return_bits()+0x9>
+    1199:	83 f8 20             	cmp    $0x20,%eax
+    119c:	74 12                	je     11b0 <call_return_bits()+0x20>
+    119e:	c7 04 25 24 02 70 00 	movl   $0x6000000,0x700224
+    11a5:	00 00 00 06 
+    11a9:	48 83 c4 08          	add    $0x8,%rsp
+    11ad:	c3                   	retq   
+    11ae:	66 90                	xchg   %ax,%ax
+    11b0:	c7 04 25 24 02 70 00 	movl   $0x2a000000,0x700224
+    11b7:	00 00 00 2a 
+    11bb:	48 83 c4 08          	add    $0x8,%rsp
+    11bf:	c3                   	retq   
 
-00000000000011b0 <call_return_reg()>:
-    11b0:	e8 00 00 00 00       	callq  11b5 <call_return_reg()+0x5>
-    11b5:	8b 00                	mov    (%rax),%eax
-    11b7:	a8 40                	test   $0x40,%al
-    11b9:	75 15                	jne    11d0 <call_return_reg()+0x20>
-    11bb:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-    11c2:	00 00 00 2e 
-    11c6:	c3                   	retq   
-    11c7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-    11ce:	00 00 
-    11d0:	c7 04 25 24 02 70 00 	movl   $0x1e000000,0x700224
-    11d7:	00 00 00 1e 
-    11db:	c3                   	retq   
-    11dc:	0f 1f 40 00          	nopl   0x0(%rax)
+00000000000011c0 <return_mskd()>:
+    11c0:	48 b8 18 00 00 00 08 	movabs $0x800000018,%rax
+    11c7:	00 00 00 
+    11ca:	c3                   	retq   
+    11cb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
 
-00000000000011e0 <return_periph()>:
-    11e0:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-    11e7:	40 00 00 00 
-    11eb:	b8 c0 02 70 00       	mov    $0x7002c0,%eax
-    11f0:	c3                   	retq   
-    11f1:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-    11f6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    11fd:	00 00 00 
+00000000000011d0 <call_return_mskd()>:
+    11d0:	48 83 ec 08          	sub    $0x8,%rsp
+    11d4:	e8 00 00 00 00       	callq  11d9 <call_return_mskd()+0x9>
+    11d9:	83 f8 18             	cmp    $0x18,%eax
+    11dc:	74 12                	je     11f0 <call_return_mskd()+0x20>
+    11de:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
+    11e5:	00 00 00 26 
+    11e9:	48 83 c4 08          	add    $0x8,%rsp
+    11ed:	c3                   	retq   
+    11ee:	66 90                	xchg   %ax,%ax
+    11f0:	48 c1 e8 20          	shr    $0x20,%rax
+    11f4:	83 f8 08             	cmp    $0x8,%eax
+    11f7:	75 e5                	jne    11de <call_return_mskd()+0xe>
+    11f9:	c7 04 25 24 02 70 00 	movl   $0x22000000,0x700224
+    1200:	00 00 00 22 
+    1204:	eb e3                	jmp    11e9 <call_return_mskd()+0x19>
+    1206:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    120d:	00 00 00 
 
-0000000000001200 <call_return_periph()>:
-    1200:	e8 00 00 00 00       	callq  1205 <call_return_periph()+0x5>
-    1205:	8b 40 04             	mov    0x4(%rax),%eax
-    1208:	a8 40                	test   $0x40,%al
-    120a:	75 14                	jne    1220 <call_return_periph()+0x20>
-    120c:	c7 04 25 24 02 70 00 	movl   $0x2a000000,0x700224
-    1213:	00 00 00 2a 
-    1217:	c3                   	retq   
-    1218:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-    121f:	00 
-    1220:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
-    1227:	00 00 00 26 
-    122b:	c3                   	retq   
-    122c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000001210 <return_reg()>:
+    1210:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+    1217:	40 00 00 00 
+    121b:	b8 c4 02 70 00       	mov    $0x7002c4,%eax
+    1220:	c3                   	retq   
+    1221:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    1226:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    122d:	00 00 00 
 
-0000000000001230 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>)>:
-    1230:	83 ff 05             	cmp    $0x5,%edi
-    1233:	74 1b                	je     1250 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>)+0x20>
-    1235:	83 ff 06             	cmp    $0x6,%edi
-    1238:	74 26                	je     1260 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>)+0x30>
-    123a:	c7 04 25 2c 01 70 00 	movl   $0x55,0x70012c
-    1241:	55 00 00 00 
-    1245:	c3                   	retq   
-    1246:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    124d:	00 00 00 
-    1250:	c7 04 25 2c 01 70 00 	movl   $0x33,0x70012c
-    1257:	33 00 00 00 
+0000000000001230 <call_return_reg()>:
+    1230:	e8 00 00 00 00       	callq  1235 <call_return_reg()+0x5>
+    1235:	8b 00                	mov    (%rax),%eax
+    1237:	a8 40                	test   $0x40,%al
+    1239:	75 15                	jne    1250 <call_return_reg()+0x20>
+    123b:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+    1242:	00 00 00 2e 
+    1246:	c3                   	retq   
+    1247:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    124e:	00 00 
+    1250:	c7 04 25 24 02 70 00 	movl   $0x1e000000,0x700224
+    1257:	00 00 00 1e 
     125b:	c3                   	retq   
     125c:	0f 1f 40 00          	nopl   0x0(%rax)
-    1260:	c7 04 25 2c 01 70 00 	movl   $0x44,0x70012c
-    1267:	44 00 00 00 
-    126b:	c3                   	retq   
-    126c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000001270 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&)>:
-    1270:	8b 07                	mov    (%rdi),%eax
-    1272:	83 f8 05             	cmp    $0x5,%eax
-    1275:	74 19                	je     1290 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&)+0x20>
-    1277:	83 f8 06             	cmp    $0x6,%eax
-    127a:	74 24                	je     12a0 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&)+0x30>
-    127c:	c7 04 25 2c 01 70 00 	movl   $0x88,0x70012c
-    1283:	88 00 00 00 
-    1287:	c3                   	retq   
-    1288:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-    128f:	00 
-    1290:	c7 04 25 2c 01 70 00 	movl   $0x66,0x70012c
-    1297:	66 00 00 00 
-    129b:	c3                   	retq   
-    129c:	0f 1f 40 00          	nopl   0x0(%rax)
-    12a0:	c7 04 25 2c 01 70 00 	movl   $0x77,0x70012c
-    12a7:	77 00 00 00 
+0000000000001260 <return_periph()>:
+    1260:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+    1267:	40 00 00 00 
+    126b:	b8 c0 02 70 00       	mov    $0x7002c0,%eax
+    1270:	c3                   	retq   
+    1271:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    1276:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    127d:	00 00 00 
+
+0000000000001280 <call_return_periph()>:
+    1280:	e8 00 00 00 00       	callq  1285 <call_return_periph()+0x5>
+    1285:	8b 40 04             	mov    0x4(%rax),%eax
+    1288:	a8 40                	test   $0x40,%al
+    128a:	75 14                	jne    12a0 <call_return_periph()+0x20>
+    128c:	c7 04 25 24 02 70 00 	movl   $0x2a000000,0x700224
+    1293:	00 00 00 2a 
+    1297:	c3                   	retq   
+    1298:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    129f:	00 
+    12a0:	c7 04 25 24 02 70 00 	movl   $0x26000000,0x700224
+    12a7:	00 00 00 26 
     12ab:	c3                   	retq   
     12ac:	0f 1f 40 00          	nopl   0x0(%rax)
 
-00000000000012b0 <runtime_range_val(regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
-    12b0:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
-    12b7:	89 f8                	mov    %edi,%eax
-    12b9:	48 c1 ef 20          	shr    $0x20,%rdi
-    12bd:	f7 d0                	not    %eax
-    12bf:	21 d0                	and    %edx,%eax
-    12c1:	09 f8                	or     %edi,%eax
-    12c3:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-    12ca:	c3                   	retq   
-    12cb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-
-00000000000012d0 <call_range_val(unsigned int)>:
-    12d0:	c1 e7 0c             	shl    $0xc,%edi
-    12d3:	48 83 ec 08          	sub    $0x8,%rsp
-    12d7:	48 c1 e7 20          	shl    $0x20,%rdi
-    12db:	48 81 cf 00 f0 01 00 	or     $0x1f000,%rdi
-    12e2:	e8 00 00 00 00       	callq  12e7 <call_range_val(unsigned int)+0x17>
-    12e7:	48 83 c4 08          	add    $0x8,%rsp
+00000000000012b0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>)>:
+    12b0:	83 ff 05             	cmp    $0x5,%edi
+    12b3:	74 1b                	je     12d0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>)+0x20>
+    12b5:	83 ff 06             	cmp    $0x6,%edi
+    12b8:	74 26                	je     12e0 <pos_val(regbits::Pos<unsigned int, mcu::Serial::Config>)+0x30>
+    12ba:	c7 04 25 2c 01 70 00 	movl   $0x55,0x70012c
+    12c1:	55 00 00 00 
+    12c5:	c3                   	retq   
+    12c6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    12cd:	00 00 00 
+    12d0:	c7 04 25 2c 01 70 00 	movl   $0x33,0x70012c
+    12d7:	33 00 00 00 
+    12db:	c3                   	retq   
+    12dc:	0f 1f 40 00          	nopl   0x0(%rax)
+    12e0:	c7 04 25 2c 01 70 00 	movl   $0x44,0x70012c
+    12e7:	44 00 00 00 
     12eb:	c3                   	retq   
     12ec:	0f 1f 40 00          	nopl   0x0(%rax)
 
-00000000000012f0 <call_range_val_port()>:
-    12f0:	bf 1f 00 00 00       	mov    $0x1f,%edi
-    12f5:	eb d9                	jmp    12d0 <call_range_val(unsigned int)>
-    12f7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-    12fe:	00 00 
+00000000000012f0 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&)>:
+    12f0:	8b 07                	mov    (%rdi),%eax
+    12f2:	83 f8 05             	cmp    $0x5,%eax
+    12f5:	74 19                	je     1310 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&)+0x20>
+    12f7:	83 f8 06             	cmp    $0x6,%eax
+    12fa:	74 24                	je     1320 <pos_ref(regbits::Pos<unsigned int, mcu::Serial::Config> const&)+0x30>
+    12fc:	c7 04 25 2c 01 70 00 	movl   $0x88,0x70012c
+    1303:	88 00 00 00 
+    1307:	c3                   	retq   
+    1308:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    130f:	00 
+    1310:	c7 04 25 2c 01 70 00 	movl   $0x66,0x70012c
+    1317:	66 00 00 00 
+    131b:	c3                   	retq   
+    131c:	0f 1f 40 00          	nopl   0x0(%rax)
+    1320:	c7 04 25 2c 01 70 00 	movl   $0x77,0x70012c
+    1327:	77 00 00 00 
+    132b:	c3                   	retq   
+    132c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000001300 <runtime_range_ref(regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
-    1300:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
-    1307:	89 f8                	mov    %edi,%eax
-    1309:	48 c1 ef 20          	shr    $0x20,%rdi
-    130d:	f7 d0                	not    %eax
-    130f:	21 d0                	and    %edx,%eax
-    1311:	09 f8                	or     %edi,%eax
-    1313:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
-    131a:	c3                   	retq   
-    131b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+0000000000001330 <runtime_range_val(regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+    1330:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
+    1337:	89 f8                	mov    %edi,%eax
+    1339:	48 c1 ef 20          	shr    $0x20,%rdi
+    133d:	f7 d0                	not    %eax
+    133f:	21 d0                	and    %edx,%eax
+    1341:	09 f8                	or     %edi,%eax
+    1343:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+    134a:	c3                   	retq   
+    134b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
 
-0000000000001320 <call_range_ref(unsigned int)>:
-    1320:	c1 e7 0c             	shl    $0xc,%edi
-    1323:	48 83 ec 08          	sub    $0x8,%rsp
-    1327:	48 c1 e7 20          	shl    $0x20,%rdi
-    132b:	48 81 cf 00 f0 01 00 	or     $0x1f000,%rdi
-    1332:	e8 00 00 00 00       	callq  1337 <call_range_ref(unsigned int)+0x17>
-    1337:	48 83 c4 08          	add    $0x8,%rsp
-    133b:	c3                   	retq   
-    133c:	0f 1f 40 00          	nopl   0x0(%rax)
+0000000000001350 <call_range_val(unsigned int)>:
+    1350:	c1 e7 0c             	shl    $0xc,%edi
+    1353:	48 83 ec 08          	sub    $0x8,%rsp
+    1357:	48 c1 e7 20          	shl    $0x20,%rdi
+    135b:	48 81 cf 00 f0 01 00 	or     $0x1f000,%rdi
+    1362:	e8 00 00 00 00       	callq  1367 <call_range_val(unsigned int)+0x17>
+    1367:	48 83 c4 08          	add    $0x8,%rsp
+    136b:	c3                   	retq   
+    136c:	0f 1f 40 00          	nopl   0x0(%rax)
 
-0000000000001340 <call_range_ref_port()>:
-    1340:	bf 0c 00 00 00       	mov    $0xc,%edi
-    1345:	eb d9                	jmp    1320 <call_range_ref(unsigned int)>
-    1347:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
-    134e:	00 00 
+0000000000001370 <call_range_val_port()>:
+    1370:	bf 1f 00 00 00       	mov    $0x1f,%edi
+    1375:	eb d9                	jmp    1350 <call_range_val(unsigned int)>
+    1377:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    137e:	00 00 
 
-0000000000001350 <check_array_range_pass(unsigned int)>:
-    1350:	83 ff 16             	cmp    $0x16,%edi
-    1353:	76 13                	jbe    1368 <check_array_range_pass(unsigned int)+0x18>
-    1355:	c7 04 25 2c 01 70 00 	movl   $0x83,0x70012c
-    135c:	83 00 00 00 
-    1360:	c3                   	retq   
-    1361:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1368:	c7 04 25 2c 01 70 00 	movl   $0x7f,0x70012c
-    136f:	7f 00 00 00 
-    1373:	c3                   	retq   
-    1374:	66 90                	xchg   %ax,%ax
-    1376:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    137d:	00 00 00 
+0000000000001380 <runtime_range_ref(regbits::Mskd<unsigned int, mcu::Serial::Config>)>:
+    1380:	8b 14 25 c4 02 70 00 	mov    0x7002c4,%edx
+    1387:	89 f8                	mov    %edi,%eax
+    1389:	48 c1 ef 20          	shr    $0x20,%rdi
+    138d:	f7 d0                	not    %eax
+    138f:	21 d0                	and    %edx,%eax
+    1391:	09 f8                	or     %edi,%eax
+    1393:	89 04 25 c4 02 70 00 	mov    %eax,0x7002c4
+    139a:	c3                   	retq   
+    139b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
 
-0000000000001380 <check_array_range_fail(unsigned int)>:
-    1380:	83 ff 16             	cmp    $0x16,%edi
-    1383:	76 13                	jbe    1398 <check_array_range_fail(unsigned int)+0x18>
-    1385:	c7 04 25 2c 01 70 00 	movl   $0x97,0x70012c
-    138c:	97 00 00 00 
-    1390:	c3                   	retq   
-    1391:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1398:	c7 04 25 2c 01 70 00 	movl   $0x95,0x70012c
-    139f:	95 00 00 00 
-    13a3:	c3                   	retq   
-    13a4:	66 90                	xchg   %ax,%ax
-    13a6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    13ad:	00 00 00 
+00000000000013a0 <call_range_ref(unsigned int)>:
+    13a0:	c1 e7 0c             	shl    $0xc,%edi
+    13a3:	48 83 ec 08          	sub    $0x8,%rsp
+    13a7:	48 c1 e7 20          	shl    $0x20,%rdi
+    13ab:	48 81 cf 00 f0 01 00 	or     $0x1f000,%rdi
+    13b2:	e8 00 00 00 00       	callq  13b7 <call_range_ref(unsigned int)+0x17>
+    13b7:	48 83 c4 08          	add    $0x8,%rsp
+    13bb:	c3                   	retq   
+    13bc:	0f 1f 40 00          	nopl   0x0(%rax)
 
-00000000000013b0 <check_bits_range_pass(unsigned int)>:
-    13b0:	83 ff 0f             	cmp    $0xf,%edi
-    13b3:	76 13                	jbe    13c8 <check_bits_range_pass(unsigned int)+0x18>
-    13b5:	c7 04 25 2c 01 70 00 	movl   $0xa3,0x70012c
-    13bc:	a3 00 00 00 
-    13c0:	c3                   	retq   
-    13c1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    13c8:	c7 04 25 2c 01 70 00 	movl   $0x9d,0x70012c
-    13cf:	9d 00 00 00 
-    13d3:	c3                   	retq   
-    13d4:	66 90                	xchg   %ax,%ax
-    13d6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    13dd:	00 00 00 
+00000000000013c0 <call_range_ref_port()>:
+    13c0:	bf 0c 00 00 00       	mov    $0xc,%edi
+    13c5:	eb d9                	jmp    13a0 <call_range_ref(unsigned int)>
+    13c7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    13ce:	00 00 
 
-00000000000013e0 <check_bits_range_fail(unsigned int)>:
-    13e0:	83 ff 0f             	cmp    $0xf,%edi
-    13e3:	76 13                	jbe    13f8 <check_bits_range_fail(unsigned int)+0x18>
-    13e5:	c7 04 25 2c 01 70 00 	movl   $0xad,0x70012c
-    13ec:	ad 00 00 00 
-    13f0:	c3                   	retq   
-    13f1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    13f8:	c7 04 25 2c 01 70 00 	movl   $0xa7,0x70012c
-    13ff:	a7 00 00 00 
-    1403:	c3                   	retq   
-    1404:	66 90                	xchg   %ax,%ax
-    1406:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    140d:	00 00 00 
+00000000000013d0 <check_array_range_pass(unsigned int)>:
+    13d0:	83 ff 16             	cmp    $0x16,%edi
+    13d3:	76 13                	jbe    13e8 <check_array_range_pass(unsigned int)+0x18>
+    13d5:	c7 04 25 2c 01 70 00 	movl   $0x83,0x70012c
+    13dc:	83 00 00 00 
+    13e0:	c3                   	retq   
+    13e1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    13e8:	c7 04 25 2c 01 70 00 	movl   $0x7f,0x70012c
+    13ef:	7f 00 00 00 
+    13f3:	c3                   	retq   
+    13f4:	66 90                	xchg   %ax,%ax
+    13f6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    13fd:	00 00 00 
 
-0000000000001410 <check_mskd_range_pass(unsigned int)>:
-    1410:	83 ff 1f             	cmp    $0x1f,%edi
-    1413:	76 13                	jbe    1428 <check_mskd_range_pass(unsigned int)+0x18>
-    1415:	c7 04 25 2c 01 70 00 	movl   $0xb5,0x70012c
-    141c:	b5 00 00 00 
-    1420:	c3                   	retq   
-    1421:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1428:	c7 04 25 2c 01 70 00 	movl   $0xb3,0x70012c
-    142f:	b3 00 00 00 
-    1433:	c3                   	retq   
-    1434:	66 90                	xchg   %ax,%ax
-    1436:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    143d:	00 00 00 
+0000000000001400 <check_array_range_fail(unsigned int)>:
+    1400:	83 ff 16             	cmp    $0x16,%edi
+    1403:	76 13                	jbe    1418 <check_array_range_fail(unsigned int)+0x18>
+    1405:	c7 04 25 2c 01 70 00 	movl   $0x97,0x70012c
+    140c:	97 00 00 00 
+    1410:	c3                   	retq   
+    1411:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1418:	c7 04 25 2c 01 70 00 	movl   $0x95,0x70012c
+    141f:	95 00 00 00 
+    1423:	c3                   	retq   
+    1424:	66 90                	xchg   %ax,%ax
+    1426:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    142d:	00 00 00 
 
-0000000000001440 <check_mskd_range_fail(unsigned int)>:
-    1440:	83 ff 1f             	cmp    $0x1f,%edi
-    1443:	76 13                	jbe    1458 <check_mskd_range_fail(unsigned int)+0x18>
-    1445:	c7 04 25 2c 01 70 00 	movl   $0xc1,0x70012c
-    144c:	c1 00 00 00 
-    1450:	c3                   	retq   
-    1451:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1458:	c7 04 25 2c 01 70 00 	movl   $0xbf,0x70012c
-    145f:	bf 00 00 00 
-    1463:	c3                   	retq   
-    1464:	66 90                	xchg   %ax,%ax
-    1466:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    146d:	00 00 00 
+0000000000001430 <check_bits_range_pass(unsigned int)>:
+    1430:	83 ff 0f             	cmp    $0xf,%edi
+    1433:	76 13                	jbe    1448 <check_bits_range_pass(unsigned int)+0x18>
+    1435:	c7 04 25 2c 01 70 00 	movl   $0xa3,0x70012c
+    143c:	a3 00 00 00 
+    1440:	c3                   	retq   
+    1441:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1448:	c7 04 25 2c 01 70 00 	movl   $0x9d,0x70012c
+    144f:	9d 00 00 00 
+    1453:	c3                   	retq   
+    1454:	66 90                	xchg   %ax,%ax
+    1456:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    145d:	00 00 00 
 
-0000000000001470 <bits_extract_ne()>:
-    1470:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-    1477:	20 00 00 00 
-    147b:	83 3c 25 c4 02 70 00 	cmpl   $0x20,0x7002c4
-    1482:	20 
-    1483:	74 13                	je     1498 <bits_extract_ne()+0x28>
-    1485:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-    148c:	02 00 00 00 
-    1490:	c3                   	retq   
-    1491:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1498:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-    149f:	04 00 00 00 
-    14a3:	c3                   	retq   
-    14a4:	66 90                	xchg   %ax,%ax
-    14a6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    14ad:	00 00 00 
+0000000000001460 <check_bits_range_fail(unsigned int)>:
+    1460:	83 ff 0f             	cmp    $0xf,%edi
+    1463:	76 13                	jbe    1478 <check_bits_range_fail(unsigned int)+0x18>
+    1465:	c7 04 25 2c 01 70 00 	movl   $0xad,0x70012c
+    146c:	ad 00 00 00 
+    1470:	c3                   	retq   
+    1471:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1478:	c7 04 25 2c 01 70 00 	movl   $0xa7,0x70012c
+    147f:	a7 00 00 00 
+    1483:	c3                   	retq   
+    1484:	66 90                	xchg   %ax,%ax
+    1486:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    148d:	00 00 00 
 
-00000000000014b0 <mskd_extract_geq()>:
-    14b0:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
-    14b7:	00 00 00 16 
-    14bb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-    14c2:	3d ff ff ff 15       	cmp    $0x15ffffff,%eax
-    14c7:	76 0f                	jbe    14d8 <mskd_extract_geq()+0x28>
-    14c9:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
-    14d0:	20 00 00 00 
-    14d4:	c3                   	retq   
-    14d5:	0f 1f 00             	nopl   (%rax)
-    14d8:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-    14df:	40 00 00 00 
+0000000000001490 <check_mskd_range_pass(unsigned int)>:
+    1490:	83 ff 1f             	cmp    $0x1f,%edi
+    1493:	76 13                	jbe    14a8 <check_mskd_range_pass(unsigned int)+0x18>
+    1495:	c7 04 25 2c 01 70 00 	movl   $0xb5,0x70012c
+    149c:	b5 00 00 00 
+    14a0:	c3                   	retq   
+    14a1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    14a8:	c7 04 25 2c 01 70 00 	movl   $0xb3,0x70012c
+    14af:	b3 00 00 00 
+    14b3:	c3                   	retq   
+    14b4:	66 90                	xchg   %ax,%ax
+    14b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    14bd:	00 00 00 
+
+00000000000014c0 <check_mskd_range_fail(unsigned int)>:
+    14c0:	83 ff 1f             	cmp    $0x1f,%edi
+    14c3:	76 13                	jbe    14d8 <check_mskd_range_fail(unsigned int)+0x18>
+    14c5:	c7 04 25 2c 01 70 00 	movl   $0xc1,0x70012c
+    14cc:	c1 00 00 00 
+    14d0:	c3                   	retq   
+    14d1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    14d8:	c7 04 25 2c 01 70 00 	movl   $0xbf,0x70012c
+    14df:	bf 00 00 00 
     14e3:	c3                   	retq   
     14e4:	66 90                	xchg   %ax,%ax
     14e6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
     14ed:	00 00 00 
 
-00000000000014f0 <shifted_val(regbits::Shft<unsigned int, mcu::Timer::Prescale>)>:
-    14f0:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-    14f7:	00 00 00 2e 
-    14fb:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-    1502:	48 89 f9             	mov    %rdi,%rcx
-    1505:	48 c1 e9 20          	shr    $0x20,%rcx
-    1509:	21 f8                	and    %edi,%eax
-    150b:	d3 e8                	shr    %cl,%eax
-    150d:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
-    1514:	c3                   	retq   
-    1515:	90                   	nop
-    1516:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    151d:	00 00 00 
+00000000000014f0 <bits_extract_ne()>:
+    14f0:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+    14f7:	20 00 00 00 
+    14fb:	83 3c 25 c4 02 70 00 	cmpl   $0x20,0x7002c4
+    1502:	20 
+    1503:	74 13                	je     1518 <bits_extract_ne()+0x28>
+    1505:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+    150c:	02 00 00 00 
+    1510:	c3                   	retq   
+    1511:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1518:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+    151f:	04 00 00 00 
+    1523:	c3                   	retq   
+    1524:	66 90                	xchg   %ax,%ax
+    1526:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    152d:	00 00 00 
 
-0000000000001520 <call_shifted_const_val()>:
-    1520:	48 83 ec 08          	sub    $0x8,%rsp
-    1524:	48 bf 00 00 00 3e 19 	movabs $0x193e000000,%rdi
-    152b:	00 00 00 
-    152e:	e8 00 00 00 00       	callq  1533 <call_shifted_const_val()+0x13>
-    1533:	48 83 c4 08          	add    $0x8,%rsp
-    1537:	c3                   	retq   
-    1538:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-    153f:	00 
+0000000000001530 <mskd_extract_geq()>:
+    1530:	c7 04 25 24 02 70 00 	movl   $0x16000000,0x700224
+    1537:	00 00 00 16 
+    153b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+    1542:	3d ff ff ff 15       	cmp    $0x15ffffff,%eax
+    1547:	76 0f                	jbe    1558 <mskd_extract_geq()+0x28>
+    1549:	c7 04 25 c4 02 70 00 	movl   $0x20,0x7002c4
+    1550:	20 00 00 00 
+    1554:	c3                   	retq   
+    1555:	0f 1f 00             	nopl   (%rax)
+    1558:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+    155f:	40 00 00 00 
+    1563:	c3                   	retq   
+    1564:	66 90                	xchg   %ax,%ax
+    1566:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    156d:	00 00 00 
 
-0000000000001540 <call_shifted_var_val()>:
-    1540:	48 83 ec 08          	sub    $0x8,%rsp
-    1544:	48 bf 00 00 00 3e 19 	movabs $0x193e000000,%rdi
-    154b:	00 00 00 
-    154e:	e8 00 00 00 00       	callq  1553 <call_shifted_var_val()+0x13>
-    1553:	48 83 c4 08          	add    $0x8,%rsp
-    1557:	c3                   	retq   
-    1558:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-    155f:	00 
+0000000000001570 <shifted_val(regbits::Shft<unsigned int, mcu::Timer::Prescale>)>:
+    1570:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+    1577:	00 00 00 2e 
+    157b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+    1582:	48 89 f9             	mov    %rdi,%rcx
+    1585:	48 c1 e9 20          	shr    $0x20,%rcx
+    1589:	21 f8                	and    %edi,%eax
+    158b:	d3 e8                	shr    %cl,%eax
+    158d:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
+    1594:	c3                   	retq   
+    1595:	90                   	nop
+    1596:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    159d:	00 00 00 
 
-0000000000001560 <call_shifted_global_val()>:
-    1560:	48 83 ec 08          	sub    $0x8,%rsp
-    1564:	48 bf 00 00 00 3e 19 	movabs $0x193e000000,%rdi
-    156b:	00 00 00 
-    156e:	e8 00 00 00 00       	callq  1573 <call_shifted_global_val()+0x13>
-    1573:	48 83 c4 08          	add    $0x8,%rsp
-    1577:	c3                   	retq   
-    1578:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-    157f:	00 
+00000000000015a0 <call_shifted_const_val()>:
+    15a0:	48 83 ec 08          	sub    $0x8,%rsp
+    15a4:	48 bf 00 00 00 3e 19 	movabs $0x193e000000,%rdi
+    15ab:	00 00 00 
+    15ae:	e8 00 00 00 00       	callq  15b3 <call_shifted_const_val()+0x13>
+    15b3:	48 83 c4 08          	add    $0x8,%rsp
+    15b7:	c3                   	retq   
+    15b8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    15bf:	00 
 
-0000000000001580 <shifted_ref(regbits::Shft<unsigned int, mcu::Timer::Prescale> const&)>:
-    1580:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
-    1587:	00 00 00 2e 
-    158b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
-    1592:	23 07                	and    (%rdi),%eax
-    1594:	8b 4f 04             	mov    0x4(%rdi),%ecx
-    1597:	d3 e8                	shr    %cl,%eax
-    1599:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
-    15a0:	c3                   	retq   
-    15a1:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-    15a6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    15ad:	00 00 00 
+00000000000015c0 <call_shifted_var_val()>:
+    15c0:	48 83 ec 08          	sub    $0x8,%rsp
+    15c4:	48 bf 00 00 00 3e 19 	movabs $0x193e000000,%rdi
+    15cb:	00 00 00 
+    15ce:	e8 00 00 00 00       	callq  15d3 <call_shifted_var_val()+0x13>
+    15d3:	48 83 c4 08          	add    $0x8,%rsp
+    15d7:	c3                   	retq   
+    15d8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    15df:	00 
 
-00000000000015b0 <call_shifted_const_ref()>:
-    15b0:	48 83 ec 18          	sub    $0x18,%rsp
-    15b4:	48 89 e7             	mov    %rsp,%rdi
-    15b7:	c7 04 24 00 00 00 3e 	movl   $0x3e000000,(%rsp)
-    15be:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%rsp)
-    15c5:	00 
-    15c6:	e8 00 00 00 00       	callq  15cb <call_shifted_const_ref()+0x1b>
-    15cb:	48 83 c4 18          	add    $0x18,%rsp
-    15cf:	c3                   	retq   
+00000000000015e0 <call_shifted_global_val()>:
+    15e0:	48 83 ec 08          	sub    $0x8,%rsp
+    15e4:	48 bf 00 00 00 3e 19 	movabs $0x193e000000,%rdi
+    15eb:	00 00 00 
+    15ee:	e8 00 00 00 00       	callq  15f3 <call_shifted_global_val()+0x13>
+    15f3:	48 83 c4 08          	add    $0x8,%rsp
+    15f7:	c3                   	retq   
+    15f8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    15ff:	00 
 
-00000000000015d0 <call_shifted_var_ref()>:
-    15d0:	48 83 ec 18          	sub    $0x18,%rsp
-    15d4:	48 89 e7             	mov    %rsp,%rdi
-    15d7:	c7 04 24 00 00 00 3e 	movl   $0x3e000000,(%rsp)
-    15de:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%rsp)
-    15e5:	00 
-    15e6:	e8 00 00 00 00       	callq  15eb <call_shifted_var_ref()+0x1b>
-    15eb:	48 83 c4 18          	add    $0x18,%rsp
-    15ef:	c3                   	retq   
-
-00000000000015f0 <call_shifted_global_ref()>:
-    15f0:	48 83 ec 18          	sub    $0x18,%rsp
-    15f4:	48 89 e7             	mov    %rsp,%rdi
-    15f7:	c7 04 24 00 00 00 3e 	movl   $0x3e000000,(%rsp)
-    15fe:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%rsp)
-    1605:	00 
-    1606:	e8 00 00 00 00       	callq  160b <call_shifted_global_ref()+0x1b>
-    160b:	48 83 c4 18          	add    $0x18,%rsp
-    160f:	c3                   	retq   
-
-0000000000001610 <copy_bits_val(regbits::Copy<unsigned int, mcu::Serial::Config>)>:
-    1610:	83 e7 40             	and    $0x40,%edi
-    1613:	75 13                	jne    1628 <copy_bits_val(regbits::Copy<unsigned int, mcu::Serial::Config>)+0x18>
-    1615:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-    161c:	04 00 00 00 
+0000000000001600 <shifted_ref(regbits::Shft<unsigned int, mcu::Timer::Prescale> const&)>:
+    1600:	c7 04 25 24 02 70 00 	movl   $0x2e000000,0x700224
+    1607:	00 00 00 2e 
+    160b:	8b 04 25 24 02 70 00 	mov    0x700224,%eax
+    1612:	23 07                	and    (%rdi),%eax
+    1614:	8b 4f 04             	mov    0x4(%rdi),%ecx
+    1617:	d3 e8                	shr    %cl,%eax
+    1619:	89 04 25 2c 01 70 00 	mov    %eax,0x70012c
     1620:	c3                   	retq   
-    1621:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1628:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-    162f:	02 00 00 00 
-    1633:	c3                   	retq   
-    1634:	66 90                	xchg   %ax,%ax
-    1636:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    163d:	00 00 00 
+    1621:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    1626:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    162d:	00 00 00 
 
-0000000000001640 <call_copy_bits_val()>:
-    1640:	48 83 ec 08          	sub    $0x8,%rsp
-    1644:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-    164b:	40 00 00 00 
-    164f:	8b 3c 25 c4 02 70 00 	mov    0x7002c4,%edi
-    1656:	e8 00 00 00 00       	callq  165b <call_copy_bits_val()+0x1b>
-    165b:	48 83 c4 08          	add    $0x8,%rsp
-    165f:	c3                   	retq   
+0000000000001630 <call_shifted_const_ref()>:
+    1630:	48 83 ec 18          	sub    $0x18,%rsp
+    1634:	48 89 e7             	mov    %rsp,%rdi
+    1637:	c7 04 24 00 00 00 3e 	movl   $0x3e000000,(%rsp)
+    163e:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%rsp)
+    1645:	00 
+    1646:	e8 00 00 00 00       	callq  164b <call_shifted_const_ref()+0x1b>
+    164b:	48 83 c4 18          	add    $0x18,%rsp
+    164f:	c3                   	retq   
 
-0000000000001660 <copy_bits_ref(regbits::Copy<unsigned int, mcu::Serial::Config> const&)>:
-    1660:	f6 07 40             	testb  $0x40,(%rdi)
-    1663:	75 13                	jne    1678 <copy_bits_ref(regbits::Copy<unsigned int, mcu::Serial::Config> const&)+0x18>
-    1665:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
-    166c:	04 00 00 00 
-    1670:	c3                   	retq   
-    1671:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1678:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
-    167f:	02 00 00 00 
-    1683:	c3                   	retq   
-    1684:	66 90                	xchg   %ax,%ax
-    1686:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    168d:	00 00 00 
+0000000000001650 <call_shifted_var_ref()>:
+    1650:	48 83 ec 18          	sub    $0x18,%rsp
+    1654:	48 89 e7             	mov    %rsp,%rdi
+    1657:	c7 04 24 00 00 00 3e 	movl   $0x3e000000,(%rsp)
+    165e:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%rsp)
+    1665:	00 
+    1666:	e8 00 00 00 00       	callq  166b <call_shifted_var_ref()+0x1b>
+    166b:	48 83 c4 18          	add    $0x18,%rsp
+    166f:	c3                   	retq   
 
-0000000000001690 <call_copy_bits_ref()>:
-    1690:	48 83 ec 18          	sub    $0x18,%rsp
-    1694:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
-    169b:	40 00 00 00 
-    169f:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
-    16a6:	48 89 e7             	mov    %rsp,%rdi
-    16a9:	89 04 24             	mov    %eax,(%rsp)
-    16ac:	e8 00 00 00 00       	callq  16b1 <call_copy_bits_ref()+0x21>
-    16b1:	48 83 c4 18          	add    $0x18,%rsp
-    16b5:	c3                   	retq   
+0000000000001670 <call_shifted_global_ref()>:
+    1670:	48 83 ec 18          	sub    $0x18,%rsp
+    1674:	48 89 e7             	mov    %rsp,%rdi
+    1677:	c7 04 24 00 00 00 3e 	movl   $0x3e000000,(%rsp)
+    167e:	c7 44 24 04 19 00 00 	movl   $0x19,0x4(%rsp)
+    1685:	00 
+    1686:	e8 00 00 00 00       	callq  168b <call_shifted_global_ref()+0x1b>
+    168b:	48 83 c4 18          	add    $0x18,%rsp
+    168f:	c3                   	retq   
+
+0000000000001690 <copy_bits_val(regbits::Copy<unsigned int, mcu::Serial::Config>)>:
+    1690:	83 e7 40             	and    $0x40,%edi
+    1693:	75 13                	jne    16a8 <copy_bits_val(regbits::Copy<unsigned int, mcu::Serial::Config>)+0x18>
+    1695:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+    169c:	04 00 00 00 
+    16a0:	c3                   	retq   
+    16a1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    16a8:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+    16af:	02 00 00 00 
+    16b3:	c3                   	retq   
+    16b4:	66 90                	xchg   %ax,%ax
     16b6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
     16bd:	00 00 00 
 
-00000000000016c0 <run>:
+00000000000016c0 <call_copy_bits_val()>:
     16c0:	48 83 ec 08          	sub    $0x8,%rsp
-    16c4:	80 3d 00 00 00 00 00 	cmpb   $0x0,0x0(%rip)        # 16cb <run+0xb>
-    16cb:	0f 84 0f 09 00 00    	je     1fe0 <run+0x920>
-    16d1:	31 d2                	xor    %edx,%edx
-    16d3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    16d8:	bf 00 00 00 00       	mov    $0x0,%edi
-    16dd:	e8 00 00 00 00       	callq  16e2 <run+0x22>
-    16e2:	ba 01 00 00 00       	mov    $0x1,%edx
-    16e7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    16ec:	bf 00 00 00 00       	mov    $0x0,%edi
-    16f1:	e8 00 00 00 00       	callq  16f6 <run+0x36>
-    16f6:	ba 02 00 00 00       	mov    $0x2,%edx
-    16fb:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1700:	bf 00 00 00 00       	mov    $0x0,%edi
-    1705:	e8 00 00 00 00       	callq  170a <run+0x4a>
-    170a:	ba 03 00 00 00       	mov    $0x3,%edx
-    170f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1714:	bf 00 00 00 00       	mov    $0x0,%edi
-    1719:	e8 00 00 00 00       	callq  171e <run+0x5e>
-    171e:	ba 04 00 00 00       	mov    $0x4,%edx
-    1723:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1728:	bf 00 00 00 00       	mov    $0x0,%edi
-    172d:	e8 00 00 00 00       	callq  1732 <run+0x72>
-    1732:	ba 05 00 00 00       	mov    $0x5,%edx
-    1737:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    173c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1741:	e8 00 00 00 00       	callq  1746 <run+0x86>
-    1746:	ba 06 00 00 00       	mov    $0x6,%edx
-    174b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1750:	bf 00 00 00 00       	mov    $0x0,%edi
-    1755:	e8 00 00 00 00       	callq  175a <run+0x9a>
-    175a:	ba 07 00 00 00       	mov    $0x7,%edx
-    175f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1764:	bf 00 00 00 00       	mov    $0x0,%edi
-    1769:	e8 00 00 00 00       	callq  176e <run+0xae>
-    176e:	ba 08 00 00 00       	mov    $0x8,%edx
-    1773:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1778:	bf 00 00 00 00       	mov    $0x0,%edi
-    177d:	e8 00 00 00 00       	callq  1782 <run+0xc2>
-    1782:	ba 09 00 00 00       	mov    $0x9,%edx
-    1787:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    178c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1791:	e8 00 00 00 00       	callq  1796 <run+0xd6>
-    1796:	ba 0a 00 00 00       	mov    $0xa,%edx
-    179b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    17a0:	bf 00 00 00 00       	mov    $0x0,%edi
-    17a5:	e8 00 00 00 00       	callq  17aa <run+0xea>
-    17aa:	ba 0b 00 00 00       	mov    $0xb,%edx
-    17af:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    17b4:	bf 00 00 00 00       	mov    $0x0,%edi
-    17b9:	e8 00 00 00 00       	callq  17be <run+0xfe>
-    17be:	ba 0c 00 00 00       	mov    $0xc,%edx
-    17c3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    17c8:	bf 00 00 00 00       	mov    $0x0,%edi
-    17cd:	e8 00 00 00 00       	callq  17d2 <run+0x112>
-    17d2:	ba 0d 00 00 00       	mov    $0xd,%edx
-    17d7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    17dc:	bf 00 00 00 00       	mov    $0x0,%edi
-    17e1:	e8 00 00 00 00       	callq  17e6 <run+0x126>
-    17e6:	ba 0e 00 00 00       	mov    $0xe,%edx
-    17eb:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    17f0:	bf 00 00 00 00       	mov    $0x0,%edi
-    17f5:	e8 00 00 00 00       	callq  17fa <run+0x13a>
-    17fa:	ba 0f 00 00 00       	mov    $0xf,%edx
-    17ff:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1804:	bf 00 00 00 00       	mov    $0x0,%edi
-    1809:	e8 00 00 00 00       	callq  180e <run+0x14e>
-    180e:	ba 10 00 00 00       	mov    $0x10,%edx
-    1813:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1818:	bf 00 00 00 00       	mov    $0x0,%edi
-    181d:	e8 00 00 00 00       	callq  1822 <run+0x162>
-    1822:	ba 11 00 00 00       	mov    $0x11,%edx
-    1827:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    182c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1831:	e8 00 00 00 00       	callq  1836 <run+0x176>
-    1836:	ba 12 00 00 00       	mov    $0x12,%edx
-    183b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1840:	bf 00 00 00 00       	mov    $0x0,%edi
-    1845:	e8 00 00 00 00       	callq  184a <run+0x18a>
-    184a:	ba 13 00 00 00       	mov    $0x13,%edx
-    184f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1854:	bf 00 00 00 00       	mov    $0x0,%edi
-    1859:	e8 00 00 00 00       	callq  185e <run+0x19e>
-    185e:	ba 14 00 00 00       	mov    $0x14,%edx
-    1863:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1868:	bf 00 00 00 00       	mov    $0x0,%edi
-    186d:	e8 00 00 00 00       	callq  1872 <run+0x1b2>
-    1872:	ba 15 00 00 00       	mov    $0x15,%edx
-    1877:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    187c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1881:	e8 00 00 00 00       	callq  1886 <run+0x1c6>
-    1886:	ba 16 00 00 00       	mov    $0x16,%edx
-    188b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1890:	bf 00 00 00 00       	mov    $0x0,%edi
-    1895:	e8 00 00 00 00       	callq  189a <run+0x1da>
-    189a:	ba 17 00 00 00       	mov    $0x17,%edx
-    189f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    18a4:	bf 00 00 00 00       	mov    $0x0,%edi
-    18a9:	e8 00 00 00 00       	callq  18ae <run+0x1ee>
-    18ae:	ba 18 00 00 00       	mov    $0x18,%edx
-    18b3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    18b8:	bf 00 00 00 00       	mov    $0x0,%edi
-    18bd:	e8 00 00 00 00       	callq  18c2 <run+0x202>
-    18c2:	ba 19 00 00 00       	mov    $0x19,%edx
-    18c7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    18cc:	bf 00 00 00 00       	mov    $0x0,%edi
-    18d1:	e8 00 00 00 00       	callq  18d6 <run+0x216>
-    18d6:	ba 1a 00 00 00       	mov    $0x1a,%edx
-    18db:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    18e0:	bf 00 00 00 00       	mov    $0x0,%edi
-    18e5:	e8 00 00 00 00       	callq  18ea <run+0x22a>
-    18ea:	ba 1b 00 00 00       	mov    $0x1b,%edx
-    18ef:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    18f4:	bf 00 00 00 00       	mov    $0x0,%edi
-    18f9:	e8 00 00 00 00       	callq  18fe <run+0x23e>
-    18fe:	ba 1c 00 00 00       	mov    $0x1c,%edx
-    1903:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1908:	bf 00 00 00 00       	mov    $0x0,%edi
-    190d:	e8 00 00 00 00       	callq  1912 <run+0x252>
-    1912:	ba 1d 00 00 00       	mov    $0x1d,%edx
-    1917:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    191c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1921:	e8 00 00 00 00       	callq  1926 <run+0x266>
-    1926:	ba 1e 00 00 00       	mov    $0x1e,%edx
-    192b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1930:	bf 00 00 00 00       	mov    $0x0,%edi
-    1935:	e8 00 00 00 00       	callq  193a <run+0x27a>
-    193a:	ba 1f 00 00 00       	mov    $0x1f,%edx
-    193f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1944:	bf 00 00 00 00       	mov    $0x0,%edi
-    1949:	e8 00 00 00 00       	callq  194e <run+0x28e>
-    194e:	ba 20 00 00 00       	mov    $0x20,%edx
-    1953:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1958:	bf 00 00 00 00       	mov    $0x0,%edi
-    195d:	e8 00 00 00 00       	callq  1962 <run+0x2a2>
-    1962:	ba 21 00 00 00       	mov    $0x21,%edx
-    1967:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    196c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1971:	e8 00 00 00 00       	callq  1976 <run+0x2b6>
-    1976:	ba 22 00 00 00       	mov    $0x22,%edx
-    197b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1980:	bf 00 00 00 00       	mov    $0x0,%edi
-    1985:	e8 00 00 00 00       	callq  198a <run+0x2ca>
-    198a:	ba 23 00 00 00       	mov    $0x23,%edx
-    198f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1994:	bf 00 00 00 00       	mov    $0x0,%edi
-    1999:	e8 00 00 00 00       	callq  199e <run+0x2de>
-    199e:	ba 24 00 00 00       	mov    $0x24,%edx
-    19a3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    19a8:	bf 00 00 00 00       	mov    $0x0,%edi
-    19ad:	e8 00 00 00 00       	callq  19b2 <run+0x2f2>
-    19b2:	ba 25 00 00 00       	mov    $0x25,%edx
-    19b7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    19bc:	bf 00 00 00 00       	mov    $0x0,%edi
-    19c1:	e8 00 00 00 00       	callq  19c6 <run+0x306>
-    19c6:	ba 26 00 00 00       	mov    $0x26,%edx
-    19cb:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    19d0:	bf 00 00 00 00       	mov    $0x0,%edi
-    19d5:	e8 00 00 00 00       	callq  19da <run+0x31a>
-    19da:	ba 27 00 00 00       	mov    $0x27,%edx
-    19df:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    19e4:	bf 00 00 00 00       	mov    $0x0,%edi
-    19e9:	e8 00 00 00 00       	callq  19ee <run+0x32e>
-    19ee:	ba 28 00 00 00       	mov    $0x28,%edx
-    19f3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    19f8:	bf 00 00 00 00       	mov    $0x0,%edi
-    19fd:	e8 00 00 00 00       	callq  1a02 <run+0x342>
-    1a02:	ba 29 00 00 00       	mov    $0x29,%edx
-    1a07:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a0c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a11:	e8 00 00 00 00       	callq  1a16 <run+0x356>
-    1a16:	ba 2a 00 00 00       	mov    $0x2a,%edx
-    1a1b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a20:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a25:	e8 00 00 00 00       	callq  1a2a <run+0x36a>
-    1a2a:	ba 2b 00 00 00       	mov    $0x2b,%edx
-    1a2f:	be a0 01 70 00       	mov    $0x7001a0,%esi
-    1a34:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a39:	e8 00 00 00 00       	callq  1a3e <run+0x37e>
-    1a3e:	ba 2c 00 00 00       	mov    $0x2c,%edx
-    1a43:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a48:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a4d:	e8 00 00 00 00       	callq  1a52 <run+0x392>
-    1a52:	ba 2d 00 00 00       	mov    $0x2d,%edx
-    1a57:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a5c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a61:	e8 00 00 00 00       	callq  1a66 <run+0x3a6>
-    1a66:	ba 2e 00 00 00       	mov    $0x2e,%edx
-    1a6b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a70:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a75:	e8 00 00 00 00       	callq  1a7a <run+0x3ba>
-    1a7a:	ba 2f 00 00 00       	mov    $0x2f,%edx
-    1a7f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a84:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a89:	e8 00 00 00 00       	callq  1a8e <run+0x3ce>
-    1a8e:	ba 30 00 00 00       	mov    $0x30,%edx
-    1a93:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1a98:	bf 00 00 00 00       	mov    $0x0,%edi
-    1a9d:	e8 00 00 00 00       	callq  1aa2 <run+0x3e2>
-    1aa2:	ba 31 00 00 00       	mov    $0x31,%edx
-    1aa7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1aac:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ab1:	e8 00 00 00 00       	callq  1ab6 <run+0x3f6>
-    1ab6:	ba 32 00 00 00       	mov    $0x32,%edx
-    1abb:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1ac0:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ac5:	e8 00 00 00 00       	callq  1aca <run+0x40a>
-    1aca:	ba 33 00 00 00       	mov    $0x33,%edx
-    1acf:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1ad4:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ad9:	e8 00 00 00 00       	callq  1ade <run+0x41e>
-    1ade:	ba 34 00 00 00       	mov    $0x34,%edx
-    1ae3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1ae8:	bf 00 00 00 00       	mov    $0x0,%edi
-    1aed:	e8 00 00 00 00       	callq  1af2 <run+0x432>
-    1af2:	ba 35 00 00 00       	mov    $0x35,%edx
-    1af7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1afc:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b01:	e8 00 00 00 00       	callq  1b06 <run+0x446>
-    1b06:	ba 36 00 00 00       	mov    $0x36,%edx
-    1b0b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b10:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b15:	e8 00 00 00 00       	callq  1b1a <run+0x45a>
-    1b1a:	ba 37 00 00 00       	mov    $0x37,%edx
-    1b1f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b24:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b29:	e8 00 00 00 00       	callq  1b2e <run+0x46e>
-    1b2e:	ba 38 00 00 00       	mov    $0x38,%edx
-    1b33:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b38:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b3d:	e8 00 00 00 00       	callq  1b42 <run+0x482>
-    1b42:	ba 39 00 00 00       	mov    $0x39,%edx
-    1b47:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b4c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b51:	e8 00 00 00 00       	callq  1b56 <run+0x496>
-    1b56:	ba 3a 00 00 00       	mov    $0x3a,%edx
-    1b5b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b60:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b65:	e8 00 00 00 00       	callq  1b6a <run+0x4aa>
-    1b6a:	ba 3b 00 00 00       	mov    $0x3b,%edx
-    1b6f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b74:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b79:	e8 00 00 00 00       	callq  1b7e <run+0x4be>
-    1b7e:	ba 3c 00 00 00       	mov    $0x3c,%edx
-    1b83:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b88:	bf 00 00 00 00       	mov    $0x0,%edi
-    1b8d:	e8 00 00 00 00       	callq  1b92 <run+0x4d2>
-    1b92:	ba 3d 00 00 00       	mov    $0x3d,%edx
-    1b97:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1b9c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ba1:	e8 00 00 00 00       	callq  1ba6 <run+0x4e6>
-    1ba6:	ba 3e 00 00 00       	mov    $0x3e,%edx
-    1bab:	be 24 02 70 00       	mov    $0x700224,%esi
-    1bb0:	bf 00 00 00 00       	mov    $0x0,%edi
-    1bb5:	e8 00 00 00 00       	callq  1bba <run+0x4fa>
-    1bba:	ba 3f 00 00 00       	mov    $0x3f,%edx
-    1bbf:	be 24 02 70 00       	mov    $0x700224,%esi
-    1bc4:	bf 00 00 00 00       	mov    $0x0,%edi
-    1bc9:	e8 00 00 00 00       	callq  1bce <run+0x50e>
-    1bce:	ba 40 00 00 00       	mov    $0x40,%edx
-    1bd3:	be 24 02 70 00       	mov    $0x700224,%esi
-    1bd8:	bf 00 00 00 00       	mov    $0x0,%edi
-    1bdd:	e8 00 00 00 00       	callq  1be2 <run+0x522>
-    1be2:	ba 41 00 00 00       	mov    $0x41,%edx
-    1be7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1bec:	bf 00 00 00 00       	mov    $0x0,%edi
-    1bf1:	e8 00 00 00 00       	callq  1bf6 <run+0x536>
-    1bf6:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1bfd <run+0x53d>
-    1bfd:	ba 42 00 00 00       	mov    $0x42,%edx
-    1c02:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c07:	e8 00 00 00 00       	callq  1c0c <run+0x54c>
-    1c0c:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1c13 <run+0x553>
-    1c13:	ba 43 00 00 00       	mov    $0x43,%edx
-    1c18:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c1d:	e8 00 00 00 00       	callq  1c22 <run+0x562>
-    1c22:	ba 44 00 00 00       	mov    $0x44,%edx
-    1c27:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1c2c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c31:	e8 00 00 00 00       	callq  1c36 <run+0x576>
-    1c36:	ba 45 00 00 00       	mov    $0x45,%edx
-    1c3b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1c40:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c45:	e8 00 00 00 00       	callq  1c4a <run+0x58a>
-    1c4a:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1c51 <run+0x591>
-    1c51:	ba 46 00 00 00       	mov    $0x46,%edx
-    1c56:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c5b:	e8 00 00 00 00       	callq  1c60 <run+0x5a0>
-    1c60:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1c67 <run+0x5a7>
-    1c67:	ba 47 00 00 00       	mov    $0x47,%edx
+    16c4:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+    16cb:	40 00 00 00 
+    16cf:	8b 3c 25 c4 02 70 00 	mov    0x7002c4,%edi
+    16d6:	e8 00 00 00 00       	callq  16db <call_copy_bits_val()+0x1b>
+    16db:	48 83 c4 08          	add    $0x8,%rsp
+    16df:	c3                   	retq   
+
+00000000000016e0 <copy_bits_ref(regbits::Copy<unsigned int, mcu::Serial::Config> const&)>:
+    16e0:	f6 07 40             	testb  $0x40,(%rdi)
+    16e3:	75 13                	jne    16f8 <copy_bits_ref(regbits::Copy<unsigned int, mcu::Serial::Config> const&)+0x18>
+    16e5:	c7 04 25 c4 02 70 00 	movl   $0x4,0x7002c4
+    16ec:	04 00 00 00 
+    16f0:	c3                   	retq   
+    16f1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    16f8:	c7 04 25 c4 02 70 00 	movl   $0x2,0x7002c4
+    16ff:	02 00 00 00 
+    1703:	c3                   	retq   
+    1704:	66 90                	xchg   %ax,%ax
+    1706:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    170d:	00 00 00 
+
+0000000000001710 <call_copy_bits_ref()>:
+    1710:	48 83 ec 18          	sub    $0x18,%rsp
+    1714:	c7 04 25 c4 02 70 00 	movl   $0x40,0x7002c4
+    171b:	40 00 00 00 
+    171f:	8b 04 25 c4 02 70 00 	mov    0x7002c4,%eax
+    1726:	48 89 e7             	mov    %rsp,%rdi
+    1729:	89 04 24             	mov    %eax,(%rsp)
+    172c:	e8 00 00 00 00       	callq  1731 <call_copy_bits_ref()+0x21>
+    1731:	48 83 c4 18          	add    $0x18,%rsp
+    1735:	c3                   	retq   
+    1736:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    173d:	00 00 00 
+
+0000000000001740 <run>:
+    1740:	48 83 ec 08          	sub    $0x8,%rsp
+    1744:	80 3d 00 00 00 00 00 	cmpb   $0x0,0x0(%rip)        # 174b <run+0xb>
+    174b:	0f 84 2f 09 00 00    	je     2080 <run+0x940>
+    1751:	31 d2                	xor    %edx,%edx
+    1753:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1758:	bf 00 00 00 00       	mov    $0x0,%edi
+    175d:	e8 00 00 00 00       	callq  1762 <run+0x22>
+    1762:	ba 01 00 00 00       	mov    $0x1,%edx
+    1767:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    176c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1771:	e8 00 00 00 00       	callq  1776 <run+0x36>
+    1776:	ba 02 00 00 00       	mov    $0x2,%edx
+    177b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1780:	bf 00 00 00 00       	mov    $0x0,%edi
+    1785:	e8 00 00 00 00       	callq  178a <run+0x4a>
+    178a:	ba 03 00 00 00       	mov    $0x3,%edx
+    178f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1794:	bf 00 00 00 00       	mov    $0x0,%edi
+    1799:	e8 00 00 00 00       	callq  179e <run+0x5e>
+    179e:	ba 04 00 00 00       	mov    $0x4,%edx
+    17a3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    17a8:	bf 00 00 00 00       	mov    $0x0,%edi
+    17ad:	e8 00 00 00 00       	callq  17b2 <run+0x72>
+    17b2:	ba 05 00 00 00       	mov    $0x5,%edx
+    17b7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    17bc:	bf 00 00 00 00       	mov    $0x0,%edi
+    17c1:	e8 00 00 00 00       	callq  17c6 <run+0x86>
+    17c6:	ba 06 00 00 00       	mov    $0x6,%edx
+    17cb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    17d0:	bf 00 00 00 00       	mov    $0x0,%edi
+    17d5:	e8 00 00 00 00       	callq  17da <run+0x9a>
+    17da:	ba 07 00 00 00       	mov    $0x7,%edx
+    17df:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    17e4:	bf 00 00 00 00       	mov    $0x0,%edi
+    17e9:	e8 00 00 00 00       	callq  17ee <run+0xae>
+    17ee:	ba 08 00 00 00       	mov    $0x8,%edx
+    17f3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    17f8:	bf 00 00 00 00       	mov    $0x0,%edi
+    17fd:	e8 00 00 00 00       	callq  1802 <run+0xc2>
+    1802:	ba 09 00 00 00       	mov    $0x9,%edx
+    1807:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    180c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1811:	e8 00 00 00 00       	callq  1816 <run+0xd6>
+    1816:	ba 0a 00 00 00       	mov    $0xa,%edx
+    181b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1820:	bf 00 00 00 00       	mov    $0x0,%edi
+    1825:	e8 00 00 00 00       	callq  182a <run+0xea>
+    182a:	ba 0b 00 00 00       	mov    $0xb,%edx
+    182f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1834:	bf 00 00 00 00       	mov    $0x0,%edi
+    1839:	e8 00 00 00 00       	callq  183e <run+0xfe>
+    183e:	ba 0c 00 00 00       	mov    $0xc,%edx
+    1843:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1848:	bf 00 00 00 00       	mov    $0x0,%edi
+    184d:	e8 00 00 00 00       	callq  1852 <run+0x112>
+    1852:	ba 0d 00 00 00       	mov    $0xd,%edx
+    1857:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    185c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1861:	e8 00 00 00 00       	callq  1866 <run+0x126>
+    1866:	ba 0e 00 00 00       	mov    $0xe,%edx
+    186b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1870:	bf 00 00 00 00       	mov    $0x0,%edi
+    1875:	e8 00 00 00 00       	callq  187a <run+0x13a>
+    187a:	ba 0f 00 00 00       	mov    $0xf,%edx
+    187f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1884:	bf 00 00 00 00       	mov    $0x0,%edi
+    1889:	e8 00 00 00 00       	callq  188e <run+0x14e>
+    188e:	ba 10 00 00 00       	mov    $0x10,%edx
+    1893:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1898:	bf 00 00 00 00       	mov    $0x0,%edi
+    189d:	e8 00 00 00 00       	callq  18a2 <run+0x162>
+    18a2:	ba 11 00 00 00       	mov    $0x11,%edx
+    18a7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    18ac:	bf 00 00 00 00       	mov    $0x0,%edi
+    18b1:	e8 00 00 00 00       	callq  18b6 <run+0x176>
+    18b6:	ba 12 00 00 00       	mov    $0x12,%edx
+    18bb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    18c0:	bf 00 00 00 00       	mov    $0x0,%edi
+    18c5:	e8 00 00 00 00       	callq  18ca <run+0x18a>
+    18ca:	ba 13 00 00 00       	mov    $0x13,%edx
+    18cf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    18d4:	bf 00 00 00 00       	mov    $0x0,%edi
+    18d9:	e8 00 00 00 00       	callq  18de <run+0x19e>
+    18de:	ba 14 00 00 00       	mov    $0x14,%edx
+    18e3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    18e8:	bf 00 00 00 00       	mov    $0x0,%edi
+    18ed:	e8 00 00 00 00       	callq  18f2 <run+0x1b2>
+    18f2:	ba 15 00 00 00       	mov    $0x15,%edx
+    18f7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    18fc:	bf 00 00 00 00       	mov    $0x0,%edi
+    1901:	e8 00 00 00 00       	callq  1906 <run+0x1c6>
+    1906:	ba 16 00 00 00       	mov    $0x16,%edx
+    190b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1910:	bf 00 00 00 00       	mov    $0x0,%edi
+    1915:	e8 00 00 00 00       	callq  191a <run+0x1da>
+    191a:	ba 17 00 00 00       	mov    $0x17,%edx
+    191f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1924:	bf 00 00 00 00       	mov    $0x0,%edi
+    1929:	e8 00 00 00 00       	callq  192e <run+0x1ee>
+    192e:	ba 18 00 00 00       	mov    $0x18,%edx
+    1933:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1938:	bf 00 00 00 00       	mov    $0x0,%edi
+    193d:	e8 00 00 00 00       	callq  1942 <run+0x202>
+    1942:	ba 19 00 00 00       	mov    $0x19,%edx
+    1947:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    194c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1951:	e8 00 00 00 00       	callq  1956 <run+0x216>
+    1956:	ba 1a 00 00 00       	mov    $0x1a,%edx
+    195b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1960:	bf 00 00 00 00       	mov    $0x0,%edi
+    1965:	e8 00 00 00 00       	callq  196a <run+0x22a>
+    196a:	ba 1b 00 00 00       	mov    $0x1b,%edx
+    196f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1974:	bf 00 00 00 00       	mov    $0x0,%edi
+    1979:	e8 00 00 00 00       	callq  197e <run+0x23e>
+    197e:	ba 1c 00 00 00       	mov    $0x1c,%edx
+    1983:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1988:	bf 00 00 00 00       	mov    $0x0,%edi
+    198d:	e8 00 00 00 00       	callq  1992 <run+0x252>
+    1992:	ba 1d 00 00 00       	mov    $0x1d,%edx
+    1997:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    199c:	bf 00 00 00 00       	mov    $0x0,%edi
+    19a1:	e8 00 00 00 00       	callq  19a6 <run+0x266>
+    19a6:	ba 1e 00 00 00       	mov    $0x1e,%edx
+    19ab:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    19b0:	bf 00 00 00 00       	mov    $0x0,%edi
+    19b5:	e8 00 00 00 00       	callq  19ba <run+0x27a>
+    19ba:	ba 1f 00 00 00       	mov    $0x1f,%edx
+    19bf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    19c4:	bf 00 00 00 00       	mov    $0x0,%edi
+    19c9:	e8 00 00 00 00       	callq  19ce <run+0x28e>
+    19ce:	ba 20 00 00 00       	mov    $0x20,%edx
+    19d3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    19d8:	bf 00 00 00 00       	mov    $0x0,%edi
+    19dd:	e8 00 00 00 00       	callq  19e2 <run+0x2a2>
+    19e2:	ba 21 00 00 00       	mov    $0x21,%edx
+    19e7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    19ec:	bf 00 00 00 00       	mov    $0x0,%edi
+    19f1:	e8 00 00 00 00       	callq  19f6 <run+0x2b6>
+    19f6:	ba 22 00 00 00       	mov    $0x22,%edx
+    19fb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1a00:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a05:	e8 00 00 00 00       	callq  1a0a <run+0x2ca>
+    1a0a:	ba 23 00 00 00       	mov    $0x23,%edx
+    1a0f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1a14:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a19:	e8 00 00 00 00       	callq  1a1e <run+0x2de>
+    1a1e:	ba 24 00 00 00       	mov    $0x24,%edx
+    1a23:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1a28:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a2d:	e8 00 00 00 00       	callq  1a32 <run+0x2f2>
+    1a32:	ba 25 00 00 00       	mov    $0x25,%edx
+    1a37:	be 24 02 70 00       	mov    $0x700224,%esi
+    1a3c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a41:	e8 00 00 00 00       	callq  1a46 <run+0x306>
+    1a46:	ba 26 00 00 00       	mov    $0x26,%edx
+    1a4b:	be 24 02 70 00       	mov    $0x700224,%esi
+    1a50:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a55:	e8 00 00 00 00       	callq  1a5a <run+0x31a>
+    1a5a:	ba 27 00 00 00       	mov    $0x27,%edx
+    1a5f:	be 24 02 70 00       	mov    $0x700224,%esi
+    1a64:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a69:	e8 00 00 00 00       	callq  1a6e <run+0x32e>
+    1a6e:	ba 28 00 00 00       	mov    $0x28,%edx
+    1a73:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1a78:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a7d:	e8 00 00 00 00       	callq  1a82 <run+0x342>
+    1a82:	ba 29 00 00 00       	mov    $0x29,%edx
+    1a87:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1a8c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1a91:	e8 00 00 00 00       	callq  1a96 <run+0x356>
+    1a96:	ba 2a 00 00 00       	mov    $0x2a,%edx
+    1a9b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1aa0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1aa5:	e8 00 00 00 00       	callq  1aaa <run+0x36a>
+    1aaa:	ba 2b 00 00 00       	mov    $0x2b,%edx
+    1aaf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ab4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1ab9:	e8 00 00 00 00       	callq  1abe <run+0x37e>
+    1abe:	ba 2c 00 00 00       	mov    $0x2c,%edx
+    1ac3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ac8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1acd:	e8 00 00 00 00       	callq  1ad2 <run+0x392>
+    1ad2:	ba 2d 00 00 00       	mov    $0x2d,%edx
+    1ad7:	be a0 01 70 00       	mov    $0x7001a0,%esi
+    1adc:	bf 00 00 00 00       	mov    $0x0,%edi
+    1ae1:	e8 00 00 00 00       	callq  1ae6 <run+0x3a6>
+    1ae6:	ba 2e 00 00 00       	mov    $0x2e,%edx
+    1aeb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1af0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1af5:	e8 00 00 00 00       	callq  1afa <run+0x3ba>
+    1afa:	ba 2f 00 00 00       	mov    $0x2f,%edx
+    1aff:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b04:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b09:	e8 00 00 00 00       	callq  1b0e <run+0x3ce>
+    1b0e:	ba 30 00 00 00       	mov    $0x30,%edx
+    1b13:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b18:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b1d:	e8 00 00 00 00       	callq  1b22 <run+0x3e2>
+    1b22:	ba 31 00 00 00       	mov    $0x31,%edx
+    1b27:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b2c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b31:	e8 00 00 00 00       	callq  1b36 <run+0x3f6>
+    1b36:	ba 32 00 00 00       	mov    $0x32,%edx
+    1b3b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b40:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b45:	e8 00 00 00 00       	callq  1b4a <run+0x40a>
+    1b4a:	ba 33 00 00 00       	mov    $0x33,%edx
+    1b4f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b54:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b59:	e8 00 00 00 00       	callq  1b5e <run+0x41e>
+    1b5e:	ba 34 00 00 00       	mov    $0x34,%edx
+    1b63:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b68:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b6d:	e8 00 00 00 00       	callq  1b72 <run+0x432>
+    1b72:	ba 35 00 00 00       	mov    $0x35,%edx
+    1b77:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b7c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b81:	e8 00 00 00 00       	callq  1b86 <run+0x446>
+    1b86:	ba 36 00 00 00       	mov    $0x36,%edx
+    1b8b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1b90:	bf 00 00 00 00       	mov    $0x0,%edi
+    1b95:	e8 00 00 00 00       	callq  1b9a <run+0x45a>
+    1b9a:	ba 37 00 00 00       	mov    $0x37,%edx
+    1b9f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ba4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1ba9:	e8 00 00 00 00       	callq  1bae <run+0x46e>
+    1bae:	ba 38 00 00 00       	mov    $0x38,%edx
+    1bb3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1bb8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1bbd:	e8 00 00 00 00       	callq  1bc2 <run+0x482>
+    1bc2:	ba 39 00 00 00       	mov    $0x39,%edx
+    1bc7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1bcc:	bf 00 00 00 00       	mov    $0x0,%edi
+    1bd1:	e8 00 00 00 00       	callq  1bd6 <run+0x496>
+    1bd6:	ba 3a 00 00 00       	mov    $0x3a,%edx
+    1bdb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1be0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1be5:	e8 00 00 00 00       	callq  1bea <run+0x4aa>
+    1bea:	ba 3b 00 00 00       	mov    $0x3b,%edx
+    1bef:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1bf4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1bf9:	e8 00 00 00 00       	callq  1bfe <run+0x4be>
+    1bfe:	ba 3c 00 00 00       	mov    $0x3c,%edx
+    1c03:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1c08:	bf 00 00 00 00       	mov    $0x0,%edi
+    1c0d:	e8 00 00 00 00       	callq  1c12 <run+0x4d2>
+    1c12:	ba 3d 00 00 00       	mov    $0x3d,%edx
+    1c17:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1c1c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1c21:	e8 00 00 00 00       	callq  1c26 <run+0x4e6>
+    1c26:	ba 3e 00 00 00       	mov    $0x3e,%edx
+    1c2b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1c30:	bf 00 00 00 00       	mov    $0x0,%edi
+    1c35:	e8 00 00 00 00       	callq  1c3a <run+0x4fa>
+    1c3a:	ba 3f 00 00 00       	mov    $0x3f,%edx
+    1c3f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1c44:	bf 00 00 00 00       	mov    $0x0,%edi
+    1c49:	e8 00 00 00 00       	callq  1c4e <run+0x50e>
+    1c4e:	ba 40 00 00 00       	mov    $0x40,%edx
+    1c53:	be 24 02 70 00       	mov    $0x700224,%esi
+    1c58:	bf 00 00 00 00       	mov    $0x0,%edi
+    1c5d:	e8 00 00 00 00       	callq  1c62 <run+0x522>
+    1c62:	ba 41 00 00 00       	mov    $0x41,%edx
+    1c67:	be 24 02 70 00       	mov    $0x700224,%esi
     1c6c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c71:	e8 00 00 00 00       	callq  1c76 <run+0x5b6>
-    1c76:	ba 48 00 00 00       	mov    $0x48,%edx
-    1c7b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1c71:	e8 00 00 00 00       	callq  1c76 <run+0x536>
+    1c76:	ba 42 00 00 00       	mov    $0x42,%edx
+    1c7b:	be 24 02 70 00       	mov    $0x700224,%esi
     1c80:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c85:	e8 00 00 00 00       	callq  1c8a <run+0x5ca>
-    1c8a:	ba 49 00 00 00       	mov    $0x49,%edx
+    1c85:	e8 00 00 00 00       	callq  1c8a <run+0x54a>
+    1c8a:	ba 43 00 00 00       	mov    $0x43,%edx
     1c8f:	be c4 02 70 00       	mov    $0x7002c4,%esi
     1c94:	bf 00 00 00 00       	mov    $0x0,%edi
-    1c99:	e8 00 00 00 00       	callq  1c9e <run+0x5de>
-    1c9e:	ba 4a 00 00 00       	mov    $0x4a,%edx
-    1ca3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1ca8:	bf 00 00 00 00       	mov    $0x0,%edi
-    1cad:	e8 00 00 00 00       	callq  1cb2 <run+0x5f2>
-    1cb2:	ba 4b 00 00 00       	mov    $0x4b,%edx
-    1cb7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1cbc:	bf 00 00 00 00       	mov    $0x0,%edi
-    1cc1:	e8 00 00 00 00       	callq  1cc6 <run+0x606>
-    1cc6:	ba 4c 00 00 00       	mov    $0x4c,%edx
-    1ccb:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1cd0:	bf 00 00 00 00       	mov    $0x0,%edi
-    1cd5:	e8 00 00 00 00       	callq  1cda <run+0x61a>
-    1cda:	ba 4d 00 00 00       	mov    $0x4d,%edx
-    1cdf:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1ce4:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ce9:	e8 00 00 00 00       	callq  1cee <run+0x62e>
-    1cee:	ba 4e 00 00 00       	mov    $0x4e,%edx
-    1cf3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1cf8:	bf 00 00 00 00       	mov    $0x0,%edi
-    1cfd:	e8 00 00 00 00       	callq  1d02 <run+0x642>
-    1d02:	ba 4f 00 00 00       	mov    $0x4f,%edx
-    1d07:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d0c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d11:	e8 00 00 00 00       	callq  1d16 <run+0x656>
-    1d16:	ba 50 00 00 00       	mov    $0x50,%edx
-    1d1b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d20:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d25:	e8 00 00 00 00       	callq  1d2a <run+0x66a>
-    1d2a:	ba 51 00 00 00       	mov    $0x51,%edx
-    1d2f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d34:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d39:	e8 00 00 00 00       	callq  1d3e <run+0x67e>
-    1d3e:	ba 52 00 00 00       	mov    $0x52,%edx
-    1d43:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d48:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d4d:	e8 00 00 00 00       	callq  1d52 <run+0x692>
-    1d52:	ba 53 00 00 00       	mov    $0x53,%edx
-    1d57:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d5c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d61:	e8 00 00 00 00       	callq  1d66 <run+0x6a6>
-    1d66:	ba 54 00 00 00       	mov    $0x54,%edx
-    1d6b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d70:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d75:	e8 00 00 00 00       	callq  1d7a <run+0x6ba>
-    1d7a:	ba 55 00 00 00       	mov    $0x55,%edx
-    1d7f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d84:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d89:	e8 00 00 00 00       	callq  1d8e <run+0x6ce>
-    1d8e:	ba 56 00 00 00       	mov    $0x56,%edx
-    1d93:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1d98:	bf 00 00 00 00       	mov    $0x0,%edi
-    1d9d:	e8 00 00 00 00       	callq  1da2 <run+0x6e2>
-    1da2:	ba 57 00 00 00       	mov    $0x57,%edx
-    1da7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1dac:	bf 00 00 00 00       	mov    $0x0,%edi
-    1db1:	e8 00 00 00 00       	callq  1db6 <run+0x6f6>
-    1db6:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1dbd <run+0x6fd>
-    1dbd:	ba 58 00 00 00       	mov    $0x58,%edx
-    1dc2:	bf 00 00 00 00       	mov    $0x0,%edi
-    1dc7:	e8 00 00 00 00       	callq  1dcc <run+0x70c>
-    1dcc:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1dd3 <run+0x713>
-    1dd3:	ba 59 00 00 00       	mov    $0x59,%edx
-    1dd8:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ddd:	e8 00 00 00 00       	callq  1de2 <run+0x722>
-    1de2:	ba 5a 00 00 00       	mov    $0x5a,%edx
-    1de7:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1dec:	bf 00 00 00 00       	mov    $0x0,%edi
-    1df1:	e8 00 00 00 00       	callq  1df6 <run+0x736>
-    1df6:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1dfd <run+0x73d>
-    1dfd:	ba 5b 00 00 00       	mov    $0x5b,%edx
-    1e02:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e07:	e8 00 00 00 00       	callq  1e0c <run+0x74c>
-    1e0c:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1e13 <run+0x753>
-    1e13:	ba 5c 00 00 00       	mov    $0x5c,%edx
+    1c99:	e8 00 00 00 00       	callq  1c9e <run+0x55e>
+    1c9e:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ca5 <run+0x565>
+    1ca5:	ba 44 00 00 00       	mov    $0x44,%edx
+    1caa:	bf 00 00 00 00       	mov    $0x0,%edi
+    1caf:	e8 00 00 00 00       	callq  1cb4 <run+0x574>
+    1cb4:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1cbb <run+0x57b>
+    1cbb:	ba 45 00 00 00       	mov    $0x45,%edx
+    1cc0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1cc5:	e8 00 00 00 00       	callq  1cca <run+0x58a>
+    1cca:	ba 46 00 00 00       	mov    $0x46,%edx
+    1ccf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1cd4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1cd9:	e8 00 00 00 00       	callq  1cde <run+0x59e>
+    1cde:	ba 47 00 00 00       	mov    $0x47,%edx
+    1ce3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ce8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1ced:	e8 00 00 00 00       	callq  1cf2 <run+0x5b2>
+    1cf2:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1cf9 <run+0x5b9>
+    1cf9:	ba 48 00 00 00       	mov    $0x48,%edx
+    1cfe:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d03:	e8 00 00 00 00       	callq  1d08 <run+0x5c8>
+    1d08:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1d0f <run+0x5cf>
+    1d0f:	ba 49 00 00 00       	mov    $0x49,%edx
+    1d14:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d19:	e8 00 00 00 00       	callq  1d1e <run+0x5de>
+    1d1e:	ba 4a 00 00 00       	mov    $0x4a,%edx
+    1d23:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1d28:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d2d:	e8 00 00 00 00       	callq  1d32 <run+0x5f2>
+    1d32:	ba 4b 00 00 00       	mov    $0x4b,%edx
+    1d37:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1d3c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d41:	e8 00 00 00 00       	callq  1d46 <run+0x606>
+    1d46:	ba 4c 00 00 00       	mov    $0x4c,%edx
+    1d4b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1d50:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d55:	e8 00 00 00 00       	callq  1d5a <run+0x61a>
+    1d5a:	ba 4d 00 00 00       	mov    $0x4d,%edx
+    1d5f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1d64:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d69:	e8 00 00 00 00       	callq  1d6e <run+0x62e>
+    1d6e:	ba 4e 00 00 00       	mov    $0x4e,%edx
+    1d73:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1d78:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d7d:	e8 00 00 00 00       	callq  1d82 <run+0x642>
+    1d82:	ba 4f 00 00 00       	mov    $0x4f,%edx
+    1d87:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1d8c:	bf 00 00 00 00       	mov    $0x0,%edi
+    1d91:	e8 00 00 00 00       	callq  1d96 <run+0x656>
+    1d96:	ba 50 00 00 00       	mov    $0x50,%edx
+    1d9b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1da0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1da5:	e8 00 00 00 00       	callq  1daa <run+0x66a>
+    1daa:	ba 51 00 00 00       	mov    $0x51,%edx
+    1daf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1db4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1db9:	e8 00 00 00 00       	callq  1dbe <run+0x67e>
+    1dbe:	ba 52 00 00 00       	mov    $0x52,%edx
+    1dc3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1dc8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1dcd:	e8 00 00 00 00       	callq  1dd2 <run+0x692>
+    1dd2:	ba 53 00 00 00       	mov    $0x53,%edx
+    1dd7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ddc:	bf 00 00 00 00       	mov    $0x0,%edi
+    1de1:	e8 00 00 00 00       	callq  1de6 <run+0x6a6>
+    1de6:	ba 54 00 00 00       	mov    $0x54,%edx
+    1deb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1df0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1df5:	e8 00 00 00 00       	callq  1dfa <run+0x6ba>
+    1dfa:	ba 55 00 00 00       	mov    $0x55,%edx
+    1dff:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1e04:	bf 00 00 00 00       	mov    $0x0,%edi
+    1e09:	e8 00 00 00 00       	callq  1e0e <run+0x6ce>
+    1e0e:	ba 56 00 00 00       	mov    $0x56,%edx
+    1e13:	be c4 02 70 00       	mov    $0x7002c4,%esi
     1e18:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e1d:	e8 00 00 00 00       	callq  1e22 <run+0x762>
-    1e22:	ba 5d 00 00 00       	mov    $0x5d,%edx
+    1e1d:	e8 00 00 00 00       	callq  1e22 <run+0x6e2>
+    1e22:	ba 57 00 00 00       	mov    $0x57,%edx
     1e27:	be c4 02 70 00       	mov    $0x7002c4,%esi
     1e2c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e31:	e8 00 00 00 00       	callq  1e36 <run+0x776>
-    1e36:	ba 5e 00 00 00       	mov    $0x5e,%edx
+    1e31:	e8 00 00 00 00       	callq  1e36 <run+0x6f6>
+    1e36:	ba 58 00 00 00       	mov    $0x58,%edx
     1e3b:	be c4 02 70 00       	mov    $0x7002c4,%esi
     1e40:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e45:	e8 00 00 00 00       	callq  1e4a <run+0x78a>
-    1e4a:	ba 5f 00 00 00       	mov    $0x5f,%edx
+    1e45:	e8 00 00 00 00       	callq  1e4a <run+0x70a>
+    1e4a:	ba 59 00 00 00       	mov    $0x59,%edx
     1e4f:	be c4 02 70 00       	mov    $0x7002c4,%esi
     1e54:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e59:	e8 00 00 00 00       	callq  1e5e <run+0x79e>
-    1e5e:	ba 60 00 00 00       	mov    $0x60,%edx
-    1e63:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1e68:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e6d:	e8 00 00 00 00       	callq  1e72 <run+0x7b2>
-    1e72:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1e79 <run+0x7b9>
-    1e79:	ba 61 00 00 00       	mov    $0x61,%edx
-    1e7e:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e83:	e8 00 00 00 00       	callq  1e88 <run+0x7c8>
-    1e88:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1e8f <run+0x7cf>
-    1e8f:	ba 62 00 00 00       	mov    $0x62,%edx
+    1e59:	e8 00 00 00 00       	callq  1e5e <run+0x71e>
+    1e5e:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1e65 <run+0x725>
+    1e65:	ba 5a 00 00 00       	mov    $0x5a,%edx
+    1e6a:	bf 00 00 00 00       	mov    $0x0,%edi
+    1e6f:	e8 00 00 00 00       	callq  1e74 <run+0x734>
+    1e74:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1e7b <run+0x73b>
+    1e7b:	ba 5b 00 00 00       	mov    $0x5b,%edx
+    1e80:	bf 00 00 00 00       	mov    $0x0,%edi
+    1e85:	e8 00 00 00 00       	callq  1e8a <run+0x74a>
+    1e8a:	ba 5c 00 00 00       	mov    $0x5c,%edx
+    1e8f:	be c4 02 70 00       	mov    $0x7002c4,%esi
     1e94:	bf 00 00 00 00       	mov    $0x0,%edi
-    1e99:	e8 00 00 00 00       	callq  1e9e <run+0x7de>
-    1e9e:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ea5 <run+0x7e5>
-    1ea5:	ba 63 00 00 00       	mov    $0x63,%edx
+    1e99:	e8 00 00 00 00       	callq  1e9e <run+0x75e>
+    1e9e:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ea5 <run+0x765>
+    1ea5:	ba 5d 00 00 00       	mov    $0x5d,%edx
     1eaa:	bf 00 00 00 00       	mov    $0x0,%edi
-    1eaf:	e8 00 00 00 00       	callq  1eb4 <run+0x7f4>
-    1eb4:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ebb <run+0x7fb>
-    1ebb:	ba 64 00 00 00       	mov    $0x64,%edx
+    1eaf:	e8 00 00 00 00       	callq  1eb4 <run+0x774>
+    1eb4:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ebb <run+0x77b>
+    1ebb:	ba 5e 00 00 00       	mov    $0x5e,%edx
     1ec0:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ec5:	e8 00 00 00 00       	callq  1eca <run+0x80a>
-    1eca:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ed1 <run+0x811>
-    1ed1:	ba 65 00 00 00       	mov    $0x65,%edx
-    1ed6:	bf 00 00 00 00       	mov    $0x0,%edi
-    1edb:	e8 00 00 00 00       	callq  1ee0 <run+0x820>
-    1ee0:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1ee7 <run+0x827>
-    1ee7:	ba 66 00 00 00       	mov    $0x66,%edx
-    1eec:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ef1:	e8 00 00 00 00       	callq  1ef6 <run+0x836>
-    1ef6:	ba 67 00 00 00       	mov    $0x67,%edx
-    1efb:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f00:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f05:	e8 00 00 00 00       	callq  1f0a <run+0x84a>
-    1f0a:	ba 68 00 00 00       	mov    $0x68,%edx
-    1f0f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f14:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f19:	e8 00 00 00 00       	callq  1f1e <run+0x85e>
-    1f1e:	ba 69 00 00 00       	mov    $0x69,%edx
-    1f23:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f28:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f2d:	e8 00 00 00 00       	callq  1f32 <run+0x872>
-    1f32:	ba 6a 00 00 00       	mov    $0x6a,%edx
-    1f37:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ec5:	e8 00 00 00 00       	callq  1eca <run+0x78a>
+    1eca:	ba 5f 00 00 00       	mov    $0x5f,%edx
+    1ecf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ed4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1ed9:	e8 00 00 00 00       	callq  1ede <run+0x79e>
+    1ede:	ba 60 00 00 00       	mov    $0x60,%edx
+    1ee3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ee8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1eed:	e8 00 00 00 00       	callq  1ef2 <run+0x7b2>
+    1ef2:	ba 61 00 00 00       	mov    $0x61,%edx
+    1ef7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1efc:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f01:	e8 00 00 00 00       	callq  1f06 <run+0x7c6>
+    1f06:	ba 62 00 00 00       	mov    $0x62,%edx
+    1f0b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1f10:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f15:	e8 00 00 00 00       	callq  1f1a <run+0x7da>
+    1f1a:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1f21 <run+0x7e1>
+    1f21:	ba 63 00 00 00       	mov    $0x63,%edx
+    1f26:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f2b:	e8 00 00 00 00       	callq  1f30 <run+0x7f0>
+    1f30:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1f37 <run+0x7f7>
+    1f37:	ba 64 00 00 00       	mov    $0x64,%edx
     1f3c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f41:	e8 00 00 00 00       	callq  1f46 <run+0x886>
-    1f46:	ba 6b 00 00 00       	mov    $0x6b,%edx
-    1f4b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f50:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f55:	e8 00 00 00 00       	callq  1f5a <run+0x89a>
-    1f5a:	ba 6c 00 00 00       	mov    $0x6c,%edx
-    1f5f:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f64:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f69:	e8 00 00 00 00       	callq  1f6e <run+0x8ae>
-    1f6e:	ba 6d 00 00 00       	mov    $0x6d,%edx
-    1f73:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f78:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f7d:	e8 00 00 00 00       	callq  1f82 <run+0x8c2>
-    1f82:	ba 6e 00 00 00       	mov    $0x6e,%edx
-    1f87:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1f8c:	bf 00 00 00 00       	mov    $0x0,%edi
-    1f91:	e8 00 00 00 00       	callq  1f96 <run+0x8d6>
-    1f96:	ba 6f 00 00 00       	mov    $0x6f,%edx
-    1f9b:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1fa0:	bf 00 00 00 00       	mov    $0x0,%edi
-    1fa5:	e8 00 00 00 00       	callq  1faa <run+0x8ea>
-    1faa:	ba 70 00 00 00       	mov    $0x70,%edx
-    1faf:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1fb4:	bf 00 00 00 00       	mov    $0x0,%edi
-    1fb9:	e8 00 00 00 00       	callq  1fbe <run+0x8fe>
-    1fbe:	ba 71 00 00 00       	mov    $0x71,%edx
-    1fc3:	be c4 02 70 00       	mov    $0x7002c4,%esi
-    1fc8:	bf 00 00 00 00       	mov    $0x0,%edi
-    1fcd:	48 83 c4 08          	add    $0x8,%rsp
-    1fd1:	e9 00 00 00 00       	jmpq   1fd6 <run+0x916>
-    1fd6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-    1fdd:	00 00 00 
-    1fe0:	bf 00 00 00 00       	mov    $0x0,%edi
-    1fe5:	e8 00 00 00 00       	callq  1fea <run+0x92a>
-    1fea:	85 c0                	test   %eax,%eax
-    1fec:	0f 84 df f6 ff ff    	je     16d1 <run+0x11>
-    1ff2:	bf 00 00 00 00       	mov    $0x0,%edi
-    1ff7:	48 c7 05 00 00 00 00 	movq   $0x70012c,0x0(%rip)        # 2002 <run+0x942>
-    1ffe:	2c 01 70 00 
-    2002:	e8 00 00 00 00       	callq  2007 <run+0x947>
-    2007:	e9 c5 f6 ff ff       	jmpq   16d1 <run+0x11>
+    1f41:	e8 00 00 00 00       	callq  1f46 <run+0x806>
+    1f46:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1f4d <run+0x80d>
+    1f4d:	ba 65 00 00 00       	mov    $0x65,%edx
+    1f52:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f57:	e8 00 00 00 00       	callq  1f5c <run+0x81c>
+    1f5c:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1f63 <run+0x823>
+    1f63:	ba 66 00 00 00       	mov    $0x66,%edx
+    1f68:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f6d:	e8 00 00 00 00       	callq  1f72 <run+0x832>
+    1f72:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1f79 <run+0x839>
+    1f79:	ba 67 00 00 00       	mov    $0x67,%edx
+    1f7e:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f83:	e8 00 00 00 00       	callq  1f88 <run+0x848>
+    1f88:	48 8b 35 00 00 00 00 	mov    0x0(%rip),%rsi        # 1f8f <run+0x84f>
+    1f8f:	ba 68 00 00 00       	mov    $0x68,%edx
+    1f94:	bf 00 00 00 00       	mov    $0x0,%edi
+    1f99:	e8 00 00 00 00       	callq  1f9e <run+0x85e>
+    1f9e:	ba 69 00 00 00       	mov    $0x69,%edx
+    1fa3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1fa8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1fad:	e8 00 00 00 00       	callq  1fb2 <run+0x872>
+    1fb2:	ba 6a 00 00 00       	mov    $0x6a,%edx
+    1fb7:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1fbc:	bf 00 00 00 00       	mov    $0x0,%edi
+    1fc1:	e8 00 00 00 00       	callq  1fc6 <run+0x886>
+    1fc6:	ba 6b 00 00 00       	mov    $0x6b,%edx
+    1fcb:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1fd0:	bf 00 00 00 00       	mov    $0x0,%edi
+    1fd5:	e8 00 00 00 00       	callq  1fda <run+0x89a>
+    1fda:	ba 6c 00 00 00       	mov    $0x6c,%edx
+    1fdf:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1fe4:	bf 00 00 00 00       	mov    $0x0,%edi
+    1fe9:	e8 00 00 00 00       	callq  1fee <run+0x8ae>
+    1fee:	ba 6d 00 00 00       	mov    $0x6d,%edx
+    1ff3:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    1ff8:	bf 00 00 00 00       	mov    $0x0,%edi
+    1ffd:	e8 00 00 00 00       	callq  2002 <run+0x8c2>
+    2002:	ba 6e 00 00 00       	mov    $0x6e,%edx
+    2007:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    200c:	bf 00 00 00 00       	mov    $0x0,%edi
+    2011:	e8 00 00 00 00       	callq  2016 <run+0x8d6>
+    2016:	ba 6f 00 00 00       	mov    $0x6f,%edx
+    201b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    2020:	bf 00 00 00 00       	mov    $0x0,%edi
+    2025:	e8 00 00 00 00       	callq  202a <run+0x8ea>
+    202a:	ba 70 00 00 00       	mov    $0x70,%edx
+    202f:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    2034:	bf 00 00 00 00       	mov    $0x0,%edi
+    2039:	e8 00 00 00 00       	callq  203e <run+0x8fe>
+    203e:	ba 71 00 00 00       	mov    $0x71,%edx
+    2043:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    2048:	bf 00 00 00 00       	mov    $0x0,%edi
+    204d:	e8 00 00 00 00       	callq  2052 <run+0x912>
+    2052:	ba 72 00 00 00       	mov    $0x72,%edx
+    2057:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    205c:	bf 00 00 00 00       	mov    $0x0,%edi
+    2061:	e8 00 00 00 00       	callq  2066 <run+0x926>
+    2066:	ba 73 00 00 00       	mov    $0x73,%edx
+    206b:	be c4 02 70 00       	mov    $0x7002c4,%esi
+    2070:	bf 00 00 00 00       	mov    $0x0,%edi
+    2075:	48 83 c4 08          	add    $0x8,%rsp
+    2079:	e9 00 00 00 00       	jmpq   207e <run+0x93e>
+    207e:	66 90                	xchg   %ax,%ax
+    2080:	bf 00 00 00 00       	mov    $0x0,%edi
+    2085:	e8 00 00 00 00       	callq  208a <run+0x94a>
+    208a:	85 c0                	test   %eax,%eax
+    208c:	0f 84 bf f6 ff ff    	je     1751 <run+0x11>
+    2092:	bf 00 00 00 00       	mov    $0x0,%edi
+    2097:	48 c7 05 00 00 00 00 	movq   $0x70012c,0x0(%rip)        # 20a2 <run+0x962>
+    209e:	2c 01 70 00 
+    20a2:	e8 00 00 00 00       	callq  20a7 <run+0x967>
+    20a7:	e9 a5 f6 ff ff       	jmpq   1751 <run+0x11>

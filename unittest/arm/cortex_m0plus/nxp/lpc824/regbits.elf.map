@@ -3,7 +3,7 @@ Allocating common symbols
 Common symbol       size              file
 
 finish              0x4               main.o
-results             0x390             main.o
+results             0x3a0             main.o
 start               0x4               main.o
 
 Discarded input sections
@@ -80,12 +80,12 @@ LOAD lpc8xx_ram_init.o
                 0x0000000000000020                PROVIDE (MINIMUM_STACK_SIZE, 0x20)
                 0x0000000010000000                . = ORIGIN (RAM)
 
-.text           0x0000000010000000     0x15cc
+.text           0x0000000010000000     0x1640
  *(.isr_vectors)
  .isr_vectors   0x0000000010000000       0x9c lpc8xx_ram_init.o
                 0x0000000010000000                INTERRUPT_VECTORS
  *(.text)
- .text          0x000000001000009c     0x1450 regbits.o
+ .text          0x000000001000009c     0x14c4 regbits.o
                 0x000000001000009c                zero_reg()
                 0x00000000100000a8                zero_array()
                 0x00000000100000b4                set_singl_bits_operator()
@@ -124,217 +124,219 @@ LOAD lpc8xx_ram_init.o
                 0x00000000100002d8                cmp_neq_zero()
                 0x00000000100002f4                cmp_equ_bits()
                 0x000000001000031c                cmp_neq_bits()
-                0x0000000010000338                cmp_equ_mskd()
-                0x0000000010000380                cmp_neq_mskd()
-                0x00000000100003b4                cmp_equ_reg()
-                0x00000000100003dc                cmp_neq_reg()
-                0x00000000100003f8                constexpr_bits_array()
-                0x000000001000040c                runtime_bits_array()
-                0x0000000010000438                prescaler_low()
-                0x0000000010000454                prescaler_high()
-                0x0000000010000470                reg_mskd_lss()
-                0x00000000100004a4                reg_mskd_leq()
-                0x00000000100004dc                reg_mskd_gtr()
-                0x000000001000050c                reg_mskd_geq()
-                0x000000001000054c                pos_cmp_eq()
-                0x0000000010000558                pos_cmp_ne()
-                0x0000000010000564                bits_extract_eq()
-                0x0000000010000580                mskd_extract_eq()
-                0x000000001000059c                mskd_extract_ne()
-                0x00000000100005b8                mskd_extract_lss()
-                0x00000000100005e4                mskd_extract_leq()
-                0x000000001000060c                mskd_extract_gtr()
-                0x0000000010000638                set_bits_global()
-                0x0000000010000648                ins_mskd_global()
-                0x000000001000065c                assign_array_global()
-                0x0000000010000668                shifted_global()
-                0x0000000010000684                assign_register_global()
-                0x0000000010000690                copy_bits_equ()
-                0x00000000100006ac                copy_bits_neq()
-                0x00000000100006c8                copy_mskd_equ()
-                0x00000000100006f4                copy_mskd_neq()
-                0x0000000010000720                copy_mskd_lss()
-                0x0000000010000754                copy_mskd_leq()
-                0x0000000010000780                copy_mskd_gtr()
-                0x00000000100007b0                copy_mskd_geq()
-                0x00000000100007e4                copy_shifted()
-                0x000000001000081c                call_pos_ref()
-                0x0000000010000844                call_pos_ref_global()
-                0x0000000010000870                call_pos_val()
-                0x0000000010000880                call_pos_val_global()
-                0x00000000100008a0                call_mskd_val_const()
-                0x00000000100008ac                call_mskd_val_var()
-                0x00000000100008b8                call_mskd_val_global()
-                0x00000000100008d4                call_bits_val_const()
-                0x00000000100008e0                call_bits_val_var()
-                0x00000000100008ec                call_bits_val_global()
-                0x00000000100008f8                bits_val(regbits::Bits<unsigned long, mcu::Serial::Config>)
-                0x0000000010000908                bits_ref(regbits::Bits<unsigned long, mcu::Serial::Config> const&)
-                0x0000000010000918                call_bits_ref_var()
-                0x000000001000092c                call_bits_ref_const()
-                0x0000000010000940                call_bits_ref_global()
-                0x0000000010000954                mskd_val(regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000964                mskd_ref(regbits::Mskd<unsigned long, mcu::Serial::Config> const&)
-                0x0000000010000978                call_mskd_ref_var()
-                0x0000000010000994                call_mskd_ref_const()
-                0x00000000100009ac                call_mskd_ref_global()
-                0x00000000100009c4                periph_bits(mcu::Serial*)
-                0x00000000100009d0                call_periph_bits()
-                0x00000000100009e0                periph_bits_val(mcu::Serial*, regbits::Bits<unsigned long, mcu::Serial::Config>)
-                0x00000000100009e8                call_periph_bits_val()
-                0x00000000100009f8                reg_bits_val(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Bits<unsigned long, mcu::Serial::Config>)
-                0x0000000010000a00                call_reg_bits_val()
-                0x0000000010000a10                periph_bits_ref(mcu::Serial*, regbits::Bits<unsigned long, mcu::Serial::Config> const&)
-                0x0000000010000a1c                call_periph_bits_ref()
-                0x0000000010000a34                reg_bits_ref(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Bits<unsigned long, mcu::Serial::Config> const&)
-                0x0000000010000a40                call_reg_bits_ref()
-                0x0000000010000a58                periph_mskd(mcu::Serial*)
-                0x0000000010000a68                call_periph_mskd()
-                0x0000000010000a78                periph_mskd_val(mcu::Serial*, regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000a84                call_periph_mskd_val()
-                0x0000000010000a98                reg_mskd_val(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000aa4                call_reg_mskd_val()
-                0x0000000010000ab8                periph_mskd_ref(mcu::Serial*, regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000ac4                call_periph_mskd_ref()
-                0x0000000010000ad8                reg_mskd_ref(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000ae4                call_reg_mskd_ref()
-                0x0000000010000af8                return_bits()
-                0x0000000010000afc                call_return_bits()
-                0x0000000010000b1c                return_mskd()
-                0x0000000010000b28                call_return_mskd()
-                0x0000000010000b58                return_reg()
-                0x0000000010000b6c                call_return_reg()
-                0x0000000010000b90                return_periph()
-                0x0000000010000b9c                call_return_periph()
-                0x0000000010000bc0                pos_val(regbits::Pos<unsigned long, mcu::Serial::Config>)
-                0x0000000010000be0                pos_ref(regbits::Pos<unsigned long, mcu::Serial::Config> const&)
-                0x0000000010000c08                runtime_range_val(regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000c18                call_range_val(unsigned int)
-                0x0000000010000c28                call_range_val_port()
-                0x0000000010000c34                runtime_range_ref(regbits::Mskd<unsigned long, mcu::Serial::Config>)
-                0x0000000010000c44                call_range_ref(unsigned int)
-                0x0000000010000c54                call_range_ref_port()
-                0x0000000010000c60                check_array_range_pass(unsigned int)
-                0x0000000010000c78                check_array_range_fail(unsigned int)
-                0x0000000010000c90                check_bits_range_pass(unsigned int)
-                0x0000000010000ca8                check_bits_range_fail(unsigned int)
-                0x0000000010000cc0                check_mskd_range_pass(unsigned int)
-                0x0000000010000cd8                check_mskd_range_fail(unsigned int)
-                0x0000000010000cf0                bits_extract_ne()
-                0x0000000010000d0c                mskd_extract_geq()
-                0x0000000010000d38                shifted_val(regbits::Shft<unsigned long, mcu::Timer::Prescale>)
-                0x0000000010000d54                call_shifted_const_val()
-                0x0000000010000d64                call_shifted_var_val()
-                0x0000000010000d74                call_shifted_global_val()
-                0x0000000010000d84                shifted_ref(regbits::Shft<unsigned long, mcu::Timer::Prescale> const&)
-                0x0000000010000da4                call_shifted_const_ref()
-                0x0000000010000dc0                call_shifted_var_ref()
-                0x0000000010000ddc                call_shifted_global_ref()
-                0x0000000010000df4                copy_bits_val(regbits::Copy<unsigned long, mcu::Serial::Config>)
-                0x0000000010000e0c                call_copy_bits_val()
-                0x0000000010000e20                copy_bits_ref(regbits::Copy<unsigned long, mcu::Serial::Config> const&)
-                0x0000000010000e3c                call_copy_bits_ref()
-                0x0000000010000e58                run
- .text          0x00000000100014ec       0x4c main.o
-                0x00000000100014ec                memset
-                0x0000000010001500                do_test
- .text          0x0000000010001538       0x94 lpc8xx_ram_init.o
-                0x0000000010001538                NMI_Handler
-                0x000000001000153c                HardFault_Handler
-                0x0000000010001540                SVCall_Handler
-                0x0000000010001544                PendSV_Handler
-                0x0000000010001548                SysTick_Handler
-                0x000000001000154c                SPI0_IRQHandler
-                0x0000000010001550                SPI1_IRQHandler
-                0x0000000010001554                UART0_IRQHandler
-                0x0000000010001558                UART1_IRQHandler
-                0x000000001000155c                UART2_IRQHandler
-                0x0000000010001560                Reserved1_IRQHandler
-                0x0000000010001564                SCT_IRQHandler
-                0x0000000010001568                MRT_IRQHandler
-                0x000000001000156c                CMP_IRQHandler
-                0x0000000010001570                WDT_IRQHandler
-                0x0000000010001574                BOD_IRQHandler
-                0x0000000010001578                WKT_IRQHandler
-                0x000000001000157c                Reserved11_IRQHandler
-                0x0000000010001580                PININT0_IRQHandler
-                0x0000000010001584                PININT1_IRQHandler
-                0x0000000010001588                PININT2_IRQHandler
-                0x000000001000158c                PININT3_IRQHandler
-                0x0000000010001590                PININT4_IRQHandler
-                0x0000000010001594                PININT5_IRQHandler
-                0x0000000010001598                PININT6_IRQHandler
-                0x000000001000159c                PININT7_IRQHandler
-                0x00000000100015a0                init
+                0x0000000010000338                cmp_equ_multi_bits()
+                0x0000000010000364                cmp_neq_multi_bits()
+                0x0000000010000390                cmp_equ_mskd()
+                0x00000000100003d8                cmp_neq_mskd()
+                0x000000001000040c                cmp_equ_reg()
+                0x0000000010000434                cmp_neq_reg()
+                0x0000000010000450                constexpr_bits_array()
+                0x0000000010000464                runtime_bits_array()
+                0x0000000010000490                prescaler_low()
+                0x00000000100004ac                prescaler_high()
+                0x00000000100004c8                reg_mskd_lss()
+                0x00000000100004fc                reg_mskd_leq()
+                0x0000000010000534                reg_mskd_gtr()
+                0x0000000010000564                reg_mskd_geq()
+                0x00000000100005a4                pos_cmp_eq()
+                0x00000000100005b0                pos_cmp_ne()
+                0x00000000100005bc                bits_extract_eq()
+                0x00000000100005d8                mskd_extract_eq()
+                0x00000000100005f4                mskd_extract_ne()
+                0x0000000010000610                mskd_extract_lss()
+                0x000000001000063c                mskd_extract_leq()
+                0x0000000010000664                mskd_extract_gtr()
+                0x0000000010000690                set_bits_global()
+                0x00000000100006a0                ins_mskd_global()
+                0x00000000100006b4                assign_array_global()
+                0x00000000100006c0                shifted_global()
+                0x00000000100006dc                assign_register_global()
+                0x00000000100006e8                copy_bits_equ()
+                0x0000000010000704                copy_bits_neq()
+                0x0000000010000720                copy_mskd_equ()
+                0x000000001000074c                copy_mskd_neq()
+                0x0000000010000778                copy_mskd_lss()
+                0x00000000100007ac                copy_mskd_leq()
+                0x00000000100007d8                copy_mskd_gtr()
+                0x0000000010000808                copy_mskd_geq()
+                0x000000001000083c                copy_shifted()
+                0x0000000010000874                call_pos_ref()
+                0x000000001000089c                call_pos_ref_global()
+                0x00000000100008c8                call_pos_val()
+                0x00000000100008d8                call_pos_val_global()
+                0x00000000100008f8                call_mskd_val_const()
+                0x0000000010000904                call_mskd_val_var()
+                0x0000000010000910                call_mskd_val_global()
+                0x000000001000092c                call_bits_val_const()
+                0x0000000010000938                call_bits_val_var()
+                0x0000000010000944                call_bits_val_global()
+                0x0000000010000950                bits_val(regbits::Bits<unsigned long, mcu::Serial::Config>)
+                0x0000000010000960                bits_ref(regbits::Bits<unsigned long, mcu::Serial::Config> const&)
+                0x0000000010000970                call_bits_ref_var()
+                0x0000000010000984                call_bits_ref_const()
+                0x0000000010000998                call_bits_ref_global()
+                0x00000000100009ac                mskd_val(regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x00000000100009bc                mskd_ref(regbits::Mskd<unsigned long, mcu::Serial::Config> const&)
+                0x00000000100009d0                call_mskd_ref_var()
+                0x00000000100009ec                call_mskd_ref_const()
+                0x0000000010000a04                call_mskd_ref_global()
+                0x0000000010000a1c                periph_bits(mcu::Serial*)
+                0x0000000010000a28                call_periph_bits()
+                0x0000000010000a38                periph_bits_val(mcu::Serial*, regbits::Bits<unsigned long, mcu::Serial::Config>)
+                0x0000000010000a40                call_periph_bits_val()
+                0x0000000010000a50                reg_bits_val(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Bits<unsigned long, mcu::Serial::Config>)
+                0x0000000010000a58                call_reg_bits_val()
+                0x0000000010000a68                periph_bits_ref(mcu::Serial*, regbits::Bits<unsigned long, mcu::Serial::Config> const&)
+                0x0000000010000a74                call_periph_bits_ref()
+                0x0000000010000a8c                reg_bits_ref(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Bits<unsigned long, mcu::Serial::Config> const&)
+                0x0000000010000a98                call_reg_bits_ref()
+                0x0000000010000ab0                periph_mskd(mcu::Serial*)
+                0x0000000010000ac0                call_periph_mskd()
+                0x0000000010000ad0                periph_mskd_val(mcu::Serial*, regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x0000000010000adc                call_periph_mskd_val()
+                0x0000000010000af0                reg_mskd_val(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x0000000010000afc                call_reg_mskd_val()
+                0x0000000010000b10                periph_mskd_ref(mcu::Serial*, regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x0000000010000b1c                call_periph_mskd_ref()
+                0x0000000010000b30                reg_mskd_ref(regbits::Reg<unsigned long, mcu::Serial::Config>&, regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x0000000010000b3c                call_reg_mskd_ref()
+                0x0000000010000b50                return_bits()
+                0x0000000010000b54                call_return_bits()
+                0x0000000010000b74                return_mskd()
+                0x0000000010000b80                call_return_mskd()
+                0x0000000010000bb0                return_reg()
+                0x0000000010000bc4                call_return_reg()
+                0x0000000010000be8                return_periph()
+                0x0000000010000bf4                call_return_periph()
+                0x0000000010000c18                pos_val(regbits::Pos<unsigned long, mcu::Serial::Config>)
+                0x0000000010000c38                pos_ref(regbits::Pos<unsigned long, mcu::Serial::Config> const&)
+                0x0000000010000c60                runtime_range_val(regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x0000000010000c70                call_range_val(unsigned int)
+                0x0000000010000c80                call_range_val_port()
+                0x0000000010000c8c                runtime_range_ref(regbits::Mskd<unsigned long, mcu::Serial::Config>)
+                0x0000000010000c9c                call_range_ref(unsigned int)
+                0x0000000010000cac                call_range_ref_port()
+                0x0000000010000cb8                check_array_range_pass(unsigned int)
+                0x0000000010000cd0                check_array_range_fail(unsigned int)
+                0x0000000010000ce8                check_bits_range_pass(unsigned int)
+                0x0000000010000d00                check_bits_range_fail(unsigned int)
+                0x0000000010000d18                check_mskd_range_pass(unsigned int)
+                0x0000000010000d30                check_mskd_range_fail(unsigned int)
+                0x0000000010000d48                bits_extract_ne()
+                0x0000000010000d64                mskd_extract_geq()
+                0x0000000010000d90                shifted_val(regbits::Shft<unsigned long, mcu::Timer::Prescale>)
+                0x0000000010000dac                call_shifted_const_val()
+                0x0000000010000dbc                call_shifted_var_val()
+                0x0000000010000dcc                call_shifted_global_val()
+                0x0000000010000ddc                shifted_ref(regbits::Shft<unsigned long, mcu::Timer::Prescale> const&)
+                0x0000000010000dfc                call_shifted_const_ref()
+                0x0000000010000e18                call_shifted_var_ref()
+                0x0000000010000e34                call_shifted_global_ref()
+                0x0000000010000e4c                copy_bits_val(regbits::Copy<unsigned long, mcu::Serial::Config>)
+                0x0000000010000e64                call_copy_bits_val()
+                0x0000000010000e78                copy_bits_ref(regbits::Copy<unsigned long, mcu::Serial::Config> const&)
+                0x0000000010000e94                call_copy_bits_ref()
+                0x0000000010000eb0                run
+ .text          0x0000000010001560       0x4c main.o
+                0x0000000010001560                memset
+                0x0000000010001574                do_test
+ .text          0x00000000100015ac       0x94 lpc8xx_ram_init.o
+                0x00000000100015ac                NMI_Handler
+                0x00000000100015b0                HardFault_Handler
+                0x00000000100015b4                SVCall_Handler
+                0x00000000100015b8                PendSV_Handler
+                0x00000000100015bc                SysTick_Handler
+                0x00000000100015c0                SPI0_IRQHandler
+                0x00000000100015c4                SPI1_IRQHandler
+                0x00000000100015c8                UART0_IRQHandler
+                0x00000000100015cc                UART1_IRQHandler
+                0x00000000100015d0                UART2_IRQHandler
+                0x00000000100015d4                Reserved1_IRQHandler
+                0x00000000100015d8                SCT_IRQHandler
+                0x00000000100015dc                MRT_IRQHandler
+                0x00000000100015e0                CMP_IRQHandler
+                0x00000000100015e4                WDT_IRQHandler
+                0x00000000100015e8                BOD_IRQHandler
+                0x00000000100015ec                WKT_IRQHandler
+                0x00000000100015f0                Reserved11_IRQHandler
+                0x00000000100015f4                PININT0_IRQHandler
+                0x00000000100015f8                PININT1_IRQHandler
+                0x00000000100015fc                PININT2_IRQHandler
+                0x0000000010001600                PININT3_IRQHandler
+                0x0000000010001604                PININT4_IRQHandler
+                0x0000000010001608                PININT5_IRQHandler
+                0x000000001000160c                PININT6_IRQHandler
+                0x0000000010001610                PININT7_IRQHandler
+                0x0000000010001614                init
 
-.glue_7         0x00000000100015cc        0x0
- .glue_7        0x00000000100015cc        0x0 linker stubs
+.glue_7         0x0000000010001640        0x0
+ .glue_7        0x0000000010001640        0x0 linker stubs
 
-.glue_7t        0x00000000100015cc        0x0
- .glue_7t       0x00000000100015cc        0x0 linker stubs
+.glue_7t        0x0000000010001640        0x0
+ .glue_7t       0x0000000010001640        0x0 linker stubs
 
-.vfp11_veneer   0x00000000100015cc        0x0
- .vfp11_veneer  0x00000000100015cc        0x0 linker stubs
+.vfp11_veneer   0x0000000010001640        0x0
+ .vfp11_veneer  0x0000000010001640        0x0 linker stubs
 
-.v4_bx          0x00000000100015cc        0x0
- .v4_bx         0x00000000100015cc        0x0 linker stubs
+.v4_bx          0x0000000010001640        0x0
+ .v4_bx         0x0000000010001640        0x0 linker stubs
 
-.iplt           0x00000000100015cc        0x0
- .iplt          0x00000000100015cc        0x0 regbits.o
+.iplt           0x0000000010001640        0x0
+ .iplt          0x0000000010001640        0x0 regbits.o
 
-.text.startup   0x00000000100015cc       0x38
- .text.startup  0x00000000100015cc       0x38 main.o
-                0x00000000100015cc                main
+.text.startup   0x0000000010001640       0x38
+ .text.startup  0x0000000010001640       0x38 main.o
+                0x0000000010001640                main
 
-.rodata         0x0000000010001604       0x18
- .rodata        0x0000000010001604       0x18 regbits.o
+.rodata         0x0000000010001678       0x18
+ .rodata        0x0000000010001678       0x18 regbits.o
 
-.rel.dyn        0x000000001000161c        0x0
- .rel.iplt      0x000000001000161c        0x0 regbits.o
+.rel.dyn        0x0000000010001690        0x0
+ .rel.iplt      0x0000000010001690        0x0 regbits.o
 
-.data           0x000000001000161c        0x0
-                0x000000001000161c                . = ALIGN (0x4)
+.data           0x0000000010001690        0x0
+                0x0000000010001690                . = ALIGN (0x4)
  *(.data)
- .data          0x000000001000161c        0x0 regbits.o
- .data          0x000000001000161c        0x0 main.o
- .data          0x000000001000161c        0x0 lpc8xx_ram_init.o
-                0x000000001000161c                BSS_START = .
+ .data          0x0000000010001690        0x0 regbits.o
+ .data          0x0000000010001690        0x0 main.o
+ .data          0x0000000010001690        0x0 lpc8xx_ram_init.o
+                0x0000000010001690                BSS_START = .
 
-.igot.plt       0x000000001000161c        0x0
- .igot.plt      0x000000001000161c        0x0 regbits.o
+.igot.plt       0x0000000010001690        0x0
+ .igot.plt      0x0000000010001690        0x0 regbits.o
 
-.bss            0x000000001000161c      0x3c8
-                0x000000001000161c                . = ALIGN (0x4)
+.bss            0x0000000010001690      0x3d8
+                0x0000000010001690                . = ALIGN (0x4)
  *(.bss)
- .bss           0x000000001000161c       0x30 regbits.o
- .bss           0x000000001000164c        0x0 main.o
- .bss           0x000000001000164c        0x0 lpc8xx_ram_init.o
- COMMON         0x000000001000164c      0x398 main.o
-                0x000000001000164c                finish
-                0x0000000010001650                results
-                0x00000000100019e0                start
-                0x00000000100019e4                BSS_END = .
-                0x00000000100019e4                end = .
+ .bss           0x0000000010001690       0x30 regbits.o
+ .bss           0x00000000100016c0        0x0 main.o
+ .bss           0x00000000100016c0        0x0 lpc8xx_ram_init.o
+ COMMON         0x00000000100016c0      0x3a8 main.o
+                0x00000000100016c0                finish
+                0x00000000100016c4                results
+                0x0000000010001a64                start
+                0x0000000010001a68                BSS_END = .
+                0x0000000010001a68                end = .
                 0x0000000010000000                RAM_BASE_ADDR = ORIGIN (RAM)
                 0x0000000000000000                FLASH_BASE_ADDR = ORIGIN (FLASH)
                 0x0000000010002000                TOP_OF_STACK = (ORIGIN (RAM) + LENGTH (RAM))
                 0x0000000000000000                ASSERT (((end + MINIMUM_STACK_SIZE) < TOP_OF_STACK), too big to fit in RAM)
 OUTPUT(regbits.elf elf32-littlearm)
 
-.debug_info     0x0000000000000000    0x12b8c
- .debug_info    0x0000000000000000    0x124b1 regbits.o
- .debug_info    0x00000000000124b1      0x2d4 main.o
- .debug_info    0x0000000000012785      0x407 lpc8xx_ram_init.o
+.debug_info     0x0000000000000000    0x12d7e
+ .debug_info    0x0000000000000000    0x126a3 regbits.o
+ .debug_info    0x00000000000126a3      0x2d4 main.o
+ .debug_info    0x0000000000012977      0x407 lpc8xx_ram_init.o
 
 .debug_abbrev   0x0000000000000000      0xa4b
  .debug_abbrev  0x0000000000000000      0x6f9 regbits.o
  .debug_abbrev  0x00000000000006f9      0x1df main.o
  .debug_abbrev  0x00000000000008d8      0x173 lpc8xx_ram_init.o
 
-.debug_loc      0x0000000000000000     0x294d
- .debug_loc     0x0000000000000000     0x27d2 regbits.o
- .debug_loc     0x00000000000027d2      0x157 main.o
- .debug_loc     0x0000000000002929       0x24 lpc8xx_ram_init.o
+.debug_loc      0x0000000000000000     0x2a81
+ .debug_loc     0x0000000000000000     0x2906 regbits.o
+ .debug_loc     0x0000000000002906      0x157 main.o
+ .debug_loc     0x0000000000002a5d       0x24 lpc8xx_ram_init.o
 
 .debug_aranges  0x0000000000000000       0x68
  .debug_aranges
@@ -373,17 +375,17 @@ OUTPUT(regbits.elf elf32-littlearm)
  .debug_macro   0x0000000000002301      0x1c4 main.o
  .debug_macro   0x00000000000024c5       0xae lpc8xx_ram_init.o
 
-.debug_line     0x0000000000000000     0x326d
- .debug_line    0x0000000000000000     0x29fb regbits.o
- .debug_line    0x00000000000029fb      0x3a9 main.o
- .debug_line    0x0000000000002da4      0x4c9 lpc8xx_ram_init.o
+.debug_line     0x0000000000000000     0x3334
+ .debug_line    0x0000000000000000     0x2ac2 regbits.o
+ .debug_line    0x0000000000002ac2      0x3a9 main.o
+ .debug_line    0x0000000000002e6b      0x4c9 lpc8xx_ram_init.o
 
-.debug_str      0x0000000000000000    0x19737
- .debug_str     0x0000000000000000    0x17246 regbits.o
-                                      0x175aa (size before relaxing)
- .debug_str     0x0000000000017246     0x229c main.o
+.debug_str      0x0000000000000000    0x1978d
+ .debug_str     0x0000000000000000    0x1729c regbits.o
+                                      0x17600 (size before relaxing)
+ .debug_str     0x000000000001729c     0x229c main.o
                                        0x5f46 (size before relaxing)
- .debug_str     0x00000000000194e2      0x255 lpc8xx_ram_init.o
+ .debug_str     0x0000000000019538      0x255 lpc8xx_ram_init.o
                                        0x5dea (size before relaxing)
 
 .comment        0x0000000000000000       0x75
@@ -401,10 +403,10 @@ OUTPUT(regbits.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000038       0x1c lpc8xx_ram_init.o
 
-.debug_frame    0x0000000000000000      0xd48
- .debug_frame   0x0000000000000000      0xb24 regbits.o
- .debug_frame   0x0000000000000b24       0x5c main.o
- .debug_frame   0x0000000000000b80      0x1c8 lpc8xx_ram_init.o
+.debug_frame    0x0000000000000000      0xd68
+ .debug_frame   0x0000000000000000      0xb44 regbits.o
+ .debug_frame   0x0000000000000b44       0x5c main.o
+ .debug_frame   0x0000000000000ba0      0x1c8 lpc8xx_ram_init.o
 Memory region         Used Size  Region Size  %age Used
            FLASH:          0 GB        32 KB      0.00%
-             RAM:        6628 B         8 KB     80.91%
+             RAM:        6760 B         8 KB     82.52%

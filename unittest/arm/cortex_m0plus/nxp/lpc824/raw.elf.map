@@ -3,7 +3,7 @@ Allocating common symbols
 Common symbol       size              file
 
 finish              0x4               main.o
-results             0x390             main.o
+results             0x3a0             main.o
 start               0x4               main.o
 
 Discarded input sections
@@ -80,12 +80,12 @@ LOAD lpc8xx_ram_init.o
                 0x0000000000000020                PROVIDE (MINIMUM_STACK_SIZE, 0x20)
                 0x0000000010000000                . = ORIGIN (RAM)
 
-.text           0x0000000010000000     0x160c
+.text           0x0000000010000000     0x1680
  *(.isr_vectors)
  .isr_vectors   0x0000000010000000       0x9c lpc8xx_ram_init.o
                 0x0000000010000000                INTERRUPT_VECTORS
  *(.text)
- .text          0x000000001000009c     0x1490 raw.o
+ .text          0x000000001000009c     0x1504 raw.o
                 0x000000001000009c                zero_reg
                 0x00000000100000a8                zero_array
                 0x00000000100000b4                set_singl_bits_operator
@@ -124,207 +124,209 @@ LOAD lpc8xx_ram_init.o
                 0x00000000100002d8                cmp_neq_zero
                 0x00000000100002f4                cmp_equ_bits
                 0x000000001000031c                cmp_neq_bits
-                0x0000000010000338                cmp_equ_mskd
-                0x0000000010000380                cmp_neq_mskd
-                0x00000000100003b4                cmp_equ_reg
-                0x00000000100003dc                cmp_neq_reg
-                0x00000000100003f8                constexpr_bits_array
-                0x0000000010000410                runtime_bits_array
-                0x0000000010000440                prescaler_low
-                0x000000001000045c                prescaler_high
-                0x0000000010000478                reg_mskd_lss
-                0x00000000100004ac                reg_mskd_leq
-                0x00000000100004e4                reg_mskd_gtr
-                0x0000000010000514                reg_mskd_geq
-                0x0000000010000554                pos_cmp_eq
-                0x0000000010000560                pos_cmp_ne
-                0x000000001000056c                bits_extract_eq
-                0x0000000010000588                mskd_extract_eq
-                0x00000000100005a8                mskd_extract_ne
-                0x00000000100005c8                mskd_extract_lss
-                0x00000000100005fc                mskd_extract_leq
-                0x0000000010000628                mskd_extract_gtr
-                0x0000000010000658                set_bits_global
-                0x0000000010000668                ins_mskd_global
-                0x000000001000067c                assign_array_global
-                0x0000000010000688                shifted_global
-                0x00000000100006a4                assign_register_global
-                0x00000000100006b0                copy_bits_equ
-                0x00000000100006cc                copy_bits_neq
-                0x00000000100006e8                copy_mskd_equ
-                0x0000000010000714                copy_mskd_neq
-                0x0000000010000740                copy_mskd_lss
-                0x0000000010000774                copy_mskd_leq
-                0x00000000100007a0                copy_mskd_gtr
-                0x00000000100007d0                copy_mskd_geq
-                0x0000000010000804                copy_shifted
-                0x0000000010000854                call_range_val_port
-                0x0000000010000874                call_pos_ref_global
-                0x00000000100008a0                call_pos_val
-                0x00000000100008ac                call_pos_val_global
-                0x00000000100008c8                call_mskd_val_const
-                0x00000000100008d4                call_mskd_val_var
-                0x00000000100008e0                call_mskd_val_global
-                0x00000000100008f8                call_bits_val_const
-                0x0000000010000900                call_bits_val_var
-                0x0000000010000908                call_bits_val_global
-                0x0000000010000910                bits_val
-                0x0000000010000920                bits_ref
-                0x0000000010000930                call_bits_ref_const
-                0x0000000010000944                call_bits_ref_var
-                0x0000000010000958                call_bits_ref_global
-                0x000000001000096c                mskd_val
-                0x000000001000097c                mskd_ref
-                0x0000000010000990                call_mskd_ref_const
-                0x00000000100009ac                call_mskd_ref_var
-                0x00000000100009c8                call_mskd_ref_global
-                0x00000000100009e4                periph_bits
-                0x00000000100009f0                call_periph_bits
-                0x0000000010000a00                periph_bits_val
-                0x0000000010000a08                call_periph_bits_val
-                0x0000000010000a18                reg_bits_val
-                0x0000000010000a20                call_reg_bits_val
-                0x0000000010000a30                periph_bits_ref
-                0x0000000010000a3c                call_periph_bits_ref
-                0x0000000010000a54                reg_bits_ref
-                0x0000000010000a60                call_reg_bits_ref
-                0x0000000010000a78                periph_mskd
-                0x0000000010000a88                call_periph_mskd
-                0x0000000010000a98                periph_mskd_val
-                0x0000000010000aa4                call_periph_mskd_val
-                0x0000000010000ab8                reg_mskd_val
-                0x0000000010000ac4                call_reg_mskd_val
-                0x0000000010000ad8                periph_mskd_ref
-                0x0000000010000ae8                call_periph_mskd_ref
-                0x0000000010000b0c                reg_mskd_ref
-                0x0000000010000b1c                call_reg_mskd_ref
-                0x0000000010000b40                return_bits
-                0x0000000010000b44                call_return_bits
-                0x0000000010000b64                return_mskd
-                0x0000000010000b70                call_return_mskd
-                0x0000000010000ba4                return_reg
-                0x0000000010000bb0                call_return_reg
-                0x0000000010000bd4                return_periph
-                0x0000000010000be8                call_return_periph
-                0x0000000010000c0c                pos_val
-                0x0000000010000c30                pos_ref
-                0x0000000010000c58                call_pos_ref
-                0x0000000010000c74                runtime_range_val
-                0x0000000010000c84                call_range_val
-                0x0000000010000c94                runtime_range_ref
-                0x0000000010000ca8                call_range_ref
-                0x0000000010000cc4                call_range_ref_port
-                0x0000000010000cd0                check_array_range_pass
-                0x0000000010000ce8                check_array_range_fail
-                0x0000000010000d00                check_bits_range_pass
-                0x0000000010000d18                check_bits_range_fail
-                0x0000000010000d30                check_mskd_range_pass
-                0x0000000010000d48                check_mskd_range_fail
-                0x0000000010000d60                bits_extract_ne
-                0x0000000010000d7c                mskd_extract_geq
-                0x0000000010000db0                shifted_val
-                0x0000000010000dcc                call_shifted_const_val
-                0x0000000010000ddc                call_shifted_var_val
-                0x0000000010000dec                call_shifted_global_val
-                0x0000000010000dfc                shifted_ref
-                0x0000000010000e1c                call_shifted_const_ref
-                0x0000000010000e38                call_shifted_var_ref
-                0x0000000010000e54                call_shifted_global_ref
-                0x0000000010000e70                copy_bits_val
-                0x0000000010000e88                call_copy_bits_val
-                0x0000000010000e9c                copy_bits_ref
-                0x0000000010000eb8                call_copy_bits_ref
-                0x0000000010000ed4                run
- .text          0x000000001000152c       0x4c main.o
-                0x000000001000152c                memset
-                0x0000000010001540                do_test
- .text          0x0000000010001578       0x94 lpc8xx_ram_init.o
-                0x0000000010001578                NMI_Handler
-                0x000000001000157c                HardFault_Handler
-                0x0000000010001580                SVCall_Handler
-                0x0000000010001584                PendSV_Handler
-                0x0000000010001588                SysTick_Handler
-                0x000000001000158c                SPI0_IRQHandler
-                0x0000000010001590                SPI1_IRQHandler
-                0x0000000010001594                UART0_IRQHandler
-                0x0000000010001598                UART1_IRQHandler
-                0x000000001000159c                UART2_IRQHandler
-                0x00000000100015a0                Reserved1_IRQHandler
-                0x00000000100015a4                SCT_IRQHandler
-                0x00000000100015a8                MRT_IRQHandler
-                0x00000000100015ac                CMP_IRQHandler
-                0x00000000100015b0                WDT_IRQHandler
-                0x00000000100015b4                BOD_IRQHandler
-                0x00000000100015b8                WKT_IRQHandler
-                0x00000000100015bc                Reserved11_IRQHandler
-                0x00000000100015c0                PININT0_IRQHandler
-                0x00000000100015c4                PININT1_IRQHandler
-                0x00000000100015c8                PININT2_IRQHandler
-                0x00000000100015cc                PININT3_IRQHandler
-                0x00000000100015d0                PININT4_IRQHandler
-                0x00000000100015d4                PININT5_IRQHandler
-                0x00000000100015d8                PININT6_IRQHandler
-                0x00000000100015dc                PININT7_IRQHandler
-                0x00000000100015e0                init
+                0x0000000010000338                cmp_equ_multi_bits
+                0x0000000010000364                cmp_neq_multi_bits
+                0x0000000010000390                cmp_equ_mskd
+                0x00000000100003d8                cmp_neq_mskd
+                0x000000001000040c                cmp_equ_reg
+                0x0000000010000434                cmp_neq_reg
+                0x0000000010000450                constexpr_bits_array
+                0x0000000010000468                runtime_bits_array
+                0x0000000010000498                prescaler_low
+                0x00000000100004b4                prescaler_high
+                0x00000000100004d0                reg_mskd_lss
+                0x0000000010000504                reg_mskd_leq
+                0x000000001000053c                reg_mskd_gtr
+                0x000000001000056c                reg_mskd_geq
+                0x00000000100005ac                pos_cmp_eq
+                0x00000000100005b8                pos_cmp_ne
+                0x00000000100005c4                bits_extract_eq
+                0x00000000100005e0                mskd_extract_eq
+                0x0000000010000600                mskd_extract_ne
+                0x0000000010000620                mskd_extract_lss
+                0x0000000010000654                mskd_extract_leq
+                0x0000000010000680                mskd_extract_gtr
+                0x00000000100006b0                set_bits_global
+                0x00000000100006c0                ins_mskd_global
+                0x00000000100006d4                assign_array_global
+                0x00000000100006e0                shifted_global
+                0x00000000100006fc                assign_register_global
+                0x0000000010000708                copy_bits_equ
+                0x0000000010000724                copy_bits_neq
+                0x0000000010000740                copy_mskd_equ
+                0x000000001000076c                copy_mskd_neq
+                0x0000000010000798                copy_mskd_lss
+                0x00000000100007cc                copy_mskd_leq
+                0x00000000100007f8                copy_mskd_gtr
+                0x0000000010000828                copy_mskd_geq
+                0x000000001000085c                copy_shifted
+                0x00000000100008ac                call_range_val_port
+                0x00000000100008cc                call_pos_ref_global
+                0x00000000100008f8                call_pos_val
+                0x0000000010000904                call_pos_val_global
+                0x0000000010000920                call_mskd_val_const
+                0x000000001000092c                call_mskd_val_var
+                0x0000000010000938                call_mskd_val_global
+                0x0000000010000950                call_bits_val_const
+                0x0000000010000958                call_bits_val_var
+                0x0000000010000960                call_bits_val_global
+                0x0000000010000968                bits_val
+                0x0000000010000978                bits_ref
+                0x0000000010000988                call_bits_ref_const
+                0x000000001000099c                call_bits_ref_var
+                0x00000000100009b0                call_bits_ref_global
+                0x00000000100009c4                mskd_val
+                0x00000000100009d4                mskd_ref
+                0x00000000100009e8                call_mskd_ref_const
+                0x0000000010000a04                call_mskd_ref_var
+                0x0000000010000a20                call_mskd_ref_global
+                0x0000000010000a3c                periph_bits
+                0x0000000010000a48                call_periph_bits
+                0x0000000010000a58                periph_bits_val
+                0x0000000010000a60                call_periph_bits_val
+                0x0000000010000a70                reg_bits_val
+                0x0000000010000a78                call_reg_bits_val
+                0x0000000010000a88                periph_bits_ref
+                0x0000000010000a94                call_periph_bits_ref
+                0x0000000010000aac                reg_bits_ref
+                0x0000000010000ab8                call_reg_bits_ref
+                0x0000000010000ad0                periph_mskd
+                0x0000000010000ae0                call_periph_mskd
+                0x0000000010000af0                periph_mskd_val
+                0x0000000010000afc                call_periph_mskd_val
+                0x0000000010000b10                reg_mskd_val
+                0x0000000010000b1c                call_reg_mskd_val
+                0x0000000010000b30                periph_mskd_ref
+                0x0000000010000b40                call_periph_mskd_ref
+                0x0000000010000b64                reg_mskd_ref
+                0x0000000010000b74                call_reg_mskd_ref
+                0x0000000010000b98                return_bits
+                0x0000000010000b9c                call_return_bits
+                0x0000000010000bbc                return_mskd
+                0x0000000010000bc8                call_return_mskd
+                0x0000000010000bfc                return_reg
+                0x0000000010000c08                call_return_reg
+                0x0000000010000c2c                return_periph
+                0x0000000010000c40                call_return_periph
+                0x0000000010000c64                pos_val
+                0x0000000010000c88                pos_ref
+                0x0000000010000cb0                call_pos_ref
+                0x0000000010000ccc                runtime_range_val
+                0x0000000010000cdc                call_range_val
+                0x0000000010000cec                runtime_range_ref
+                0x0000000010000d00                call_range_ref
+                0x0000000010000d1c                call_range_ref_port
+                0x0000000010000d28                check_array_range_pass
+                0x0000000010000d40                check_array_range_fail
+                0x0000000010000d58                check_bits_range_pass
+                0x0000000010000d70                check_bits_range_fail
+                0x0000000010000d88                check_mskd_range_pass
+                0x0000000010000da0                check_mskd_range_fail
+                0x0000000010000db8                bits_extract_ne
+                0x0000000010000dd4                mskd_extract_geq
+                0x0000000010000e08                shifted_val
+                0x0000000010000e24                call_shifted_const_val
+                0x0000000010000e34                call_shifted_var_val
+                0x0000000010000e44                call_shifted_global_val
+                0x0000000010000e54                shifted_ref
+                0x0000000010000e74                call_shifted_const_ref
+                0x0000000010000e90                call_shifted_var_ref
+                0x0000000010000eac                call_shifted_global_ref
+                0x0000000010000ec8                copy_bits_val
+                0x0000000010000ee0                call_copy_bits_val
+                0x0000000010000ef4                copy_bits_ref
+                0x0000000010000f10                call_copy_bits_ref
+                0x0000000010000f2c                run
+ .text          0x00000000100015a0       0x4c main.o
+                0x00000000100015a0                memset
+                0x00000000100015b4                do_test
+ .text          0x00000000100015ec       0x94 lpc8xx_ram_init.o
+                0x00000000100015ec                NMI_Handler
+                0x00000000100015f0                HardFault_Handler
+                0x00000000100015f4                SVCall_Handler
+                0x00000000100015f8                PendSV_Handler
+                0x00000000100015fc                SysTick_Handler
+                0x0000000010001600                SPI0_IRQHandler
+                0x0000000010001604                SPI1_IRQHandler
+                0x0000000010001608                UART0_IRQHandler
+                0x000000001000160c                UART1_IRQHandler
+                0x0000000010001610                UART2_IRQHandler
+                0x0000000010001614                Reserved1_IRQHandler
+                0x0000000010001618                SCT_IRQHandler
+                0x000000001000161c                MRT_IRQHandler
+                0x0000000010001620                CMP_IRQHandler
+                0x0000000010001624                WDT_IRQHandler
+                0x0000000010001628                BOD_IRQHandler
+                0x000000001000162c                WKT_IRQHandler
+                0x0000000010001630                Reserved11_IRQHandler
+                0x0000000010001634                PININT0_IRQHandler
+                0x0000000010001638                PININT1_IRQHandler
+                0x000000001000163c                PININT2_IRQHandler
+                0x0000000010001640                PININT3_IRQHandler
+                0x0000000010001644                PININT4_IRQHandler
+                0x0000000010001648                PININT5_IRQHandler
+                0x000000001000164c                PININT6_IRQHandler
+                0x0000000010001650                PININT7_IRQHandler
+                0x0000000010001654                init
 
-.glue_7         0x000000001000160c        0x0
- .glue_7        0x000000001000160c        0x0 linker stubs
+.glue_7         0x0000000010001680        0x0
+ .glue_7        0x0000000010001680        0x0 linker stubs
 
-.glue_7t        0x000000001000160c        0x0
- .glue_7t       0x000000001000160c        0x0 linker stubs
+.glue_7t        0x0000000010001680        0x0
+ .glue_7t       0x0000000010001680        0x0 linker stubs
 
-.vfp11_veneer   0x000000001000160c        0x0
- .vfp11_veneer  0x000000001000160c        0x0 linker stubs
+.vfp11_veneer   0x0000000010001680        0x0
+ .vfp11_veneer  0x0000000010001680        0x0 linker stubs
 
-.v4_bx          0x000000001000160c        0x0
- .v4_bx         0x000000001000160c        0x0 linker stubs
+.v4_bx          0x0000000010001680        0x0
+ .v4_bx         0x0000000010001680        0x0 linker stubs
 
-.iplt           0x000000001000160c        0x0
- .iplt          0x000000001000160c        0x0 raw.o
+.iplt           0x0000000010001680        0x0
+ .iplt          0x0000000010001680        0x0 raw.o
 
-.text.startup   0x000000001000160c       0x38
- .text.startup  0x000000001000160c       0x38 main.o
-                0x000000001000160c                main
+.text.startup   0x0000000010001680       0x38
+ .text.startup  0x0000000010001680       0x38 main.o
+                0x0000000010001680                main
 
-.rodata         0x0000000010001644       0x18
- .rodata        0x0000000010001644       0x18 raw.o
+.rodata         0x00000000100016b8       0x18
+ .rodata        0x00000000100016b8       0x18 raw.o
 
-.rel.dyn        0x000000001000165c        0x0
- .rel.iplt      0x000000001000165c        0x0 raw.o
+.rel.dyn        0x00000000100016d0        0x0
+ .rel.iplt      0x00000000100016d0        0x0 raw.o
 
-.data           0x000000001000165c        0x0
-                0x000000001000165c                . = ALIGN (0x4)
+.data           0x00000000100016d0        0x0
+                0x00000000100016d0                . = ALIGN (0x4)
  *(.data)
- .data          0x000000001000165c        0x0 raw.o
- .data          0x000000001000165c        0x0 main.o
- .data          0x000000001000165c        0x0 lpc8xx_ram_init.o
-                0x000000001000165c                BSS_START = .
+ .data          0x00000000100016d0        0x0 raw.o
+ .data          0x00000000100016d0        0x0 main.o
+ .data          0x00000000100016d0        0x0 lpc8xx_ram_init.o
+                0x00000000100016d0                BSS_START = .
 
-.igot.plt       0x000000001000165c        0x0
- .igot.plt      0x000000001000165c        0x0 raw.o
+.igot.plt       0x00000000100016d0        0x0
+ .igot.plt      0x00000000100016d0        0x0 raw.o
 
-.bss            0x000000001000165c      0x398
-                0x000000001000165c                . = ALIGN (0x4)
+.bss            0x00000000100016d0      0x3a8
+                0x00000000100016d0                . = ALIGN (0x4)
  *(.bss)
- .bss           0x000000001000165c        0x0 raw.o
- .bss           0x000000001000165c        0x0 main.o
- .bss           0x000000001000165c        0x0 lpc8xx_ram_init.o
- COMMON         0x000000001000165c      0x398 main.o
-                0x000000001000165c                finish
-                0x0000000010001660                results
-                0x00000000100019f0                start
-                0x00000000100019f4                BSS_END = .
-                0x00000000100019f4                end = .
+ .bss           0x00000000100016d0        0x0 raw.o
+ .bss           0x00000000100016d0        0x0 main.o
+ .bss           0x00000000100016d0        0x0 lpc8xx_ram_init.o
+ COMMON         0x00000000100016d0      0x3a8 main.o
+                0x00000000100016d0                finish
+                0x00000000100016d4                results
+                0x0000000010001a74                start
+                0x0000000010001a78                BSS_END = .
+                0x0000000010001a78                end = .
                 0x0000000010000000                RAM_BASE_ADDR = ORIGIN (RAM)
                 0x0000000000000000                FLASH_BASE_ADDR = ORIGIN (FLASH)
                 0x0000000010002000                TOP_OF_STACK = (ORIGIN (RAM) + LENGTH (RAM))
                 0x0000000000000000                ASSERT (((end + MINIMUM_STACK_SIZE) < TOP_OF_STACK), too big to fit in RAM)
 OUTPUT(raw.elf elf32-littlearm)
 
-.debug_info     0x0000000000000000     0x2ff8
- .debug_info    0x0000000000000000     0x291d raw.o
- .debug_info    0x000000000000291d      0x2d4 main.o
- .debug_info    0x0000000000002bf1      0x407 lpc8xx_ram_init.o
+.debug_info     0x0000000000000000     0x3064
+ .debug_info    0x0000000000000000     0x2989 raw.o
+ .debug_info    0x0000000000002989      0x2d4 main.o
+ .debug_info    0x0000000000002c5d      0x407 lpc8xx_ram_init.o
 
 .debug_abbrev   0x0000000000000000      0x5be
  .debug_abbrev  0x0000000000000000      0x26c raw.o
@@ -365,17 +367,17 @@ OUTPUT(raw.elf elf32-littlearm)
  .debug_macro   0x0000000000001ca1      0x1c4 main.o
  .debug_macro   0x0000000000001e65       0xae lpc8xx_ram_init.o
 
-.debug_line     0x0000000000000000     0x1cfa
- .debug_line    0x0000000000000000     0x1488 raw.o
- .debug_line    0x0000000000001488      0x3a9 main.o
- .debug_line    0x0000000000001831      0x4c9 lpc8xx_ram_init.o
+.debug_line     0x0000000000000000     0x1d58
+ .debug_line    0x0000000000000000     0x14e6 raw.o
+ .debug_line    0x00000000000014e6      0x3a9 main.o
+ .debug_line    0x000000000000188f      0x4c9 lpc8xx_ram_init.o
 
-.debug_str      0x0000000000000000     0x8e16
- .debug_str     0x0000000000000000     0x6918 raw.o
-                                       0x6bba (size before relaxing)
- .debug_str     0x0000000000006918     0x22a9 main.o
+.debug_str      0x0000000000000000     0x8e3c
+ .debug_str     0x0000000000000000     0x693e raw.o
+                                       0x6be0 (size before relaxing)
+ .debug_str     0x000000000000693e     0x22a9 main.o
                                        0x5f46 (size before relaxing)
- .debug_str     0x0000000000008bc1      0x255 lpc8xx_ram_init.o
+ .debug_str     0x0000000000008be7      0x255 lpc8xx_ram_init.o
                                        0x5dea (size before relaxing)
 
 .comment        0x0000000000000000       0x75
@@ -393,13 +395,13 @@ OUTPUT(raw.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000038       0x1c lpc8xx_ram_init.o
 
-.debug_frame    0x0000000000000000      0xd70
- .debug_frame   0x0000000000000000      0xb4c raw.o
- .debug_frame   0x0000000000000b4c       0x5c main.o
- .debug_frame   0x0000000000000ba8      0x1c8 lpc8xx_ram_init.o
+.debug_frame    0x0000000000000000      0xd90
+ .debug_frame   0x0000000000000000      0xb6c raw.o
+ .debug_frame   0x0000000000000b6c       0x5c main.o
+ .debug_frame   0x0000000000000bc8      0x1c8 lpc8xx_ram_init.o
 
 .debug_ranges   0x0000000000000000       0x18
  .debug_ranges  0x0000000000000000       0x18 main.o
 Memory region         Used Size  Region Size  %age Used
            FLASH:          0 GB        32 KB      0.00%
-             RAM:        6644 B         8 KB     81.10%
+             RAM:        6776 B         8 KB     82.71%
