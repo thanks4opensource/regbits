@@ -995,9 +995,7 @@ const unsigned  bit_num) \
 // assumes shft_t and mskd_t have been typedef'd/using'd
 //
 #define REGBITS_MSKD_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, MASK, POS, LIMIT) \
-static constexpr shft_t       CONSTEXPR_NAME##_SHFT          \
-                            = shft_t(CONSTEXPR_NAME##_MASK,  \
-                                     CONSTEXPR_NAME##_POS ); \
+static constexpr shft_t     CONSTEXPR_NAME##_SHFT = shft_t(MASK, POS);   \
 \
 template<unsigned BITS> static constexpr mskd_t CONSTEXPR_NAME() { \
     static_assert(BITS <= (LIMIT), \

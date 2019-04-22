@@ -26,8 +26,8 @@ using namespace mcu;
 void mskd_range()
 {
 #ifdef GOOD
-    timer1->prescale /= Timer::Prescale::PRESCALER_HIGH<13>();
+    timer1->prescale /= Timer::Prescale::PRESCALER_LOW<127>();
 #else
-    timer1->prescale /= Timer::Control::CLOCK_SOURCE_PLL;
+    timer1->prescale /= Timer::Prescale::PRESCALER_LOW<128>();
 #endif
 }

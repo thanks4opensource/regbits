@@ -20,15 +20,15 @@
 
 set height 0
 set logging on
-printf "size:    %d\n", &main - &zero_reg
+printf "size:    %d\n", &run - &zero_reg
 printf "repeats: %d\n", REPEATS
 
 set logging off
 break main:exit
-cont
+continue
 
 set logging on
-printf "time:    %d\n", start - finish
+printf "time:    %d\n", elapsed_time
 
 set var $ndx = 0
 while $ndx < NUM_TESTS * 2
@@ -40,5 +40,7 @@ while $ndx < NUM_TESTS * 2
 end
 
 set logging off
-continue
+set logging file /dev/null
+set logging on
+mon reset halt
 quit

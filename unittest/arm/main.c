@@ -53,12 +53,29 @@ size_t       siz)
 
 
 
+uint32_t __attribute__((unused)) elapsed_time = 0;
+
+
 
 void do_test(
 void                        (*test)(),
 volatile uint32_t* const      regster,
 const    uint32_t             testnum)
 {
+    uint32_t    start,
+                finish;
+
+    SysTick->CTRL = 0;   // halt
+    SysTick->VAL  = 0;   // ensure will start from LOAD value
+    SysTick->CTRL = SysTick_CTRL_ENABLE_Msk | SysTick_CTRL_CLKSOURCE_Msk;
+    SysTick->LOAD = 0xffffff;  // is 24 bits, max
+
+    // wait for SysTick to start up
+    while (SysTick->VAL == 0)
+        asm("nop");
+
+    start = SysTick->VAL;
+
     *regster = 0x00000000;
     test();
     results[testnum * 2] = *regster;
@@ -66,27 +83,18 @@ const    uint32_t             testnum)
     *regster = 0xffffffff;
     test();
     results[testnum * 2 + 1] = *regster;
+
+    finish = SysTick->VAL;
+
+    elapsed_time += start - finish;
 }
 
 
 
-uint32_t __attribute__((unused)) start ,
-         __attribute__((unused)) finish;
-
-
 int main()
 {
-    SysTick->CTRL = 0;   // halt
-    SysTick->VAL  = 0;   // ensure will start from LOAD value
-    SysTick->CTRL = SysTick_CTRL_ENABLE_Msk | SysTick_CTRL_CLKSOURCE_Msk;
-    SysTick->LOAD = 0xffffff;  // is 24 bits, max
-
-    start = SysTick->VAL;
-
     uint32_t    repeat;
     for (repeat = 0 ; repeat < REPEATS ; ++repeat) run();
-
-    finish = SysTick->VAL;
 
     exit: asm("nop");   // for GDB breakpoint
     goto exit;          // if no breakpoint

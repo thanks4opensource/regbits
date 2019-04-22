@@ -22,6 +22,8 @@ ifndef GCC_ARM_ROOT
 $(error set GCC_ARM_ROOT environment variable)
 endif
 
+export PATH := $(GCC_ARM_ROOT)/bin:$(PATH)
+
 CXX = arm-none-eabi-g++
 
 GOOD	     ?= -UGOOD

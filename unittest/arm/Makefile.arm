@@ -34,6 +34,7 @@ EXTRA_CC     ?=
 EXTRA_CXX    ?=
 
 THUMB_ARM    ?= -mthumb
+MCU	     ?=
 ACPU	     ?= cortex-m0plus
 TUNE	     ?=
 ARCH	     ?=
@@ -58,12 +59,10 @@ OUTS     = $(subst .elf,.out,$(ELFS))
 INL_FILE = ../../../../do_tests.inl
 
 unittest: main.o $(INL_FILE) $(INIT_FILE).o $(ELFS) $(DMPS) $(RLFS)
-	@ tail -n 3 -v  *.elf.map
-	@ ../../../../unittest.py arm '$(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp
+	@ ../../../../unittest.py arm '$(MCU) $(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp
 
 gdb: $(OUTS) main.o $(INL_FILE) $(INIT_FILE).o $(ELFS) $(DMPS) $(RLFS)
-	@ tail -n 3 -v  *.elf.map
-	@ ../../../../unittest.py arm '$(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp *.out
+	@ ../../../../unittest.py arm '$(MCU) $(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp *.out
 
 .PHONY: clean cleanbin
 clean: cleanbin
@@ -134,14 +133,17 @@ LDOPTS    = -marmelf -static -M --print-memory-usage  # -nostdlib
 		    $(LDLIBS) 		\
 		    -T $(LD_SCRIPT)	\
 	      > $@.map
+	@ echo $@.map
+	@ awk '/^Memory region/ {on = 1} on {print $0}' $@.map
 
 %.elf.dmp: %.elf
-	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data  $< > $@
+	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data -j.bss $< > $@
 
 %.out: %.elf
 	@ rm -f $@
 	@ if [ -x $< ] ; then \
 	$$GDB_OPENOCD $< -q -x ../../../../$(subst .elf,.gdb,$^) -x ../../../unittest.gdb > /dev/null ; \
+	sleep 2 ; \
 	fi
 
 #	$$GDB_OPENOCD $< -x ../../../../$(subst .elf,.gdb,$^) -x ../../../unittest.gdb ; \
@@ -152,7 +154,7 @@ LDOPTS    = -marmelf -static -M --print-memory-usage  # -nostdlib
 	@- $(READELF) -a $<  > $@
 
 %.o.dmp: %.o
-	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data  $< > $@
+	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data -j.bss $< > $@
 
 %.o: %.c
 	@- $(CC) -c $(CCOPTS) $< -o $@

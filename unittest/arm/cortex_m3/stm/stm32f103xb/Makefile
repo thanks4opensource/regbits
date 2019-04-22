@@ -17,6 +17,7 @@
 # License (LICENSE.txt) along with the regbits program.	 If not, see
 # <https://www.gnu.org/licenses/gpl.html>
 
+MCU  ?= stm32f103
 ACPU ?= cortex-m3
 
 INIT_FILE = stm32f103_ram_init

@@ -17,7 +17,8 @@
 # License (LICENSE.txt) along with the regbits program.	 If not, see
 # <https://www.gnu.org/licenses/gpl.html>
 
-ACPU	     ?= cortex-m0plus
+MCU  ?= lpc824
+ACPU ?= cortex-m0plus
 
 INIT_FILE = lpc8xx_ram_init
 LD_SCRIPT = lpc824_ram.ld

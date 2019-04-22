@@ -49,10 +49,6 @@ for (name, lines) in outs:
     sizes.append(lines[0].split()[1])
     times.append(lines[2].split()[1])
 
-for ndx in range(len(sizes)):
-    print("%-16s\tsize: %s\ttime: %s" % (outs[ndx][0], sizes[ndx], times[ndx]))
-print()
-
 if outs:
     for line in range(3, len(outs[0][1])):
         matched = True
@@ -75,7 +71,7 @@ dump_sizes = {}
 funcs      = set()
 
 for dmp_name in dmp_names:
-    sizes = {}
+    name_sizes = {}
     with open(dmp_name, 'r') as file:
         size = -1
         for line in file:
@@ -84,18 +80,21 @@ for dmp_name in dmp_names:
                 func = func[1:-len('>:')]
                 if '(' in func:
                     func = func[:func.find('(')]
+                splits = line.split()
+                if splits[-2] == '[clone':
+                    func += splits[-1][:-3]
                 funcs.add(func)
                 size = 0
             elif line == '\n' and size > 0:
-                sizes[func] = size
+                name_sizes[func] = size
                 size = -1
             elif size >= 0 and len(line) > 15:
                 if architecture == 'arm':
                     size += 2 if line[15] == " " else 4
                 elif architecture == 'intel':
                     size += len(line[10:30].split())
-        sizes[func] = size
-    dump_sizes[dmp_name[:-len('.o.dmp')]] = sizes
+        name_sizes[func] = size
+    dump_sizes[dmp_name[:-len('.o.dmp')]] = name_sizes
 
 print('compile:', " ".join(compile_flags.split()))
 for name in ('regbits', 'struct', 'raw', 'bitfield'):
@@ -119,3 +118,11 @@ for func in func_list:
         else:
             print("          ", end='')
     print("    %s" % func)
+
+
+if outs:
+    print()
+    print('compile:', " ".join(compile_flags.split()))
+    for ndx in range(len(sizes)):
+        print(  "%-16s\tsize: %s\ttime: %s"
+              % (outs[ndx][0], sizes[ndx], times[ndx]))
