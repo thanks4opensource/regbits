@@ -25,7 +25,7 @@ using namespace mcu;
 
 void copy_shifted_op()
 {
-    Copy<uint32_t, Serial::Config> copy(serial2->config);
+    Serial::config_t    copy(serial2->config);
 
 #ifdef GOOD
     volatile uint32_t   extracted = copy >> Serial::Config::RXPORT_SHFT;

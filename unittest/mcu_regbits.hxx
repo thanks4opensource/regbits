@@ -46,7 +46,7 @@ struct Gpio {
                             MAX_PORT_NUM);
 
       private:
-        volatile uint8_t _bytes[NUM_BYTE_REGS];
+        uint8_t _bytes[NUM_BYTE_REGS];
     };  // struct Bytes
     Bytes   bytes;
     static_assert(sizeof(Bytes) == 32, "sizeof(Bytes)");
@@ -60,7 +60,7 @@ struct Gpio {
                             MAX_PORT_NUM);
 
       private:
-        volatile uint32_t   _words[NUM_WORD_REGS];
+        uint32_t    _words[NUM_WORD_REGS];
     };  // struct Words
     Words   words;
     static_assert(sizeof(Words) == 128, "sizeof(Words)");
@@ -377,17 +377,24 @@ static_assert(sizeof(Serial) == 24, "sizeof(Serial)");
 #define SERIAL1_BASE    ((SERIAL_BASE) + 0x00000020)
 #define SERIAL2_BASE    ((SERIAL_BASE) + 0x00000040)
 
-static Gpio* const      gpio0  = reinterpret_cast<Gpio*>(GPIO0_BASE);
-static Gpio* const      gpio1  = reinterpret_cast<Gpio*>(GPIO1_BASE);
 
-static Timer* const     timer0 = reinterpret_cast<Timer*>(TIMER0_BASE);
-static Timer* const     timer1 = reinterpret_cast<Timer*>(TIMER1_BASE);
-static Timer* const     timer2 = reinterpret_cast<Timer*>(TIMER2_BASE);
-static Timer* const     timer3 = reinterpret_cast<Timer*>(TIMER3_BASE);
+#define MCU_REGBITS_PERIPH(TYPE, PERIPH, BASE) \
+    static volatile TYPE* const       PERIPH \
+                                    = reinterpret_cast<volatile TYPE*>(BASE)
 
-static Serial* const    serial0 = reinterpret_cast<Serial*>(SERIAL0_BASE);
-static Serial* const    serial1 = reinterpret_cast<Serial*>(SERIAL1_BASE);
-static Serial* const    serial2 = reinterpret_cast<Serial*>(SERIAL2_BASE);
+MCU_REGBITS_PERIPH(Gpio, gpio0, GPIO0_BASE);
+MCU_REGBITS_PERIPH(Gpio, gpio1, GPIO1_BASE);
+
+MCU_REGBITS_PERIPH(Timer, timer0, TIMER0_BASE);
+MCU_REGBITS_PERIPH(Timer, timer1, TIMER1_BASE);
+MCU_REGBITS_PERIPH(Timer, timer2, TIMER2_BASE);
+MCU_REGBITS_PERIPH(Timer, timer3, TIMER3_BASE);
+
+MCU_REGBITS_PERIPH(Serial, serial0, SERIAL0_BASE);
+MCU_REGBITS_PERIPH(Serial, serial1, SERIAL1_BASE);
+MCU_REGBITS_PERIPH(Serial, serial2, SERIAL2_BASE);
+
+#undef MCU_REGBITS_PERIPH
 
 }  // namespace mcu
 

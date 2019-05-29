@@ -532,11 +532,6 @@ __attribute__((noinline)) void runtime_bits_array()
     volatile unsigned   index = 3;
 
     GPIO1->words[index] = 0x21;
-
-    index = 7;
-
-    GPIO1->set.word  = 0;
-    if (index == 7) GPIO1->set.port7 = 1;
 }
 
 
@@ -1711,8 +1706,7 @@ __attribute__((noinline)) void run()
 
     static ptr_t    serial2_config  = (ptr_t)(&SERIAL2->config  .word),
                     timer1_prescale = (ptr_t)(&TIMER1 ->prescale.word),
-                    gpio1_words_3   = (ptr_t)(&GPIO1  ->words[3]     ),
-                    gpio1_set       = (ptr_t)(&GPIO1  ->set     .word);
+                    gpio1_words_3   = (ptr_t)(&GPIO1  ->words[3]     );
 
 #include "do_tests.inl"
 

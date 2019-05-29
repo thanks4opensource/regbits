@@ -26,8 +26,8 @@ using namespace mcu;
 void mskd_reg_neq()
 {
 #ifdef GOOD
-    timer1->prescale != Timer::Prescale::PRESCALER_HIGH<13>();
+    timer1->prescale.all(Timer::Prescale::PRESCALER_HIGH<13>());
 #else
-    timer1->prescale != Timer::Control::CLOCK_SOURCE_PLL;
+    timer1->prescale.all(Timer::Control::CLOCK_SOURCE_PLL);
 #endif
 }

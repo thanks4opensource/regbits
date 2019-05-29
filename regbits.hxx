@@ -42,7 +42,6 @@ template<typename WORD, typename CLSS> class Pos {
 
     // constructors
     //
-    explicit
     constexpr
     Pos()
     :   _pos(static_cast<WORD>(0))
@@ -148,6 +147,7 @@ template<typename WORD, typename CLSS> class Bits {
     :   _bits(static_cast<WORD>(0))
     {}
 
+    explicit
     constexpr
     Bits(
     const WORD  bits)
@@ -162,12 +162,17 @@ template<typename WORD, typename CLSS> class Bits {
     {}
 
     Bits(
-    Mskd<WORD, CLSS>        mskd)
+    const Mskd<WORD, CLSS>      mskd)
     :   _bits(mskd._bits)
     {}
 
     Bits(
-    Reg<WORD, CLSS>     reg)
+    const Reg<WORD, CLSS>   &reg)
+    :   _bits(reg._word)
+    {}
+
+    Bits(
+    volatile const Reg<WORD, CLSS>  &reg)
     :   _bits(reg._word)
     {}
 
@@ -213,6 +218,13 @@ template<typename WORD, typename CLSS> class Bits {
     }
 
     Bits<WORD, CLSS> operator=(
+    const Mskd<WORD, CLSS>  mskd)
+    {
+        _bits = mskd._bits;
+        return *this;
+    }
+
+    Bits<WORD, CLSS> operator=(
     const Reg<WORD, CLSS>   &reg)
     {
         _bits = reg._word;
@@ -220,12 +232,11 @@ template<typename WORD, typename CLSS> class Bits {
     }
 
     Bits<WORD, CLSS> operator=(
-    const Mskd<WORD, CLSS>  &mskd)
+    volatile const Reg<WORD, CLSS>  &reg)
     {
-        _bits = mskd._bits;
+        _bits = reg._word;
         return *this;
     }
-
 
     // accessor
     constexpr WORD bits() const { return _bits; }
@@ -261,6 +272,37 @@ template<typename WORD, typename CLSS> class Bits {
     const Mskd<WORD, CLSS>   &mskd)
     {
         _bits |= mskd._bits;
+        return *this;
+    }
+
+    constexpr
+    Bits<WORD, CLSS> operator-(
+    const Bits<WORD, CLSS>   other)
+    const
+    {
+        return Bits<WORD, CLSS>(_bits & ~other._bits);
+    }
+
+    constexpr
+    Bits<WORD, CLSS> operator-(
+    const Mskd<WORD, CLSS>   &mskd)
+    const
+    {
+        return Bits<WORD, CLSS>(_bits &~ mskd._bits);
+    }
+
+    Bits<WORD, CLSS> operator-=(
+    const Bits<WORD, CLSS>   other)
+    {
+        _bits = bits & ~other._bits;
+        return *this;
+    }
+
+    constexpr
+    Bits<WORD, CLSS> operator-=(
+    const Mskd<WORD, CLSS>   &mskd)
+    {
+        _bits = bits & ~mskd._bits;
         return *this;
     }
 
@@ -390,6 +432,14 @@ template<typename WORD, typename CLSS> class Mskd {
         return *this;
     }
 
+    Mskd<WORD, CLSS> &operator=(
+    volatile const Reg<WORD, CLSS>  &reg)
+    {
+        _bits = reg._word;
+        // do not modify _mask
+        return *this;
+    }
+
 
     // accessors
     constexpr WORD mask() const { return _mask; }
@@ -427,6 +477,38 @@ template<typename WORD, typename CLSS> class Mskd {
     {
         _mask |= bits._bits;
         _bits |= bits._bits;
+        return *this;
+    }
+
+    constexpr
+    Mskd<WORD, CLSS> operator-(
+    const Mskd<WORD, CLSS>  other)
+    const
+    {
+        return Mskd<WORD, CLSS>(_mask & ~other._mask, _bits & ~other._bits);
+    }
+
+    constexpr
+    Mskd<WORD, CLSS> operator-(
+    const Bits<WORD, CLSS>   bits)
+    const
+    {
+        return Mskd<WORD, CLSS>(_mask & ~bits._bits, _bits & ~bits._bits);
+    }
+
+    Mskd<WORD, CLSS> operator-=(
+    const Mskd<WORD, CLSS>  other)
+    {
+        _mask = _mask & ~other._mask;
+        _bits = bits & ~other._bits;
+        return *this;
+    }
+
+    Mskd<WORD, CLSS> operator-=(
+    const Bits<WORD, CLSS>   bits)
+    {
+        _mask = _mask & ~bits._bits;
+        _bits = _mask & ~bits._bits;
         return *this;
     }
 
@@ -578,8 +660,28 @@ template<typename WORD,  typename CLSS> class Reg {
     template <typename COPY_WORD, typename COPY_CLSS> friend class Copy;
 
 
-    // no constructor -- use only as pointer to hardware register
-    Reg<WORD, CLSS>() = delete;
+    // constructors
+    //
+    Reg<WORD, CLSS>() {}
+
+    explicit
+    constexpr
+    Reg<WORD, CLSS>(
+    const WORD  word)
+    :   _word(word)
+    {}
+
+    constexpr
+    Reg<WORD, CLSS>(
+    const Bits<WORD, CLSS>  bits)
+    :   _word(bits.bits())
+    {}
+
+    constexpr
+    Reg<WORD, CLSS>(
+    const Mskd<WORD, CLSS>  mskd)
+    :   _word(mskd.bits())
+    {}
 
 
 #ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
@@ -590,244 +692,195 @@ template<typename WORD,  typename CLSS> class Reg {
     {}
 #endif
 
+    // for passing constexpr instance by value without requiring storage
+    Reg<WORD, CLSS> operator+()
+    volatile const
+    {
+        return Reg<WORD, CLSS>(_word);
+    }
+    Reg<WORD, CLSS> operator+()
+    const
+    {
+        return Reg<WORD, CLSS>(_word);
+    }
 
     // assignments
     //
-    void operator=(
-    const WORD  word)
-    volatile
-    {
-        _word = word;
-    }
+    void operator=(const WORD   word) volatile { _word = word; }
+    void operator=(const WORD   word)          { _word = word; }
 
-    void operator=(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word = bits._bits;
-    }
+    void operator=(const Bits<WORD, CLSS>  bits) volatile { _word = bits._bits; }
+    void operator=(const Bits<WORD, CLSS>  bits)          { _word = bits._bits; }
 
-    void wrt(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word = bits._bits;
-    }
+    void wrt(const Bits<WORD, CLSS> bits) volatile { _word = bits._bits; }
+    void wrt(const Bits<WORD, CLSS> bits)          { _word = bits._bits; }
 
-    void operator=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word = mskd._bits;
-    }
+    void operator=(const Mskd<WORD, CLSS> &mskd) volatile { _word = mskd._bits; }
+    void operator=(const Mskd<WORD, CLSS> &mskd)          { _word = mskd._bits; }
 
-    void wrt(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word = mskd._bits;
-    }
+    void wrt(const Mskd<WORD, CLSS> &mskd) volatile { _word = mskd._bits; }
+    void wrt(const Mskd<WORD, CLSS> &mskd)          { _word = mskd._bits; }
+
+
+    void operator=(volatile const Reg<WORD, CLSS> &reg) volatile { _word = reg._word; }
+    void operator=(const Reg<WORD, CLSS> &reg)          { _word = reg._word; }
 
 
     // accessor
-    WORD word() volatile { return _word; }
+    WORD word() volatile const { return _word; }
+    WORD word()          const { return _word; }
 
 
     // bitwise operators
     //
-    void operator|=(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word |= bits._bits;
-    }
+    void operator|=(const Bits<WORD, CLSS>  bits) volatile
+                    { _word |= bits._bits; }
+    void operator|=(const Bits<WORD, CLSS>  bits)
+                    { _word |= bits._bits; }
 
-    void set(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word |= bits._bits;
-    }
+    void set(const Bits<WORD, CLSS> bits) volatile { _word |= bits._bits; }
+    void set(const Bits<WORD, CLSS> bits)          { _word |= bits._bits; }
 
-    void operator|=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word |= mskd._bits;
-    }
+    void operator|=(const Mskd<WORD, CLSS>  &mskd) volatile
+                    { _word |= mskd._bits; }
+    void operator|=(const Mskd<WORD, CLSS>  &mskd)
+                    { _word |= mskd._bits; }
 
-    void set(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word |= mskd._bits;
-    }
+    void set(const Mskd<WORD, CLSS> &mskd) volatile { _word |= mskd._bits; }
+    void set(const Mskd<WORD, CLSS> &mskd)          { _word |= mskd._bits; }
 
+    void operator-=(const Bits<WORD, CLSS>  bits) volatile
+                    { _word &= ~bits._bits; }
+    void operator-=(const Bits<WORD, CLSS>  bits)
+                    { _word &= ~bits._bits; }
 
-    void operator-=(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word &= ~bits._bits;
-    }
+    void clr(const Bits<WORD, CLSS> bits) volatile { _word &= ~bits._bits; }
+    void clr(const Bits<WORD, CLSS> bits)          { _word &= ~bits._bits; }
 
-    void clr(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word &= ~bits._bits;
-    }
+    void operator-=(const Mskd<WORD, CLSS>  &mskd) volatile
+                    { _word &= ~mskd._bits; }
+    void operator-=(const Mskd<WORD, CLSS>  &mskd)
+                    { _word &= ~mskd._bits; }
 
-    void operator-=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word &= ~mskd._bits;
-    }
+    void clr(const Mskd<WORD, CLSS> &mskd) volatile { _word &= ~mskd._bits; }
+    void clr(const Mskd<WORD, CLSS> &mskd)          { _word &= ~mskd._bits; }
 
-    void clr(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word &= ~mskd._bits;
-    }
+    void operator^=(const Bits<WORD, CLSS>  bits) volatile
+                    { _word ^= bits._bits; }
+    void operator^=(const Bits<WORD, CLSS>  bits)
+                    { _word ^= bits._bits; }
 
+    void flp(const Bits<WORD, CLSS> bits) volatile { _word ^= bits._bits; }
+    void flp(const Bits<WORD, CLSS> bits)          { _word ^= bits._bits; }
 
-    void operator^=(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word ^= bits._bits;
-    }
+    void operator^=(const Mskd<WORD, CLSS>  &mskd) volatile
+                    { _word ^= mskd._bits; }
+    void operator^=(const Mskd<WORD, CLSS>  &mskd)
+                    { _word ^= mskd._bits; }
 
-    void flp(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        _word ^= bits._bits;
-    }
+    void flp(const Mskd<WORD, CLSS> &mskd) volatile { _word ^= mskd._bits; }
+    void flp(const Mskd<WORD, CLSS> &mskd)          { _word ^= mskd._bits; }
 
-    void operator^=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word ^= mskd._bits;
-    }
+    void operator/=(const Mskd<WORD, CLSS>  &mskd) volatile
+                    { _word = (_word & ~mskd._mask) | mskd._bits; }
+    void operator/=(const Mskd<WORD, CLSS>  &mskd)
+                    { _word = (_word & ~mskd._mask) | mskd._bits; }
 
-    void flp(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word ^= mskd._bits;
-    }
-
-    void operator/=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word = (_word & ~mskd._mask) | mskd._bits;
-    }
-
-    void ins(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        _word = (_word & ~mskd._mask) | mskd._bits;
-    }
+    void ins(const Mskd<WORD, CLSS> &mskd) volatile
+                    { _word = (_word & ~mskd._mask) | mskd._bits; }
+    void ins(const Mskd<WORD, CLSS> &mskd)
+                    { _word = (_word & ~mskd._mask) | mskd._bits; }
 
 
     // extractors
     //
-    WORD operator>>(
-    const Shft<WORD, CLSS>  shft)
-    volatile
-    {
-        return (_word & shft._mask) >> shft._pos._pos;
-    }
+    Reg<WORD, CLSS> operator &(Bits<WORD, CLSS> bits) volatile const
+                    { return Reg<WORD, CLSS>(_word & bits._bits); }
+    Reg<WORD, CLSS> operator &(Bits<WORD, CLSS> bits)          const
+                    { return Reg<WORD, CLSS>(_word & bits._bits); }
 
-    WORD shifted(
-    const Shft<WORD, CLSS>  shft)
-    volatile
-    {
-        return (_word & shft._mask) >> shft._pos._pos;
-    }
+    Reg<WORD, CLSS> operator &(Mskd<WORD, CLSS> mskd) volatile const
+                    { return Reg<WORD, CLSS>(_word & mskd._mask); }
+    Reg<WORD, CLSS> operator &(Mskd<WORD, CLSS> mskd)          const
+                    { return Reg<WORD, CLSS>(_word & mskd._mask); }
+
+    WORD operator>>(const Shft<WORD, CLSS>  shft) volatile const
+                    { return (_word & shft._mask) >> shft._pos._pos; }
+    WORD operator>>(const Shft<WORD, CLSS>  shft)          const
+                    { return (_word & shft._mask) >> shft._pos._pos; }
+
+    WORD shifted(const Shft<WORD, CLSS> shft) volatile const
+                    { return (_word & shft._mask) >> shft._pos._pos; }
+    WORD shifted(const Shft<WORD, CLSS> shft)          const
+                    { return (_word & shft._mask) >> shft._pos._pos; }
 
 
     // comparisons
     //
-    bool operator==(
-    const WORD      word)
-    volatile
-    {
-        return word == _word;
-    }
+    bool is(const WORD  word) volatile const { return word == _word; }
+    bool is(const WORD  word)          const { return word == _word; }
 
-    bool operator!=(
-    const WORD      word)
-    volatile
-    {
-        return word != _word;
-    }
+    bool is(const Bits<WORD, CLSS>  bits) volatile const
+                    { return _word == bits._bits; }
+    bool is(const Bits<WORD, CLSS>  bits)          const
+                    { return _word == bits._bits; }
 
-    bool operator==(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        return (_word & bits._bits) == bits._bits;
-    }
+    bool is(const Mskd<WORD, CLSS>  mskd) volatile const
+                    { return _word == mskd._bits; }
+    bool is(const Mskd<WORD, CLSS>  mskd)          const
+                    { return _word == mskd._bits; }
 
-    bool operator!=(
-    const Bits<WORD, CLSS>  bits)
-    volatile
-    {
-        return (_word & bits._bits) !=  bits._bits;
-    }
 
-    bool operator==(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        return (_word & mskd._mask) == mskd._bits;
-    }
+    bool all(const WORD word) volatile const
+                    { return word & _word == _word; }
+    bool all(const WORD word)          const
+                    { return word & _word == _word; }
 
-    bool operator!=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        return (_word & mskd._mask) != mskd._bits;
-    }
+    bool all(const Bits<WORD, CLSS> bits) volatile const
+                    { return (_word & bits._bits) == bits._bits; }
+    bool all(const Bits<WORD, CLSS> bits)          const
+                    { return (_word & bits._bits) == bits._bits; }
 
-    bool operator<(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        return (_word & mskd._mask) < mskd._bits;
-    }
+    bool all(const Mskd<WORD, CLSS> mskd) volatile const
+                    { return (_word & mskd._mask) == mskd._bits; }
+    bool all(const Mskd<WORD, CLSS> mskd)          const
+                    { return (_word & mskd._mask) == mskd._bits; }
 
-    bool operator<=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        return (_word & mskd._mask) <= mskd._bits;
-    }
 
-    bool operator>(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        return (_word & mskd._mask) > mskd._bits;
-    }
+    bool any(const WORD word) volatile const
+                    { return static_cast<bool>(word & _word); }
+    bool any(const WORD word)          const
+                    { return static_cast<bool>(word & _word); }
 
-    bool operator>=(
-    const Mskd<WORD, CLSS>  &mskd)
-    volatile
-    {
-        return (_word & mskd._mask) >= mskd._bits;
-    }
+    bool any(const Bits<WORD, CLSS> bits) volatile const
+                    { return static_cast<bool>(_word & bits._bits); }
+    bool any(const Bits<WORD, CLSS> bits)          const
+                    { return static_cast<bool>(_word & bits._bits); }
+
+
+    bool operator<(const Mskd<WORD, CLSS>   &mskd) volatile const
+                    { return (_word & mskd._mask) < mskd._bits; }
+    bool operator<(const Mskd<WORD, CLSS>   &mskd)          const
+                    { return (_word & mskd._mask) < mskd._bits; }
+
+    bool operator<=(const Mskd<WORD, CLSS>  &mskd) volatile const
+                    { return (_word & mskd._mask) <= mskd._bits; }
+    bool operator<=(const Mskd<WORD, CLSS>  &mskd)          const
+                    { return (_word & mskd._mask) <= mskd._bits; }
+
+    bool operator>(const Mskd<WORD, CLSS>   &mskd) volatile const
+                    { return (_word & mskd._mask) > mskd._bits; }
+    bool operator>(const Mskd<WORD, CLSS>   &mskd)          const
+                    { return (_word & mskd._mask) > mskd._bits; }
+
+    bool operator>=(const Mskd<WORD, CLSS>  &mskd) volatile const
+                    { return (_word & mskd._mask) >= mskd._bits; }
+    bool operator>=(const Mskd<WORD, CLSS>  &mskd)          const
+                    { return (_word & mskd._mask) >= mskd._bits; }
 
 
   protected:
-    volatile WORD   _word;
+    WORD    _word;
 
 
   private:
@@ -838,140 +891,13 @@ template<typename WORD,  typename CLSS> class Reg {
 
 
 
-template<typename WORD,  typename CLSS> class Copy {
-  public:
-    // no bare constructor -- use only as non-volatile copy of Reg
-    Copy<WORD, CLSS>() = delete;
-
-    Copy<WORD, CLSS>(
-    const Reg<WORD, CLSS>   &reg)
-    :   _word(reg._word)
-    {}
-
-    Copy<WORD, CLSS>(
-    const WORD  word)
-    :   _word(word)
-    {}
-
-
-#ifdef REGBITS_COPY_CTOR  // implementing this impacts object passing performance
-    constexpr
-    Copy<WORD, CLSS>(
-    const Copy<WORD, CLSS>  &other)
-    :   _word(other._word)
-    {}
-#endif
-
-
-    // accessor
-    WORD word() { return _word; }
-
-
-    // extractors
-    //
-    WORD operator>>(
-    const Shft<WORD, CLSS>  shft)
-    {
-        return (_word & shft._mask) >> shft._pos._pos;
-    }
-
-    WORD shifted(
-    const Shft<WORD, CLSS>  shft)
-    {
-        return (_word & shft._mask) >> shft._pos._pos;
-    }
-
-
-    // comparisons
-    //
-    bool operator==(
-    const WORD      word)
-    const
-    {
-        return word == _word;
-    }
-
-    bool operator!=(
-    const WORD      word)
-    const
-    {
-        return word != _word;
-    }
-
-    bool operator==(
-    const Bits<WORD, CLSS>  bits)
-    const
-    {
-        return (_word & bits._bits) == bits._bits;
-    }
-
-    bool operator!=(
-    const Bits<WORD, CLSS>  bits)
-    const
-    {
-        return (_word & bits._bits) != bits._bits;
-    }
-
-    bool operator==(
-    const Mskd<WORD, CLSS>  &mskd)
-    const
-    {
-        return (_word & mskd._mask) == mskd._bits;
-    }
-
-    bool operator!=(
-    const Mskd<WORD, CLSS>  &mskd)
-    const
-    {
-        return (_word & mskd._mask) != mskd._bits;
-    }
-
-    bool operator<(
-    const Mskd<WORD, CLSS>  &mskd)
-    const
-    {
-        return (_word & mskd._mask) < mskd._bits;
-    }
-
-    bool operator<=(
-    const Mskd<WORD, CLSS>  &mskd)
-    const
-    {
-        return (_word & mskd._mask) <= mskd._bits;
-    }
-
-    bool operator>(
-    const Mskd<WORD, CLSS>  &mskd)
-    const
-    {
-        return (_word & mskd._mask) > mskd._bits;
-    }
-
-    bool operator>=(
-    const Mskd<WORD, CLSS>  &mskd)
-    const
-    {
-        return (_word & mskd._mask) >= mskd._bits;
-    }
-
-
-  protected:
-    const WORD  _word;
-
-
-  private:
-    // do not implement this, even as private
-    // operator WORD() {}
-
-};  // template<typename BITS, typename MSKD> class Copy
-
-
 
 // macro for generating functions returning Bits (constexpr and non-)
 // assumes pos_t and bits_ have been typedef'd/using'd
 //
 #define REGBITS_BITS_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, WORD) \
-template<unsigned BIT_NUM> static constexpr bits_t CONSTEXPR_NAME() { \
+template<unsigned BIT_NUM> static constexpr bits_t CONSTEXPR_NAME() \
+    { \
     static_assert(BIT_NUM < sizeof(WORD) * 8, \
                   CLASS "::" #CONSTEXPR_NAME "<BIT_NUM> out of range"); \
     return bits_t(1, pos_t(BIT_NUM)); \
@@ -990,14 +916,14 @@ const unsigned  bit_num) \
 }
 
 
-
 // macro for generating functions returning Mskd (constexpr and non-)
 // assumes shft_t and mskd_t have been typedef'd/using'd
 //
 #define REGBITS_MSKD_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, MASK, POS, LIMIT) \
 static constexpr shft_t     CONSTEXPR_NAME##_SHFT = shft_t(MASK, POS);   \
 \
-template<unsigned BITS> static constexpr mskd_t CONSTEXPR_NAME() { \
+template<unsigned BITS> static constexpr mskd_t CONSTEXPR_NAME() \
+    { \
     static_assert(BITS <= (LIMIT), \
                   CLASS "::" #CONSTEXPR_NAME "<BITS> out of range"); \
     return mskd_t(MASK, BITS, POS); \
@@ -1018,15 +944,16 @@ const unsigned  bits) \
 
 // macro for generating functions returning array member (constexpr and non-)
 #define REGBITS_ARRAY_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, DATATYPE, ARRAY, LIMIT) \
-template<unsigned INDEX> volatile DATATYPE& CONSTEXPR_NAME() { \
+template<unsigned INDEX> volatile DATATYPE& CONSTEXPR_NAME() \
+    volatile { \
     static_assert(INDEX <= (LIMIT), \
                   CLASS "::" #CONSTEXPR_NAME "<INDEX> out of range"); \
     return ARRAY[INDEX]; \
 } \
 \
 volatile DATATYPE& RUNTIME_NAME( \
-const unsigned index) \
-{ \
+const unsigned  index) \
+volatile { \
     return ARRAY[index]; \
 } \
 \
@@ -1035,7 +962,6 @@ const unsigned  index) \
 { \
     return index <= (LIMIT); \
 }
-
 
 }  // namespace regbits
 

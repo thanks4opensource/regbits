@@ -25,10 +25,10 @@ using namespace mcu;
 
 void bits_copy_equ()
 {
-    Copy<uint32_t, Serial::Config>  copy(serial2->config);
+    Serial::config_t    copy(serial2->config);
 #ifdef GOOD
-    copy == Serial::Config::ENDIAN;
+    copy.any(Serial::Config::ENDIAN);
 #else
-    copy == Serial::Control::ENABLE;
+    copy.any(Serial::Control::ENABLE);
 #endif
 }

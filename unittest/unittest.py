@@ -119,6 +119,36 @@ for func in func_list:
             print("          ", end='')
     print("    %s" % func)
 
+print('compile:', " ".join(compile_flags.split()))
+for name in ('regbits', 'struct', 'raw', 'bitfield'):
+    if name in dump_sizes:
+        print("  %8s" % name, end='')
+print()
+func_list = list(funcs)
+func_list.sort()
+for func in func_list:
+    best = 0xffffffff
+    for name in ('regbits', 'struct', 'raw', 'bitfield'):
+        if name in dump_sizes and func in dump_sizes[name]:
+            if dump_sizes[name][func] < best:
+                best = dump_sizes[name][func]
+    if    (    func in dump_sizes['regbits']
+           and func in dump_sizes['struct' ]
+           and         dump_sizes['regbits'][func]
+                     > dump_sizes['struct' ][func] ) \
+       or (    func in dump_sizes['regbits']
+           and func in dump_sizes['raw'    ]
+           and         dump_sizes['regbits'][func]
+                     > dump_sizes['raw'    ][func]):
+        for name in ('regbits', 'struct', 'raw', 'bitfield'):
+            if name in dump_sizes and func in dump_sizes[name]:
+                size = dump_sizes[name][func]
+                print(  "%8d%s"
+                      % (size, " *" if size == best else "  "),
+                      end='')
+            else:
+                print("          ", end='')
+        print("    %s" % func)
 
 if outs:
     print()

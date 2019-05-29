@@ -344,8 +344,7 @@ __attribute__((noinline)) void cmp_neq_bits()
 {
     *(SERIAL2 + SERIAL_CONFIG_OFFSET) = SERIAL_CONFIG_POLARITY;
 
-    if (   (*(SERIAL2 + SERIAL_CONFIG_OFFSET) & SERIAL_CONFIG_POLARITY)
-        != SERIAL_CONFIG_POLARITY)
+    if (!(*(SERIAL2 + SERIAL_CONFIG_OFFSET) & SERIAL_CONFIG_POLARITY))
         *(SERIAL2 + SERIAL_CONFIG_OFFSET)  = SERIAL_CONFIG_DATALEN_16_BITS;
     else
         *(SERIAL2 + SERIAL_CONFIG_OFFSET)  = SERIAL_CONFIG_ENDIAN        ;
@@ -420,11 +419,11 @@ __attribute__((noinline)) void cmp_neq_mskd()
 
 __attribute__((noinline)) void cmp_equ_reg()
 {
-    uint32_t word   = SERIAL_CONFIG_ENDIAN | SERIAL_CONFIG_DATALEN_16_BITS;
+      *(SERIAL2 + SERIAL_CONFIG_OFFSET)
+    = SERIAL_CONFIG_ENDIAN | SERIAL_CONFIG_DATALEN_16_BITS;
 
-    *(SERIAL2 + SERIAL_CONFIG_OFFSET) = word;
-
-    if (*(SERIAL2 + SERIAL_CONFIG_OFFSET) == word)
+    if (   *(SERIAL2 + SERIAL_CONFIG_OFFSET)
+        == (SERIAL_CONFIG_ENDIAN | SERIAL_CONFIG_DATALEN_16_BITS))
         *(TIMER1 + TIMER_PRESCALE_OFFSET)  = 21 << TIMER_PRESCALE_PRESCALER_HIGH_POS;
     else
         *(TIMER1 + TIMER_PRESCALE_OFFSET)  = 23 << TIMER_PRESCALE_PRESCALER_HIGH_POS;
@@ -480,11 +479,7 @@ __attribute__((noinline)) void runtime_bits_array()
 {
     volatile unsigned   index = 3;
 
-     (GPIO1 + GPIO_WORDS_OFFSET)[index] = 0x21;
-
-    index = 7;
-
-    *(GPIO1 + GPIO_SET_OFFSET) =  (1 << index);
+    (GPIO1 + GPIO_WORDS_OFFSET)[index] = 0x21;
 }
 
 
@@ -1338,7 +1333,7 @@ __attribute__((noinline)) void copy_bits_equ()
 
     uint32_t copy = *(SERIAL2 + SERIAL_CONFIG_OFFSET);
 
-    if ((copy & SERIAL_CONFIG_POLARITY_MSK) == SERIAL_CONFIG_POLARITY)
+    if (copy & SERIAL_CONFIG_POLARITY_MSK)
         *(SERIAL2 + SERIAL_CONFIG_OFFSET) = SERIAL_CONFIG_DATALEN_16_BITS;
     else
         *(SERIAL2 + SERIAL_CONFIG_OFFSET) = SERIAL_CONFIG_DATALEN_32_BITS;
@@ -1501,8 +1496,7 @@ __attribute__((noinline)) void run()
     static ptr_t
     serial2_config  = (ptr_t)(   SERIAL2 + SERIAL_CONFIG_OFFSET  ),
     timer1_prescale = (ptr_t)(   TIMER1  + TIMER_PRESCALE_OFFSET ),
-    gpio1_words_3   = (ptr_t)(&((GPIO1   + GPIO_WORDS_OFFSET)[3])),
-    gpio1_set       = (ptr_t)(   GPIO1   + GPIO_SET_OFFSET       );
+    gpio1_words_3   = (ptr_t)(&((GPIO1   + GPIO_WORDS_OFFSET)[3]));
 
 #include "do_tests.inl"
 

@@ -63,7 +63,7 @@
     do_test(cmp_equ_reg                 , serial2_config ,  42);
     do_test(cmp_neq_reg                 , serial2_config ,  43);
     do_test(constexpr_bits_array        , serial2_config ,  44);
-    do_test(runtime_bits_array          , gpio1_set      ,  45);
+    do_test(runtime_bits_array          , gpio1_words_3  ,  45);
     do_test(call_bits_val_const         , serial2_config ,  46);
     do_test(call_bits_val_var           , serial2_config ,  47);
     do_test(call_bits_ref_const         , serial2_config ,  48);

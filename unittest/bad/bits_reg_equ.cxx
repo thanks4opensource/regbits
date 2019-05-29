@@ -26,8 +26,8 @@ using namespace mcu;
 void bits_reg_equ()
 {
 #ifdef GOOD
-    serial2->config == Serial::Config::ENDIAN;
+    serial2->config.any(Serial::Config::ENDIAN);
 #else
-    serial2->control == Serial::Config::ENDIAN;
+    serial2->control.any(Serial::Config::ENDIAN);
 #endif
 }

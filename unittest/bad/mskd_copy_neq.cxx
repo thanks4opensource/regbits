@@ -25,10 +25,10 @@ using namespace mcu;
 
 void mskd_copy_neq()
 {
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy(timer1->prescale);
 #ifdef GOOD
-    copy != Timer::Prescale::PRESCALER_HIGH<13>();
+    copy.all(Timer::Prescale::PRESCALER_HIGH<13>());
 #else
-    copy != Timer::Control::CLOCK_SOURCE_PLL;
+    copy.all(Timer::Control::CLOCK_SOURCE_PLL);
 #endif
 }

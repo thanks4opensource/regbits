@@ -26,8 +26,8 @@ using namespace mcu;
 void copy()
 {
 #ifdef GOOD
-    Copy<uint32_t, Serial::Config>  copy(serial2->config);
+    Serial::config_t    copy(serial2->config);
 #else
-    Copy<uint32_t, Serial::Control> copy(serial2->config);
+    Serial::control_t   copy(serial2->config);
 #endif
 }

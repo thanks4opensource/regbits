@@ -36,17 +36,17 @@ SERIAL_CONFIG_MSKD = Serial::Config::DATALEN_16_BITS;
 #ifdef GCC_ARM_BUG
 #include <stddef.h>
 static volatile uint32_t&         GPIO_WORD
-                                = *(  reinterpret_cast<uint32_t*>(gpio1)
+                                = *(  reinterpret_cast<volatile uint32_t*>(gpio1)
                                     + (offsetof(mcu::Gpio, words) >> 2 )
                                     + 3                                );
 #else
 static volatile uint32_t&       GPIO_WORD = gpio1->words.WORDS<3>();
 #endif
 
-static const Timer::Prescale::shft_t
+static constexpr Timer::Prescale::shft_t
 TIMER_PRESCALER_SHIFT = Timer::Prescale::PRESCALER_HIGH_SHFT;
 
-static Serial* const    SERIAL = serial2;
+static volatile Serial* const   SERIAL = serial2;
 }
 
 
@@ -317,7 +317,7 @@ __attribute__((noinline)) void cmp_equ_zero()
 {
     serial2->config = 0;
 
-    if (serial2->config == 0)
+    if (serial2->config.is(0))
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<29>();
     else
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<17>();
@@ -329,7 +329,7 @@ __attribute__((noinline)) void cmp_neq_zero()
 {
     serial2->config = 0;
 
-    if (serial2->config != 0)
+    if (!serial2->config.is(0))
         serial2->config = Serial::Config::DATALEN_32_BITS;
     else
         serial2->config = Serial::Config::ENDIAN           ;
@@ -341,7 +341,7 @@ __attribute__((noinline)) void cmp_equ_bits()
 {
     serial2->config = Serial::Config::POLARITY ;
 
-    if (serial2->config == Serial::Config::POLARITY)
+    if (serial2->config.all(Serial::Config::POLARITY))
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<11>();
     else
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<13>();
@@ -353,7 +353,7 @@ __attribute__((noinline)) void cmp_neq_bits()
 {
     serial2->config = Serial::Config::POLARITY ;
 
-    if (serial2->config != Serial::Config::POLARITY)
+    if (!serial2->config.all(Serial::Config::POLARITY))
         serial2->config  = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config  = Serial::Config::ENDIAN         ;
@@ -365,7 +365,7 @@ __attribute__((noinline)) void cmp_equ_multi_bits()
 {
     serial2->config = Serial::Config::ENDIAN | Serial::Config::POLARITY;
 
-    if (serial2->config == (Serial::Config::ENDIAN | Serial::Config::POLARITY))
+    if (serial2->config.all(Serial::Config::ENDIAN | Serial::Config::POLARITY))
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<17>();
     else
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<23>();
@@ -377,7 +377,7 @@ __attribute__((noinline)) void cmp_neq_multi_bits()
 {
     serial2->config = Serial::Config::ENDIAN | Serial::Config::POLARITY;
 
-    if (serial2->config != (Serial::Config::ENDIAN | Serial::Config::POLARITY))
+    if (!serial2->config.all(Serial::Config::ENDIAN | Serial::Config::POLARITY))
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<29>();
     else
         timer1->prescale = Timer::Prescale::PRESCALER_HIGH<31>();
@@ -389,7 +389,7 @@ __attribute__((noinline)) void cmp_equ_mskd()
 {
     serial2->config = Serial::Config::TXPORT<29>();
 
-    if (serial2->config  == Serial::Config::TXPORT<17>())
+    if (serial2->config.all(Serial::Config::TXPORT<17>()))
         timer1->prescale /= Timer::Prescale::PRESCALER_HIGH<7>();
     else
         timer1->prescale /= Timer::Prescale::PRESCALER_HIGH<17>();
@@ -401,7 +401,7 @@ __attribute__((noinline)) void cmp_neq_mskd()
 {
     serial2->config = Serial::Config::TXPORT<29>();
 
-    if (serial2->config != Serial::Config::TXPORT<17>())
+    if (!serial2->config.all(Serial::Config::TXPORT<17>()))
         serial2->config /= Serial::Config::DATALEN_32_BITS;
     else
         serial2->config |= Serial::Config::POLARITY        ;
@@ -411,12 +411,10 @@ __attribute__((noinline)) void cmp_neq_mskd()
 
 __attribute__((noinline)) void cmp_equ_reg()
 {
-    uint32_t word = (  Serial::Config::ENDIAN
-                     | Serial::Config::DATALEN_16_BITS).bits();
+    serial2->config = Serial::Config::ENDIAN | Serial::Config::DATALEN_16_BITS;
 
-    serial2->config = word;
-
-    if (serial2->config == word)
+    if (serial2->config.is(  Serial::Config::ENDIAN
+                           | Serial::Config::DATALEN_16_BITS))
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<21>();
     else
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<23>();
@@ -426,12 +424,11 @@ __attribute__((noinline)) void cmp_equ_reg()
 
 __attribute__((noinline)) void cmp_neq_reg()
 {
-    uint32_t word = (  Serial::Config::ENDIAN
-                     | Serial::Config::DATALEN_16_BITS).bits();
+    serial2->config =   Serial::Config::ENDIAN
+                      | Serial::Config::DATALEN_16_BITS;
 
-    serial2->config = word;
-
-    if (serial2->config != word)
+    if (!serial2->config.is(  Serial::Config::ENDIAN
+                            | Serial::Config::DATALEN_16_BITS))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::ENDIAN         ;
@@ -476,10 +473,6 @@ __attribute__((noinline)) void runtime_bits_array()
     volatile unsigned   index = 3;
 
     gpio1->words.words(index) = 0x21;
-
-    index = 7;
-
-    gpio1->set = Gpio::Set::set(index);
 }
 
 
@@ -557,7 +550,7 @@ __attribute__((noinline)) void call_mskd_ref_var()
 
 
 __attribute__((noinline)) void periph_bits(
-Serial      *serial)
+volatile Serial     *serial)
 {
     serial->config |= Serial::Config::POLARITY ;
 }
@@ -570,7 +563,7 @@ __attribute__((noinline)) void call_periph_bits()
 
 
 __attribute__((noinline)) void periph_bits_val(
-Serial                          *serial,
+volatile Serial                 *serial,
 const Serial::Config::bits_t     bits  )
 
 {
@@ -585,8 +578,8 @@ __attribute__((noinline)) void call_periph_bits_val()
 
 
 __attribute__((noinline)) void reg_bits_val(
-Reg<uint32_t, Serial::Config>   &config,
-const Serial::Config::bits_t     bits  )
+volatile Serial::config_t       &config,
+const Serial::Config::bits_t      bits  )
 {
     config |= bits;
 }
@@ -599,7 +592,7 @@ __attribute__((noinline)) void call_reg_bits_val()
 
 
 __attribute__((noinline)) void periph_bits_ref(
-Serial                          *serial,
+volatile Serial                 *serial,
 const Serial::Config::bits_t    &bits  )
 
 {
@@ -614,7 +607,7 @@ __attribute__((noinline)) void call_periph_bits_ref()
 
 
 __attribute__((noinline)) void reg_bits_ref(
-Reg<uint32_t, Serial::Config>   &config,
+volatile Serial::config_t       &config,
 const Serial::Config::bits_t    &bits  )
 {
     config |= bits;
@@ -628,7 +621,7 @@ __attribute__((noinline)) void call_reg_bits_ref()
 
 
 __attribute__((noinline)) void periph_mskd(
-Serial      *serial)
+volatile Serial     *serial)
 {
     serial->config /= Serial::Config::DATALEN_16_BITS ;
 }
@@ -641,7 +634,7 @@ __attribute__((noinline)) void call_periph_mskd()
 
 
 __attribute__((noinline)) void periph_mskd_val(
-Serial                          *serial,
+volatile Serial                 *serial,
 const Serial::Config::mskd_t     mask )
 
 {
@@ -656,7 +649,7 @@ __attribute__((noinline)) void call_periph_mskd_val()
 
 
 __attribute__((noinline)) void reg_mskd_val(
-Reg<uint32_t, Serial::Config>   &config,
+volatile Serial::config_t       &config,
 const Serial::Config::mskd_t     mask )
 {
     config /= mask;
@@ -670,7 +663,7 @@ __attribute__((noinline)) void call_reg_mskd_val()
 
 
 __attribute__((noinline)) void periph_mskd_ref(
-Serial                          *serial,
+volatile Serial                 *serial,
 const Serial::Config::mskd_t     mask )
 
 {
@@ -685,7 +678,7 @@ __attribute__((noinline)) void call_periph_mskd_ref()
 
 
 __attribute__((noinline)) void reg_mskd_ref(
-Reg<uint32_t, Serial::Config>   &config,
+volatile Serial::config_t       &config,
 const Serial::Config::mskd_t     mask )
 {
     config /= mask;
@@ -728,7 +721,7 @@ __attribute__((noinline)) void call_return_mskd()
 {
     Serial::Config::mskd_t  config_mskd = return_mskd();
 
-    if (config_mskd == Serial::Config::PARITY_EVEN)
+    if (   config_mskd == Serial::Config::PARITY_EVEN)
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<17>();
     else
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<19>();
@@ -736,7 +729,7 @@ __attribute__((noinline)) void call_return_mskd()
 
 
 
-__attribute__((noinline)) Serial::config_t* return_reg()
+__attribute__((noinline)) volatile Serial::config_t* return_reg()
 {
     serial2->config = Serial::Config::POLARITY;
 
@@ -747,9 +740,9 @@ __attribute__((noinline)) Serial::config_t* return_reg()
 
 __attribute__((noinline)) void call_return_reg()
 {
-    Serial::config_t    *config = return_reg();
+    volatile Serial::config_t   *config = return_reg();
 
-    if (*config == Serial::Config::POLARITY)
+    if (config->is(Serial::Config::POLARITY))
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<15>();
     else
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<23>();
@@ -757,7 +750,7 @@ __attribute__((noinline)) void call_return_reg()
 
 
 
-__attribute__((noinline)) Serial* return_periph()
+__attribute__((noinline)) volatile Serial* return_periph()
 {
     serial2->config = Serial::Config::POLARITY;
 
@@ -768,9 +761,9 @@ __attribute__((noinline)) Serial* return_periph()
 
 __attribute__((noinline)) void call_return_periph()
 {
-    Serial*     serial = return_periph();
+    volatile Serial*    serial = return_periph();
 
-    if (serial->config == Serial::Config::POLARITY)
+    if (serial->config.is(Serial::Config::POLARITY))
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<19>();
     else
         timer1->prescale  = Timer::Prescale::PRESCALER_HIGH<21>();
@@ -1028,7 +1021,7 @@ __attribute__((noinline)) void bits_extract_eq()
 {
     serial2->config = Serial::Config::POLARITY;
 
-    Serial::Config::bits_t  extracted = serial2->config;
+    Serial::Config::bits_t      extracted(serial2->config);
 
     if (extracted == Serial::Config::POLARITY)
         serial2->config = Serial::Config::DATALEN_16_BITS;
@@ -1040,7 +1033,7 @@ __attribute__((noinline)) void bits_extract_ne()
 {
     serial2->config = Serial::Config::ENDIAN;
 
-    Serial::Config::bits_t  extracted = serial2->config;
+    Serial::Config::bits_t  extracted(serial2->config);
 
     if (extracted != Serial::Config::ENDIAN)
         serial2->config = Serial::Config::DATALEN_16_BITS;
@@ -1208,9 +1201,7 @@ __attribute__((noinline)) void call_shifted_const_val()
 
 __attribute__((noinline)) void call_shifted_var_val()
 {
-    Timer::Prescale::shft_t     shift = Timer::Prescale::PRESCALER_HIGH_SHFT;
-
-    shifted_val(shift);
+    shifted_val(+Timer::Prescale::PRESCALER_HIGH_SHFT);
 }
 
 __attribute__((noinline)) void call_shifted_global_val()
@@ -1249,9 +1240,9 @@ __attribute__((noinline)) void copy_bits_equ()
 {
     serial2->config = Serial::Config::POLARITY;
 
-    Copy<uint32_t, Serial::Config> copy(serial2->config);
+    Serial::config_t    copy(serial2->config);
 
-    if (copy == Serial::Config::POLARITY)
+    if (copy.any(Serial::Config::POLARITY))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::DATALEN_32_BITS;
@@ -1261,9 +1252,9 @@ __attribute__((noinline)) void copy_bits_neq()
 {
     serial2->config = Serial::Config::POLARITY;
 
-    Copy<uint32_t, Serial::Config> copy(serial2->config);
+    Serial::config_t    copy = serial2->config;
 
-    if (copy != Serial::Config::POLARITY)
+    if (!copy.any(Serial::Config::POLARITY))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::DATALEN_32_BITS;
@@ -1273,9 +1264,9 @@ __attribute__((noinline)) void copy_mskd_equ()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<11>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy(timer1->prescale);
 
-    if (copy == Timer::Prescale::PRESCALER_HIGH<11>())
+    if (copy.all(Timer::Prescale::PRESCALER_HIGH<11>()))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::DATALEN_32_BITS;
@@ -1285,9 +1276,9 @@ __attribute__((noinline)) void copy_mskd_neq()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<13>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy = timer1->prescale;
 
-    if (copy != Timer::Prescale::PRESCALER_HIGH<13>())
+    if (!copy.all(Timer::Prescale::PRESCALER_HIGH<13>()))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::DATALEN_32_BITS;
@@ -1297,7 +1288,7 @@ __attribute__((noinline)) void copy_mskd_lss()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<27>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy(timer1->prescale);
 
     if (copy < Timer::Prescale::PRESCALER_HIGH<28>())
         serial2->config = Serial::Config::DATALEN_16_BITS;
@@ -1309,7 +1300,7 @@ __attribute__((noinline)) void copy_mskd_leq()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<23>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy = timer1->prescale;
 
     if (   copy <= Timer::Prescale::PRESCALER_HIGH<23>()
         && copy <= Timer::Prescale::PRESCALER_HIGH<24>())
@@ -1322,7 +1313,7 @@ __attribute__((noinline)) void copy_mskd_gtr()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<19>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy(timer1->prescale);
 
     if (copy > Timer::Prescale::PRESCALER_HIGH<18>())
         serial2->config = Serial::Config::DATALEN_16_BITS;
@@ -1334,7 +1325,7 @@ __attribute__((noinline)) void copy_mskd_geq()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<17>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy = timer1->prescale;
 
     if (   copy >= Timer::Prescale::PRESCALER_HIGH<16>()
         && copy >= Timer::Prescale::PRESCALER_HIGH<17>())
@@ -1347,7 +1338,7 @@ __attribute__((noinline)) void copy_shifted()
 {
     timer1->prescale = Timer::Prescale::PRESCALER_HIGH<11>();
 
-    Copy<uint32_t, Timer::Prescale> copy(timer1->prescale);
+    Timer::prescale_t   copy(timer1->prescale);
 
     if (copy.shifted(Timer::Prescale::PRESCALER_HIGH_SHFT) == 11)
         serial2->config = Serial::Config::DATALEN_16_BITS;
@@ -1356,9 +1347,9 @@ __attribute__((noinline)) void copy_shifted()
 }
 
 __attribute__((noinline)) void copy_bits_val(
-const Copy<uint32_t, Serial::Config>    copy)
+const Serial::config_t  copy)
 {
-    if (copy == Serial::Config::POLARITY)
+    if (copy.all(Serial::Config::POLARITY))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::DATALEN_32_BITS;
@@ -1368,15 +1359,15 @@ __attribute__((noinline)) void call_copy_bits_val()
 {
     serial2->config = Serial::Config::POLARITY;
 
-    Copy<uint32_t, Serial::Config> copy(serial2->config);
+    Serial::config_t    copy = serial2->config;
 
     copy_bits_val(copy);
 }
 
 __attribute__((noinline)) void copy_bits_ref(
-const Copy<uint32_t, Serial::Config>    &copy)
+const Serial::config_t  &copy)
 {
-    if (copy == Serial::Config::POLARITY)
+    if (copy.all(Serial::Config::POLARITY))
         serial2->config = Serial::Config::DATALEN_16_BITS;
     else
         serial2->config = Serial::Config::DATALEN_32_BITS;
@@ -1386,7 +1377,7 @@ __attribute__((noinline)) void call_copy_bits_ref()
 {
     serial2->config = Serial::Config::POLARITY;
 
-    Copy<uint32_t, Serial::Config> copy(serial2->config);
+    Serial::config_t    copy = serial2->config;
 
     copy_bits_ref(copy);
 }
@@ -1408,8 +1399,7 @@ extern "C" __attribute__((noinline)) void run()
     static ptr_t
     serial2_config  = reinterpret_cast<ptr_t>(&serial2->config        ),
     timer1_prescale = reinterpret_cast<ptr_t>(&timer1  ->prescale     ),
-    gpio1_words_3   = reinterpret_cast<ptr_t>(&gpio1->words.WORDS<3>()),
-    gpio1_set       = reinterpret_cast<ptr_t>(&gpio1    ->set         );
+    gpio1_words_3   = reinterpret_cast<ptr_t>(&gpio1->words.WORDS<3>());
 
 #include "do_tests.inl"
 
