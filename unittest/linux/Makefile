@@ -1,5 +1,5 @@
 # regbits: C++ templates for type-safe bit manipulation
-# Copyright (C) 2019 Mark R. Rubin
+# Copyright (C) 2019,2020 Mark R. Rubin
 #
 # This file is part of regbits.
 #
@@ -55,6 +55,7 @@ vpath %c	..
 vpath %cxx	..
 
 CCOPTS =  -Wall				\
+	  -Wno-unused-const-variable	\
 	  $(OPTIMIZE)			\
 	  $(DEBUG)			\
 	  $(INCLUDES)			\

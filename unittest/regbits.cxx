@@ -439,23 +439,24 @@ __attribute__((noinline)) void cmp_neq_reg()
 __attribute__((noinline)) void bits_val(
 const Serial::Config::bits_t        config)
 {
-    serial2->config |= config;
+    serial2->config = config;
 }
-
-
 
 __attribute__((noinline)) void call_bits_val_const()
 {
     bits_val(+Serial::Config::POLARITY);
 }
 
-
-
 __attribute__((noinline)) void call_bits_val_var()
 {
     Serial::Config::bits_t  config = Serial::Config::POLARITY;
 
     bits_val(config);
+}
+
+__attribute__((noinline)) void call_bits_val_zero()
+{
+    bits_val(Serial::config_t::zero());
 }
 
 
@@ -480,17 +481,13 @@ __attribute__((noinline)) void runtime_bits_array()
 __attribute__((noinline)) void bits_ref(
 const Serial::Config::bits_t        &config)
 {
-    serial2->config |=  config;
+    serial2->config = config;
 }
-
-
 
 __attribute__((noinline)) void call_bits_ref_const()
 {
     bits_ref(+Serial::Config::MODE);
 }
-
-
 
 __attribute__((noinline)) void call_bits_ref_var()
 {
@@ -498,6 +495,12 @@ __attribute__((noinline)) void call_bits_ref_var()
 
     bits_ref(config);
 }
+
+__attribute__((noinline)) void call_bits_ref_zero()
+{
+    bits_ref(Serial::config_t::zero());
+}
+
 
 
 
@@ -1400,6 +1403,8 @@ extern "C" __attribute__((noinline)) void run()
     serial2_config  = reinterpret_cast<ptr_t>(&serial2->config        ),
     timer1_prescale = reinterpret_cast<ptr_t>(&timer1  ->prescale     ),
     gpio1_words_3   = reinterpret_cast<ptr_t>(&gpio1->words.WORDS<3>());
+
+    uint32_t    testnum = 0;
 
 #include "do_tests.inl"
 

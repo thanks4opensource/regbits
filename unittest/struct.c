@@ -433,27 +433,24 @@ __attribute__((noinline)) void cmp_neq_reg()
 __attribute__((noinline)) void bits_val(
 const uint32_t  config)
 {
-    SERIAL2->CONFIG |= config;
+    SERIAL2->CONFIG = config;
 }
-
-
 
 __attribute__((noinline)) void call_bits_val_const()
 {
-    uint32_t    config = SERIAL_CONFIG_POLARITY;
-
-    bits_val(config);
     bits_val(SERIAL_CONFIG_POLARITY);
 }
-
-
 
 __attribute__((noinline)) void call_bits_val_var()
 {
     uint32_t    config = SERIAL_CONFIG_POLARITY;
 
     bits_val(config);
-    bits_val(SERIAL_CONFIG_POLARITY);
+}
+
+__attribute__((noinline)) void call_bits_val_zero()
+{
+    bits_val(0);
 }
 
 
@@ -478,10 +475,8 @@ __attribute__((noinline)) void runtime_bits_array()
 __attribute__((noinline)) void bits_ref(
 const uint32_t* const   config)
 {
-    SERIAL2->CONFIG |= *config;
+    SERIAL2->CONFIG = *config;
 }
-
-
 
 __attribute__((noinline)) void call_bits_ref_const()
 {
@@ -490,11 +485,16 @@ __attribute__((noinline)) void call_bits_ref_const()
     bits_ref(&config);
 }
 
-
-
 __attribute__((noinline)) void call_bits_ref_var()
 {
     uint32_t    config = SERIAL_CONFIG_MODE;
+
+    bits_ref(&config);
+}
+
+__attribute__((noinline)) void call_bits_ref_zero()
+{
+    uint32_t    config = 0;
 
     bits_ref(&config);
 }
@@ -1468,6 +1468,8 @@ __attribute__((noinline)) void run()
     static ptr_t    serial2_config  = (ptr_t)(&SERIAL2->CONFIG   ),
                     timer1_prescale = (ptr_t)(&TIMER1  ->PRESCALE),
                     gpio1_words_3   = (ptr_t)(&GPIO1   ->WORDS[3]);
+
+    uint32_t    testnum = 0;
 
 #include "do_tests.inl"
 

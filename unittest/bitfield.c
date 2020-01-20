@@ -484,6 +484,8 @@ __attribute__((noinline)) void bits_val(
 const enum SERIAL_CONFIG    bit  ,
 const uint32_t              value)
 {
+    SERIAL2->config.word = 0;
+
     switch (bit) {
         case MODE:
             SERIAL2->config.mode     = value;
@@ -502,21 +504,20 @@ const uint32_t              value)
     }
 }
 
-
-
 __attribute__((noinline)) void call_bits_val_const()
 {
     bits_val(POLARITY, SERIAL_CONFIG_POLARITY);
 }
-
-
 
 __attribute__((noinline)) void call_bits_val_var()
 {
     bits_val(POLARITY, SERIAL_CONFIG_POLARITY);
 }
 
-
+__attribute__((noinline)) void call_bits_val_zero()
+{
+    bits_val(POLARITY, 0);
+}
 
 __attribute__((noinline)) void constexpr_bits_array()
 {
@@ -541,6 +542,8 @@ __attribute__((noinline)) void bits_ref(
 const enum SERIAL_CONFIG    *bit  ,
 const uint32_t              *value)
 {
+    SERIAL2->config.word = 0;
+
     switch (*bit) {
         case MODE:
             SERIAL2->config.mode     = *value;
@@ -559,8 +562,6 @@ const uint32_t              *value)
     }
 }
 
-
-
 __attribute__((noinline)) void call_bits_ref_const()
 {
     const enum SERIAL_CONFIG    config = MODE              ;
@@ -569,12 +570,18 @@ __attribute__((noinline)) void call_bits_ref_const()
     bits_ref(&config, &value);
 }
 
-
-
 __attribute__((noinline)) void call_bits_ref_var()
 {
     const enum SERIAL_CONFIG    config = MODE              ;
     const uint32_t              value  = SERIAL_CONFIG_MODE;
+
+    bits_ref(&config, &value);
+}
+
+__attribute__((noinline)) void call_bits_ref_zero()
+{
+    const enum SERIAL_CONFIG    config = MODE;
+    const uint32_t              value  = 0   ;
 
     bits_ref(&config, &value);
 }
@@ -1707,6 +1714,8 @@ __attribute__((noinline)) void run()
     static ptr_t    serial2_config  = (ptr_t)(&SERIAL2->config  .word),
                     timer1_prescale = (ptr_t)(&TIMER1 ->prescale.word),
                     gpio1_words_3   = (ptr_t)(&GPIO1  ->words[3]     );
+
+    uint32_t    testnum = 0;
 
 #include "do_tests.inl"
 

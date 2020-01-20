@@ -1,25 +1,30 @@
 // regbits: C++ templates for type-safe bit manipulation
-// Copyright (C) 2019 Mark R. Rubin
+// Copyright (C) 2019,2020 Mark R. Rubin
 //
 // This file is part of regbits.
 //
-// The regbits program is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
+// The regbits program is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3 of
+// the License, or (at your option) any later version.
 //
 // The regbits program is distributed in the hope that it will be
 // useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // General Public License for more details.
 //
-// You should have received a copy of the GNU General Public
-// License (LICENSE.txt) along with the regbits program.  If not, see
+// You should have received a copy of the GNU General Public License
+// (LICENSE.txt) along with the regbits program. If not, see
 // <https://www.gnu.org/licenses/gpl.html>
 
 
 #ifndef regbits_hxx
 #define regbits_hxx
+
+#define REGBITS_MAJOR_VERSION   1
+#define REGBITS_MINOR_VERSION   0
+#define REGBITS_MICRO_VERSION   1
+
 
 namespace regbits {
 
@@ -42,6 +47,7 @@ template<typename WORD, typename CLSS> class Pos {
 
     // constructors
     //
+    explicit
     constexpr
     Pos()
     :   _pos(static_cast<WORD>(0))
@@ -60,6 +66,8 @@ template<typename WORD, typename CLSS> class Pos {
     const Pos<WORD, CLSS>   &other)
     :   _pos(other._pos)
     {}
+#else
+    Pos(const Pos<WORD, CLSS> &other) = default;
 #endif
 
 
@@ -142,6 +150,7 @@ template<typename WORD, typename CLSS> class Bits {
 
     // constructors
     //
+    explicit
     constexpr
     Bits()
     :   _bits(static_cast<WORD>(0))
@@ -182,6 +191,8 @@ template<typename WORD, typename CLSS> class Bits {
     const Bits<WORD, CLSS>  &other)
     :   _bits(other._bits)
     {}
+#else
+    Bits(const Bits<WORD, CLSS> &other) = default;
 #endif
 
     // for passing constexpr instance by value without requiring storage
@@ -348,6 +359,7 @@ template<typename WORD, typename CLSS> class Mskd {
 
     // constructors
     //
+    explicit
     constexpr
     Mskd()
     :   _mask(static_cast<WORD>(0)),
@@ -385,6 +397,8 @@ template<typename WORD, typename CLSS> class Mskd {
     :   _mask(other._mask),
         _bits(other._bits)
     {}
+#else
+    Mskd(const Mskd<WORD, CLSS> &other) = default;
 #endif
 
     // for passing constexpr instance by value without requiring storage
@@ -585,6 +599,7 @@ template<typename WORD, typename CLSS> class Shft {
 
     // constructors
     //
+    explicit
     constexpr
     Shft()
     :   _mask(static_cast<WORD>(0)),
@@ -606,6 +621,8 @@ template<typename WORD, typename CLSS> class Shft {
     :   _mask(other._mask),
         _pos (other._pos )
     {}
+#else
+    Shft(const Shft<WORD, CLSS> &other) = default;
 #endif
 
     // for passing constexpr instance by value without requiring storage
@@ -690,6 +707,8 @@ template<typename WORD,  typename CLSS> class Reg {
     const Reg<WORD, CLSS>   &other)
     :   _word(other._word)
     {}
+#else
+    Reg(const Reg<WORD, CLSS> &other) = default;
 #endif
 
     // for passing constexpr instance by value without requiring storage
@@ -703,6 +722,15 @@ template<typename WORD,  typename CLSS> class Reg {
     {
         return Reg<WORD, CLSS>(_word);
     }
+
+
+    // for passing all bits off
+    static
+    Bits<WORD, CLSS> zero()
+    {
+        return Bits<WORD, CLSS>(0);
+    }
+
 
     // assignments
     //
@@ -794,15 +822,17 @@ template<typename WORD,  typename CLSS> class Reg {
 
     // extractors
     //
-    Reg<WORD, CLSS> operator &(Bits<WORD, CLSS> bits) volatile const
-                    { return Reg<WORD, CLSS>(_word & bits._bits); }
-    Reg<WORD, CLSS> operator &(Bits<WORD, CLSS> bits)          const
-                    { return Reg<WORD, CLSS>(_word & bits._bits); }
+    Bits<WORD, CLSS> operator&(Bits<WORD, CLSS> bits) volatile const
+                     { return Bits<WORD, CLSS>(_word & bits._bits); }
+    Bits<WORD, CLSS> operator&(Bits<WORD, CLSS> bits)          const
+                     { return Bits<WORD, CLSS>(_word & bits._bits); }
 
-    Reg<WORD, CLSS> operator &(Mskd<WORD, CLSS> mskd) volatile const
-                    { return Reg<WORD, CLSS>(_word & mskd._mask); }
-    Reg<WORD, CLSS> operator &(Mskd<WORD, CLSS> mskd)          const
-                    { return Reg<WORD, CLSS>(_word & mskd._mask); }
+    Mskd<WORD, CLSS> operator&(Mskd<WORD, CLSS> mskd) volatile const
+                     { return Mskd<WORD, CLSS>(_word & mskd._mask,
+                                                       mskd._mask); }
+    Mskd<WORD, CLSS> operator&(Mskd<WORD, CLSS> mskd)          const
+                     { return Mskd<WORD, CLSS>(_word & mskd._mask,
+                                                       mskd._mask); }
 
     WORD operator>>(const Shft<WORD, CLSS>  shft) volatile const
                     { return (_word & shft._mask) >> shft._pos._pos; }
@@ -840,6 +870,21 @@ template<typename WORD,  typename CLSS> class Reg {
                     { return (_word & bits._bits) == bits._bits; }
     bool all(const Bits<WORD, CLSS> bits)          const
                     { return (_word & bits._bits) == bits._bits; }
+
+    bool all(
+    const Bits<WORD, CLSS>  mask,
+    const Bits<WORD, CLSS>  bits)
+    volatile const
+    {
+        return (_word & mask._bits) == bits._bits;
+    }
+    bool all(
+    const Bits<WORD, CLSS>  mask,
+    const Bits<WORD, CLSS>  bits)
+    const
+    {
+        return (_word & mask._bits) == bits._bits;
+    }
 
     bool all(const Mskd<WORD, CLSS> mskd) volatile const
                     { return (_word & mskd._mask) == mskd._bits; }
