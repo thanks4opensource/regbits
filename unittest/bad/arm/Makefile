@@ -1,5 +1,5 @@
 # regbits: C++ templates for type-safe bit manipulation
-# Copyright (C) 2019 Mark R. Rubin
+# Copyright (C) 2019,2020 Mark R. Rubin
 #
 # This file is part of regbits.
 #
@@ -26,7 +26,6 @@ export PATH := $(GCC_ARM_ROOT)/bin:$(PATH)
 
 CXX = arm-none-eabi-g++
 
-GOOD	     ?= -UGOOD
 CXX_STANDARD ?= c++11
 OPTIMIZE     ?= -O1
 DEBUG        ?=
@@ -67,7 +66,6 @@ SRCS = $(subst ../,,$(wildcard ../*.cxx))
 OBJS = $(SRCS:.cxx=.o)
 
 unittest: $(OBJS)
-	@ rm -f *.o
 
 .PHONY: clean
 clean:
@@ -78,7 +76,6 @@ INCLUDES = -I../.. -I../../..
 vpath %.cxx	..
 
 CXXOPTS =  -Wall		\
-	  $(GOOD)		\
 	  -std=$(CXX_STANDARD)	\
 	  $(OPTIMIZE)		\
 	  $(DEBUG)		\
@@ -87,13 +84,14 @@ CXXOPTS =  -Wall		\
 	  $(ARM_OPTS)		\
 	  -DREGBITS_PERIPH_BASE=$(PERIPH_BASE)
 
+
 %.o: %.cxx
-	@- if $(CXX) -c $(CXXOPTS) $< -o $@			\
-	> /dev/null 2>&1 ;					\
-	then							\
-	    if [ $(GOOD) == -UGOOD ] ; then			\
-		    echo "$< compiled but should have failed" ;	\
-	    fi							\
-	elif [ $(GOOD) == -DGOOD ] ; then			\
-	    echo "$< failed but should have compiled" ;		\
-	fi
+	@ if $(CXX) -c $(CXXOPTS) -UGOOD $< -o $@ > /dev/null 2>&1 ;	\
+	then								\
+		echo "$< -UGOOD compiled but should have failed" ;	\
+	fi ;								\
+	rm -f $@ ;							\
+	if ! $(CXX) -c $(CXXOPTS) -DGOOD $< -o $@ > /dev/null 2>&1 ;	\
+	then								\
+		echo "$< -DGOOD failed but should have compiled" ;	\
+	fi								\

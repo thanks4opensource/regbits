@@ -35,7 +35,7 @@ DMPS     = $(subst .elf,.elf.dmp,$(ELFS)) $(subst .elf,.o.dmp,$(ELFS))
 OUTS     = $(subst .elf,.out,$(ELFS))
 
 unittest: main.o ../do_tests.inl $(ELFS) $(DMPS) $(OUTS)
-	@ ../unittest.py intel '$(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../do_tests.inl *.out *.o.dmp
+	@ ../unittest.py intel '$(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../do_tests.inl *.out *.o.dmp > results.txt
 
 # manual check that all tests change at least one tracked register
 uniq: regbits.out
@@ -43,9 +43,9 @@ uniq: regbits.out
 
 .PHONY: clean cleanbin
 clean: cleanbin
-	rm -f *.dmp *.out
+	@ rm -f *.dmp *.out results.txt
 cleanbin:
-	rm -f *.o *.elf
+	@ rm -f *.o *.elf
 
 
 .PRECIOUS: %.o %.elf
@@ -76,20 +76,20 @@ CXXOPTS = -Wall				\
 
 
 %.elf: %.o main.o
-	$(CXX) -o $@ $^
+	@ $(CXX) -o $@ $^
 
 %.elf.dmp: %.elf
-	objdump -dC -j.text -j.rodata -j.data  $< > $@
+	@ objdump -dC -j.text -j.rodata -j.data  $< > $@
 
 %.out: %.elf
 	@ rm -f $@
 	@ gdb -q -x ../$(subst .elf,.gdb,$^) -x unittest.gdb $< > /dev/null
 
 %.o.dmp: %.o
-	objdump -dC -j.text -j.rodata -j.data  $< > $@
+	@ objdump -dC -j.text -j.rodata -j.data  $< > $@
 
 %.o: %.c
-	$(CC) -c $(CCOPTS) $< -o $@
+	@ $(CC) -c $(CCOPTS) $< -o $@
 
 %.o: %.cxx
-	$(CXX) -c $(CXXOPTS) $< -o $@
+	@ $(CXX) -c $(CXXOPTS) $< -o $@

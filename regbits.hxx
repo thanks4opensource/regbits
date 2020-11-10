@@ -23,7 +23,7 @@
 
 #define REGBITS_MAJOR_VERSION   1
 #define REGBITS_MINOR_VERSION   0
-#define REGBITS_MICRO_VERSION   1
+#define REGBITS_MICRO_VERSION   2
 
 
 namespace regbits {
@@ -725,7 +725,7 @@ template<typename WORD,  typename CLSS> class Reg {
 
 
     // for passing all bits off
-    static
+    static constexpr
     Bits<WORD, CLSS> zero()
     {
         return Bits<WORD, CLSS>(0);

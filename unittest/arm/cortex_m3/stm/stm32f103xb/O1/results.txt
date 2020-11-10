@@ -1,43 +1,40 @@
-struct.elf.map
+==> O1/bitfield.elf.map <==
 Memory region         Used Size  Region Size  %age Used
-        ITCM_RAM:          0 GB        16 KB      0.00%
-        DTCM_RAM:          0 GB       128 KB      0.00%
-           SRAM1:        7028 B       368 KB      1.87%
-           SRAM2:          0 GB        16 KB      0.00%
-bitfield.elf.map
-Memory region         Used Size  Region Size  %age Used
-        ITCM_RAM:          0 GB        16 KB      0.00%
-        DTCM_RAM:          0 GB       128 KB      0.00%
-           SRAM1:        8868 B       368 KB      2.35%
-           SRAM2:          0 GB        16 KB      0.00%
-raw.elf.map
-Memory region         Used Size  Region Size  %age Used
-        ITCM_RAM:          0 GB        16 KB      0.00%
-        DTCM_RAM:          0 GB       128 KB      0.00%
-           SRAM1:        7012 B       368 KB      1.86%
-           SRAM2:          0 GB        16 KB      0.00%
-regbits.elf.map
-Memory region         Used Size  Region Size  %age Used
-        ITCM_RAM:          0 GB        16 KB      0.00%
-        DTCM_RAM:          0 GB       128 KB      0.00%
-           SRAM1:        6956 B       368 KB      1.85%
-           SRAM2:          0 GB        16 KB      0.00%
+           FLASH:          0 GB        64 KB      0.00%
+             RAM:        8552 B        20 KB     41.76%
 
-compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+==> O1/raw.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        64 KB      0.00%
+             RAM:        6672 B        20 KB     32.58%
+
+==> O1/regbits.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        64 KB      0.00%
+             RAM:        6616 B        20 KB     32.30%
+
+==> O1/struct.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        64 KB      0.00%
+             RAM:        6676 B        20 KB     32.60%
+
+compile: stm32f103 cortex-m3 apcs-gnu -g3 -DGCC_ARM_BUG c++17 -O1
    regbits    struct       raw  bitfield
       24 *      24 *      24 *              .rodata
       12 *      12 *      12 *      12 *    assign_array_global
       12 *      12 *      12 *      24      assign_register_global
       28 *      28 *      28 *      52      bits_extract_eq
       28 *      28 *      28 *      52      bits_extract_ne
-      16 *      16 *      16 *      90      bits_ref
-      16 *      16 *      16 *      88      bits_val
+      12 *      12 *      12 *      96      bits_ref
+      12 *      12 *      12 *      92      bits_val
       20 *      20 *      20 *      26      call_bits_ref_const
       20 *      20 *      20 *      26      call_bits_ref_global
       20 *      20 *      20 *      26      call_bits_ref_var
-      12 *      18        12 *      14      call_bits_val_const
+      20 *      20 *      20 *      24      call_bits_ref_zero
+      12 *      12 *      12 *      14      call_bits_val_const
       12 *      12 *      12 *      14      call_bits_val_global
-      12 *      18        12 *      14      call_bits_val_var
+      12 *      12 *      12 *      14      call_bits_val_var
+      12 *      12 *      12 *      14      call_bits_val_zero
       32 *      32 *      32 *      44      call_copy_bits_ref
       24 *      24 *      24 *      36      call_copy_bits_val
       24 *      28        28        26      call_mskd_ref_const
@@ -89,8 +86,8 @@ compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       36 *      36 *      36 *      84      cmp_equ_multi_bits
       36 *      36 *      36 *     140      cmp_equ_reg
       40 *      40 *      40 *      52      cmp_equ_zero
-      28 *      28 *      28 *      60      cmp_neq_bits
-      52 *      52 *      52 *      56      cmp_neq_mskd
+      28 *      28 *      28 *      52      cmp_neq_bits
+      44 *      44 *      44 *      56      cmp_neq_mskd
       36 *      36 *      36 *      84      cmp_neq_multi_bits
       28 *      28 *      28 *     132      cmp_neq_reg
       32 *      32 *      32 *      40      cmp_neq_zero
@@ -149,7 +146,7 @@ compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       34 *      34 *      34 *      34 *    pos_ref
       32 *      32 *      32 *      32 *    pos_val
       28 *      28 *      28 *      32      prescaler_high
-      28 *      28 *      28 *      32      prescaler_low
+      26 *      28        28        32      prescaler_low
       10 *      10 *      10 *      18      reg_bits_ref
        8 *       8 *       8 *      16      reg_bits_val
       56 *      56 *      56 *      76      reg_mskd_geq
@@ -162,11 +159,11 @@ compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       10 *      10 *      10 *      10 *    return_mskd
       12 *      12 *      20        20      return_periph
       20        20        12 *      28      return_reg
-    1236      1192 *    1192 *    1192 *    run
+    1256      1208 *    1208 *    1208 *    run
        2 *                                  run::gpio1_words_3
        2 *                                  run::serial2_config
        2 *                                  run::timer1_prescale
-      28        28        24 *      28      runtime_bits_array
+      26        28        24 *      28      runtime_bits_array
       20 *      24        24        20 *    runtime_range_ref
       18 *      20        20        18 *    runtime_range_val
       16 *      16 *      16 *      16 *    set_bits_global
@@ -181,14 +178,8 @@ compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       28 *      28 *      28 *      44      shifted_val
       12 *      12 *      12 *      12 *    zero_array
       12 *      12 *      12 *      12 *    zero_reg
-compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+compile: stm32f103 cortex-m3 apcs-gnu -g3 -DGCC_ARM_BUG c++17 -O1
    regbits    struct       raw  bitfield
       20        20        12 *      28      return_reg
-    1236      1192 *    1192 *    1192 *    run
-      28        28        24 *      28      runtime_bits_array
-
-compile: stm32f767xx cortex-m7 apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
-bitfield.out    	size: 5340	time: 19427
-raw.out         	size: 3460	time: 16116
-regbits.out     	size: 3324	time: 16099
-struct.out      	size: 3476	time: 16602
+    1256      1208 *    1208 *    1208 *    run
+      26        28        24 *      28      runtime_bits_array

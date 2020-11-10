@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # regbits: C++ templates for type-safe bit manipulation
-# Copyright (C) 2019 Mark R. Rubin
+# Copyright (C) 2019,2020 Mark R. Rubin
 #
 # This file is part of regbits.
 #
@@ -20,6 +20,7 @@
 # <https://www.gnu.org/licenses/gpl.html>
 
 
+import os
 import sys
 
 
@@ -39,7 +40,7 @@ with open(sys.argv[3], 'r') as file:
 for filename in [name for name in sys.argv[4:] if name.endswith('.out')]:
     with open(filename, 'r') as file:
         lines = file.readlines()
-        outs.append((filename, lines))
+        outs.append((os.path.basename(filename), lines))
 
 sizes = []
 times = []
@@ -94,7 +95,7 @@ for dmp_name in dmp_names:
                 elif architecture == 'intel':
                     size += len(line[10:30].split())
         name_sizes[func] = size
-    dump_sizes[dmp_name[:-len('.o.dmp')]] = name_sizes
+    dump_sizes[os.path.basename(dmp_name)[:-len('.o.dmp')]] = name_sizes
 
 print('compile:', " ".join(compile_flags.split()))
 for name in ('regbits', 'struct', 'raw', 'bitfield'):

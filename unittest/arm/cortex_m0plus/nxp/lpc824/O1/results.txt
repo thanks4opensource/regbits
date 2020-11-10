@@ -1,38 +1,40 @@
-struct.elf.map
+==> O1/bitfield.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        9092 B         8 KB    110.99%
+
+==> O1/raw.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        6716 B         8 KB     81.98%
+
+==> O1/regbits.elf.map <==
 Memory region         Used Size  Region Size  %age Used
            FLASH:          0 GB        32 KB      0.00%
              RAM:        6680 B         8 KB     81.54%
-../../../Makefile.arm:158: recipe for target 'bitfield.elf' failed
-bitfield.elf.map
-Memory region         Used Size  Region Size  %age Used
-           FLASH:          0 GB        32 KB      0.00%
-             RAM:        9016 B         8 KB    110.06%
-raw.elf.map
-Memory region         Used Size  Region Size  %age Used
-           FLASH:          0 GB        32 KB      0.00%
-             RAM:        6672 B         8 KB     81.45%
-regbits.elf.map
-Memory region         Used Size  Region Size  %age Used
-           FLASH:          0 GB        32 KB      0.00%
-             RAM:        6636 B         8 KB     81.01%
-../../../Makefile.arm:169: recipe for target 'bitfield.elf.dmp' failed
-../../../Makefile.arm:183: recipe for target 'bitfield.elf.rdelf' failed
 
-compile: lpc824 cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+==> O1/struct.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        6712 B         8 KB     81.93%
+
+compile: lpc824 cortex-m0plus apcs-gnu -g3 -DGCC_ARM_BUG c++17 -O1
    regbits    struct       raw  bitfield
       24 *      24 *      24 *      56      .rodata
       12 *      12 *      12 *      12 *    assign_array_global
       12 *      12 *      12 *      24      assign_register_global
       32 *      32 *      32 *      56      bits_extract_eq
       32 *      32 *      32 *      56      bits_extract_ne
-      18 *      18 *      18 *     124      bits_ref
-      16 *      16 *      16 *     100      bits_val
+      12 *      12 *      12 *     132      bits_ref
+      12 *      12 *      12 *     104      bits_val
       18 *      18 *      18 *      24      call_bits_ref_const
       18 *      18 *      18 *      24      call_bits_ref_global
       18 *      18 *      18 *      24      call_bits_ref_var
-      10 *      16        10 *      12      call_bits_val_const
+      18 *      18 *      18 *      22      call_bits_ref_zero
+      10 *      10 *      10 *      12      call_bits_val_const
       10 *      10 *      10 *      12      call_bits_val_global
-      10 *      16        10 *      12      call_bits_val_var
+      10 *      10 *      10 *      12      call_bits_val_var
+      10 *      10 *      10 *      12      call_bits_val_zero
       28 *      28 *      28 *      40      call_copy_bits_ref
       20 *      20 *      20 *      32      call_copy_bits_val
       22 *      28        28        24      call_mskd_ref_const
@@ -132,7 +134,7 @@ compile: lpc824 cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       44 *      52        52        68      mskd_extract_lss
       32 *      36        36        56      mskd_extract_ne
       20 *      20 *      20 *     280      mskd_ref
-      18 *      18 *      18 *     224      mskd_val
+      16 *      16 *      16 *     226      mskd_val
       10 *      10 *      10 *      10 *    periph_bits
       10 *      10 *      10 *      18      periph_bits_ref
        8 *       8 *       8 *      16      periph_bits_val
@@ -157,7 +159,7 @@ compile: lpc824 cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       10 *      10 *      10 *      10 *    return_mskd
       12 *      12 *      20        20      return_periph
       20        20        12 *      28      return_reg
-    1244      1192 *    1192 *    1192 *    run
+    1264      1212 *    1212 *    1212 *    run
        2 *                                  run::gpio1_words_3
        2 *                                  run::serial2_config
        2 *                                  run::timer1_prescale
@@ -176,13 +178,8 @@ compile: lpc824 cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
       28 *      28 *      28 *      52      shifted_val
       12 *      12 *      12 *      12 *    zero_array
       12 *      12 *      12 *      12 *    zero_reg
-compile: lpc824 cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
+compile: lpc824 cortex-m0plus apcs-gnu -g3 -DGCC_ARM_BUG c++17 -O1
    regbits    struct       raw  bitfield
       26        24 *      24 *      26      check_array_range_pass
       20        20        12 *      28      return_reg
-    1244      1192 *    1192 *    1192 *    run
-
-compile: lpc824 cortex-m0plus apcs-gnu -O1 -g3 -DGCC_ARM_BUG c++11
-raw.out         	size: 3644	time: 8210
-regbits.out     	size: 3520	time: 8050
-struct.out      	size: 3652	time: 8258
+    1264      1212 *    1212 *    1212 *    run

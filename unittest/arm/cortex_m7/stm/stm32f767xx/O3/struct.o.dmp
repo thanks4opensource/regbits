@@ -1,5 +1,5 @@
 
-struct.o:     file format elf32-littlearm
+O3/struct.o:     file format elf32-littlearm
 
 
 Disassembly of section .text:
@@ -943,64 +943,70 @@ Disassembly of section .text:
      7a6:	bf00      	nop
 
 000007a8 <bits_val.constprop.7>:
-     7a8:	4a02      	ldr	r2, [pc, #8]	; (7b4 <bits_val.constprop.7+0xc>)
-     7aa:	6853      	ldr	r3, [r2, #4]
-     7ac:	f043 0340 	orr.w	r3, r3, #64	; 0x40
-     7b0:	6053      	str	r3, [r2, #4]
-     7b2:	4770      	bx	lr
-     7b4:	200226c0 	.word	0x200226c0
+     7a8:	4b01      	ldr	r3, [pc, #4]	; (7b0 <bits_val.constprop.7+0x8>)
+     7aa:	2240      	movs	r2, #64	; 0x40
+     7ac:	605a      	str	r2, [r3, #4]
+     7ae:	4770      	bx	lr
+     7b0:	200226c0 	.word	0x200226c0
 
-000007b8 <call_bits_val_const>:
-     7b8:	b500      	push	{lr}
-     7ba:	f7ff fff5 	bl	7a8 <bits_val.constprop.7>
-     7be:	f85d eb04 	ldr.w	lr, [sp], #4
-     7c2:	e7f1      	b.n	7a8 <bits_val.constprop.7>
+000007b4 <call_bits_val_const>:
+     7b4:	e7f8      	b.n	7a8 <bits_val.constprop.7>
+     7b6:	bf00      	nop
 
-000007c4 <call_bits_val_var>:
-     7c4:	b500      	push	{lr}
-     7c6:	f7ff ffef 	bl	7a8 <bits_val.constprop.7>
-     7ca:	f85d eb04 	ldr.w	lr, [sp], #4
-     7ce:	e7eb      	b.n	7a8 <bits_val.constprop.7>
+000007b8 <call_bits_val_var>:
+     7b8:	e7f6      	b.n	7a8 <bits_val.constprop.7>
+     7ba:	bf00      	nop
 
-000007d0 <call_bits_val_global>:
-     7d0:	e7ea      	b.n	7a8 <bits_val.constprop.7>
+000007bc <call_bits_val_global>:
+     7bc:	e7f4      	b.n	7a8 <bits_val.constprop.7>
+     7be:	bf00      	nop
+
+000007c0 <bits_val>:
+     7c0:	4b01      	ldr	r3, [pc, #4]	; (7c8 <bits_val+0x8>)
+     7c2:	6058      	str	r0, [r3, #4]
+     7c4:	4770      	bx	lr
+     7c6:	bf00      	nop
+     7c8:	200226c0 	.word	0x200226c0
+
+000007cc <call_bits_val_zero>:
+     7cc:	2000      	movs	r0, #0
+     7ce:	f7ff bffe 	b.w	7c0 <bits_val>
      7d2:	bf00      	nop
 
-000007d4 <bits_val>:
-     7d4:	4a02      	ldr	r2, [pc, #8]	; (7e0 <bits_val+0xc>)
-     7d6:	6853      	ldr	r3, [r2, #4]
-     7d8:	4318      	orrs	r0, r3
-     7da:	6050      	str	r0, [r2, #4]
-     7dc:	4770      	bx	lr
-     7de:	bf00      	nop
-     7e0:	200226c0 	.word	0x200226c0
+000007d4 <bits_ref>:
+     7d4:	6802      	ldr	r2, [r0, #0]
+     7d6:	4b01      	ldr	r3, [pc, #4]	; (7dc <bits_ref+0x8>)
+     7d8:	605a      	str	r2, [r3, #4]
+     7da:	4770      	bx	lr
+     7dc:	200226c0 	.word	0x200226c0
 
-000007e4 <bits_ref>:
-     7e4:	4a02      	ldr	r2, [pc, #8]	; (7f0 <bits_ref+0xc>)
-     7e6:	6801      	ldr	r1, [r0, #0]
-     7e8:	6853      	ldr	r3, [r2, #4]
-     7ea:	430b      	orrs	r3, r1
-     7ec:	6053      	str	r3, [r2, #4]
-     7ee:	4770      	bx	lr
-     7f0:	200226c0 	.word	0x200226c0
+000007e0 <call_bits_ref_const>:
+     7e0:	b500      	push	{lr}
+     7e2:	b081      	sub	sp, #4
+     7e4:	2301      	movs	r3, #1
+     7e6:	4668      	mov	r0, sp
+     7e8:	9300      	str	r3, [sp, #0]
+     7ea:	f7ff fffe 	bl	7d4 <bits_ref>
+     7ee:	b001      	add	sp, #4
+     7f0:	f85d fb04 	ldr.w	pc, [sp], #4
 
-000007f4 <call_bits_ref_const>:
+000007f4 <call_bits_ref_var>:
      7f4:	b500      	push	{lr}
      7f6:	b081      	sub	sp, #4
      7f8:	2301      	movs	r3, #1
      7fa:	4668      	mov	r0, sp
      7fc:	9300      	str	r3, [sp, #0]
-     7fe:	f7ff fffe 	bl	7e4 <bits_ref>
+     7fe:	f7ff fffe 	bl	7d4 <bits_ref>
      802:	b001      	add	sp, #4
      804:	f85d fb04 	ldr.w	pc, [sp], #4
 
-00000808 <call_bits_ref_var>:
+00000808 <call_bits_ref_zero>:
      808:	b500      	push	{lr}
      80a:	b081      	sub	sp, #4
-     80c:	2301      	movs	r3, #1
+     80c:	2300      	movs	r3, #0
      80e:	4668      	mov	r0, sp
      810:	9300      	str	r3, [sp, #0]
-     812:	f7ff fffe 	bl	7e4 <bits_ref>
+     812:	f7ff fffe 	bl	7d4 <bits_ref>
      816:	b001      	add	sp, #4
      818:	f85d fb04 	ldr.w	pc, [sp], #4
 
@@ -1010,7 +1016,7 @@ Disassembly of section .text:
      820:	2340      	movs	r3, #64	; 0x40
      822:	4668      	mov	r0, sp
      824:	9300      	str	r3, [sp, #0]
-     826:	f7ff fffe 	bl	7e4 <bits_ref>
+     826:	f7ff fffe 	bl	7d4 <bits_ref>
      82a:	b001      	add	sp, #4
      82c:	f85d fb04 	ldr.w	pc, [sp], #4
 
@@ -1930,11 +1936,11 @@ Disassembly of section .text:
      ff8:	223f      	movs	r2, #63	; 0x3f
      ffa:	4875      	ldr	r0, [pc, #468]	; (11d0 <run+0x458>)
      ffc:	f7ff fffe 	bl	0 <do_test>
-    1000:	4631      	mov	r1, r6
+    1000:	4621      	mov	r1, r4
     1002:	2240      	movs	r2, #64	; 0x40
     1004:	4873      	ldr	r0, [pc, #460]	; (11d4 <run+0x45c>)
     1006:	f7ff fffe 	bl	0 <do_test>
-    100a:	4631      	mov	r1, r6
+    100a:	4621      	mov	r1, r4
     100c:	2241      	movs	r2, #65	; 0x41
     100e:	4872      	ldr	r0, [pc, #456]	; (11d8 <run+0x460>)
     1010:	f7ff fffe 	bl	0 <do_test>
@@ -1942,39 +1948,39 @@ Disassembly of section .text:
     1016:	2242      	movs	r2, #66	; 0x42
     1018:	4870      	ldr	r0, [pc, #448]	; (11dc <run+0x464>)
     101a:	f7ff fffe 	bl	0 <do_test>
-    101e:	4621      	mov	r1, r4
+    101e:	4631      	mov	r1, r6
     1020:	2243      	movs	r2, #67	; 0x43
     1022:	486f      	ldr	r0, [pc, #444]	; (11e0 <run+0x468>)
     1024:	f7ff fffe 	bl	0 <do_test>
-    1028:	4629      	mov	r1, r5
+    1028:	4631      	mov	r1, r6
     102a:	2244      	movs	r2, #68	; 0x44
     102c:	486d      	ldr	r0, [pc, #436]	; (11e4 <run+0x46c>)
     102e:	f7ff fffe 	bl	0 <do_test>
-    1032:	4629      	mov	r1, r5
+    1032:	4621      	mov	r1, r4
     1034:	2245      	movs	r2, #69	; 0x45
     1036:	486c      	ldr	r0, [pc, #432]	; (11e8 <run+0x470>)
     1038:	f7ff fffe 	bl	0 <do_test>
-    103c:	4621      	mov	r1, r4
+    103c:	4629      	mov	r1, r5
     103e:	2246      	movs	r2, #70	; 0x46
     1040:	486a      	ldr	r0, [pc, #424]	; (11ec <run+0x474>)
     1042:	f7ff fffe 	bl	0 <do_test>
-    1046:	4621      	mov	r1, r4
+    1046:	4629      	mov	r1, r5
     1048:	2247      	movs	r2, #71	; 0x47
     104a:	4869      	ldr	r0, [pc, #420]	; (11f0 <run+0x478>)
     104c:	f7ff fffe 	bl	0 <do_test>
-    1050:	4629      	mov	r1, r5
+    1050:	4621      	mov	r1, r4
     1052:	2248      	movs	r2, #72	; 0x48
     1054:	4867      	ldr	r0, [pc, #412]	; (11f4 <run+0x47c>)
     1056:	f7ff fffe 	bl	0 <do_test>
-    105a:	4629      	mov	r1, r5
+    105a:	4621      	mov	r1, r4
     105c:	2249      	movs	r2, #73	; 0x49
     105e:	4866      	ldr	r0, [pc, #408]	; (11f8 <run+0x480>)
     1060:	f7ff fffe 	bl	0 <do_test>
-    1064:	4621      	mov	r1, r4
+    1064:	4629      	mov	r1, r5
     1066:	224a      	movs	r2, #74	; 0x4a
     1068:	4864      	ldr	r0, [pc, #400]	; (11fc <run+0x484>)
     106a:	f7ff fffe 	bl	0 <do_test>
-    106e:	4621      	mov	r1, r4
+    106e:	4629      	mov	r1, r5
     1070:	224b      	movs	r2, #75	; 0x4b
     1072:	4863      	ldr	r0, [pc, #396]	; (1200 <run+0x488>)
     1074:	f7ff fffe 	bl	0 <do_test>
@@ -1986,28 +1992,28 @@ Disassembly of section .text:
     1084:	224d      	movs	r2, #77	; 0x4d
     1086:	4860      	ldr	r0, [pc, #384]	; (1208 <run+0x490>)
     1088:	f7ff fffe 	bl	0 <do_test>
-    108c:	4e5f      	ldr	r6, [pc, #380]	; (120c <run+0x494>)
-    108e:	4621      	mov	r1, r4
-    1090:	224e      	movs	r2, #78	; 0x4e
-    1092:	485f      	ldr	r0, [pc, #380]	; (1210 <run+0x498>)
-    1094:	f7ff fffe 	bl	0 <do_test>
-    1098:	4621      	mov	r1, r4
-    109a:	224f      	movs	r2, #79	; 0x4f
-    109c:	485d      	ldr	r0, [pc, #372]	; (1214 <run+0x49c>)
-    109e:	f7ff fffe 	bl	0 <do_test>
+    108c:	4621      	mov	r1, r4
+    108e:	224e      	movs	r2, #78	; 0x4e
+    1090:	485e      	ldr	r0, [pc, #376]	; (120c <run+0x494>)
+    1092:	f7ff fffe 	bl	0 <do_test>
+    1096:	4621      	mov	r1, r4
+    1098:	224f      	movs	r2, #79	; 0x4f
+    109a:	485d      	ldr	r0, [pc, #372]	; (1210 <run+0x498>)
+    109c:	f7ff fffe 	bl	0 <do_test>
+    10a0:	4e5c      	ldr	r6, [pc, #368]	; (1214 <run+0x49c>)
     10a2:	4621      	mov	r1, r4
-    10a4:	4630      	mov	r0, r6
-    10a6:	2250      	movs	r2, #80	; 0x50
+    10a4:	2250      	movs	r2, #80	; 0x50
+    10a6:	485c      	ldr	r0, [pc, #368]	; (1218 <run+0x4a0>)
     10a8:	f7ff fffe 	bl	0 <do_test>
-    10ac:	4630      	mov	r0, r6
-    10ae:	4621      	mov	r1, r4
-    10b0:	2251      	movs	r2, #81	; 0x51
+    10ac:	4621      	mov	r1, r4
+    10ae:	2251      	movs	r2, #81	; 0x51
+    10b0:	485a      	ldr	r0, [pc, #360]	; (121c <run+0x4a4>)
     10b2:	f7ff fffe 	bl	0 <do_test>
     10b6:	4621      	mov	r1, r4
-    10b8:	2252      	movs	r2, #82	; 0x52
-    10ba:	4857      	ldr	r0, [pc, #348]	; (1218 <run+0x4a0>)
+    10b8:	4630      	mov	r0, r6
+    10ba:	2252      	movs	r2, #82	; 0x52
     10bc:	f7ff fffe 	bl	0 <do_test>
-    10c0:	4e56      	ldr	r6, [pc, #344]	; (121c <run+0x4a4>)
+    10c0:	4630      	mov	r0, r6
     10c2:	4621      	mov	r1, r4
     10c4:	2253      	movs	r2, #83	; 0x53
     10c6:	e0ab      	b.n	1220 <run+0x4a8>
@@ -2017,138 +2023,146 @@ Disassembly of section .text:
 	...
     117c:	2002252c 	.word	0x2002252c
 	...
-    1220:	4852      	ldr	r0, [pc, #328]	; (14c <do_test+0x14c>)
-    1222:	f7ff fffe 	bl	0 <do_test>
-    1226:	4621      	mov	r1, r4
-    1228:	2254      	movs	r2, #84	; 0x54
-    122a:	4851      	ldr	r0, [pc, #324]	; (1370 <run+0x5f8>)
-    122c:	f7ff fffe 	bl	0 <do_test>
+    1220:	f7ff fffe 	bl	0 <do_test>
+    1224:	4621      	mov	r1, r4
+    1226:	2254      	movs	r2, #84	; 0x54
+    1228:	4855      	ldr	r0, [pc, #340]	; (1380 <run+0x608>)
+    122a:	f7ff fffe 	bl	0 <do_test>
+    122e:	4e55      	ldr	r6, [pc, #340]	; (1384 <run+0x60c>)
     1230:	4621      	mov	r1, r4
-    1232:	4630      	mov	r0, r6
-    1234:	2255      	movs	r2, #85	; 0x55
+    1232:	2255      	movs	r2, #85	; 0x55
+    1234:	4854      	ldr	r0, [pc, #336]	; (1388 <run+0x610>)
     1236:	f7ff fffe 	bl	0 <do_test>
     123a:	4621      	mov	r1, r4
     123c:	2256      	movs	r2, #86	; 0x56
-    123e:	484d      	ldr	r0, [pc, #308]	; (1374 <run+0x5fc>)
+    123e:	4853      	ldr	r0, [pc, #332]	; (138c <run+0x614>)
     1240:	f7ff fffe 	bl	0 <do_test>
-    1244:	4630      	mov	r0, r6
-    1246:	4621      	mov	r1, r4
+    1244:	4621      	mov	r1, r4
+    1246:	4630      	mov	r0, r6
     1248:	2257      	movs	r2, #87	; 0x57
     124a:	f7ff fffe 	bl	0 <do_test>
     124e:	4621      	mov	r1, r4
     1250:	2258      	movs	r2, #88	; 0x58
-    1252:	4849      	ldr	r0, [pc, #292]	; (1378 <run+0x600>)
+    1252:	484f      	ldr	r0, [pc, #316]	; (1390 <run+0x618>)
     1254:	f7ff fffe 	bl	0 <do_test>
-    1258:	4621      	mov	r1, r4
-    125a:	2259      	movs	r2, #89	; 0x59
-    125c:	4847      	ldr	r0, [pc, #284]	; (137c <run+0x604>)
+    1258:	4630      	mov	r0, r6
+    125a:	4621      	mov	r1, r4
+    125c:	2259      	movs	r2, #89	; 0x59
     125e:	f7ff fffe 	bl	0 <do_test>
-    1262:	4629      	mov	r1, r5
+    1262:	4621      	mov	r1, r4
     1264:	225a      	movs	r2, #90	; 0x5a
-    1266:	4846      	ldr	r0, [pc, #280]	; (1380 <run+0x608>)
+    1266:	484b      	ldr	r0, [pc, #300]	; (1394 <run+0x61c>)
     1268:	f7ff fffe 	bl	0 <do_test>
-    126c:	4629      	mov	r1, r5
+    126c:	4621      	mov	r1, r4
     126e:	225b      	movs	r2, #91	; 0x5b
-    1270:	4844      	ldr	r0, [pc, #272]	; (1384 <run+0x60c>)
+    1270:	4849      	ldr	r0, [pc, #292]	; (1398 <run+0x620>)
     1272:	f7ff fffe 	bl	0 <do_test>
-    1276:	4621      	mov	r1, r4
+    1276:	4629      	mov	r1, r5
     1278:	225c      	movs	r2, #92	; 0x5c
-    127a:	4843      	ldr	r0, [pc, #268]	; (1388 <run+0x610>)
+    127a:	4848      	ldr	r0, [pc, #288]	; (139c <run+0x624>)
     127c:	f7ff fffe 	bl	0 <do_test>
     1280:	4629      	mov	r1, r5
     1282:	225d      	movs	r2, #93	; 0x5d
-    1284:	4841      	ldr	r0, [pc, #260]	; (138c <run+0x614>)
+    1284:	4846      	ldr	r0, [pc, #280]	; (13a0 <run+0x628>)
     1286:	f7ff fffe 	bl	0 <do_test>
-    128a:	4629      	mov	r1, r5
+    128a:	4621      	mov	r1, r4
     128c:	225e      	movs	r2, #94	; 0x5e
-    128e:	4840      	ldr	r0, [pc, #256]	; (1390 <run+0x618>)
+    128e:	4845      	ldr	r0, [pc, #276]	; (13a4 <run+0x62c>)
     1290:	f7ff fffe 	bl	0 <do_test>
-    1294:	4621      	mov	r1, r4
+    1294:	4629      	mov	r1, r5
     1296:	225f      	movs	r2, #95	; 0x5f
-    1298:	483e      	ldr	r0, [pc, #248]	; (1394 <run+0x61c>)
+    1298:	4843      	ldr	r0, [pc, #268]	; (13a8 <run+0x630>)
     129a:	f7ff fffe 	bl	0 <do_test>
-    129e:	4621      	mov	r1, r4
+    129e:	4629      	mov	r1, r5
     12a0:	2260      	movs	r2, #96	; 0x60
-    12a2:	483d      	ldr	r0, [pc, #244]	; (1398 <run+0x620>)
+    12a2:	4842      	ldr	r0, [pc, #264]	; (13ac <run+0x634>)
     12a4:	f7ff fffe 	bl	0 <do_test>
     12a8:	4621      	mov	r1, r4
     12aa:	2261      	movs	r2, #97	; 0x61
-    12ac:	483b      	ldr	r0, [pc, #236]	; (139c <run+0x624>)
+    12ac:	4840      	ldr	r0, [pc, #256]	; (13b0 <run+0x638>)
     12ae:	f7ff fffe 	bl	0 <do_test>
     12b2:	4621      	mov	r1, r4
     12b4:	2262      	movs	r2, #98	; 0x62
-    12b6:	483a      	ldr	r0, [pc, #232]	; (13a0 <run+0x628>)
+    12b6:	483f      	ldr	r0, [pc, #252]	; (13b4 <run+0x63c>)
     12b8:	f7ff fffe 	bl	0 <do_test>
-    12bc:	4629      	mov	r1, r5
+    12bc:	4621      	mov	r1, r4
     12be:	2263      	movs	r2, #99	; 0x63
-    12c0:	4838      	ldr	r0, [pc, #224]	; (13a4 <run+0x62c>)
+    12c0:	483d      	ldr	r0, [pc, #244]	; (13b8 <run+0x640>)
     12c2:	f7ff fffe 	bl	0 <do_test>
-    12c6:	4629      	mov	r1, r5
+    12c6:	4621      	mov	r1, r4
     12c8:	2264      	movs	r2, #100	; 0x64
-    12ca:	4837      	ldr	r0, [pc, #220]	; (13a8 <run+0x630>)
+    12ca:	483c      	ldr	r0, [pc, #240]	; (13bc <run+0x644>)
     12cc:	f7ff fffe 	bl	0 <do_test>
     12d0:	4629      	mov	r1, r5
     12d2:	2265      	movs	r2, #101	; 0x65
-    12d4:	4835      	ldr	r0, [pc, #212]	; (13ac <run+0x634>)
+    12d4:	483a      	ldr	r0, [pc, #232]	; (13c0 <run+0x648>)
     12d6:	f7ff fffe 	bl	0 <do_test>
     12da:	4629      	mov	r1, r5
     12dc:	2266      	movs	r2, #102	; 0x66
-    12de:	4834      	ldr	r0, [pc, #208]	; (13b0 <run+0x638>)
+    12de:	4839      	ldr	r0, [pc, #228]	; (13c4 <run+0x64c>)
     12e0:	f7ff fffe 	bl	0 <do_test>
     12e4:	4629      	mov	r1, r5
     12e6:	2267      	movs	r2, #103	; 0x67
-    12e8:	4832      	ldr	r0, [pc, #200]	; (13b4 <run+0x63c>)
+    12e8:	4837      	ldr	r0, [pc, #220]	; (13c8 <run+0x650>)
     12ea:	f7ff fffe 	bl	0 <do_test>
     12ee:	4629      	mov	r1, r5
     12f0:	2268      	movs	r2, #104	; 0x68
-    12f2:	4831      	ldr	r0, [pc, #196]	; (13b8 <run+0x640>)
+    12f2:	4836      	ldr	r0, [pc, #216]	; (13cc <run+0x654>)
     12f4:	f7ff fffe 	bl	0 <do_test>
-    12f8:	4621      	mov	r1, r4
+    12f8:	4629      	mov	r1, r5
     12fa:	2269      	movs	r2, #105	; 0x69
-    12fc:	482f      	ldr	r0, [pc, #188]	; (13bc <run+0x644>)
+    12fc:	4834      	ldr	r0, [pc, #208]	; (13d0 <run+0x658>)
     12fe:	f7ff fffe 	bl	0 <do_test>
-    1302:	4621      	mov	r1, r4
+    1302:	4629      	mov	r1, r5
     1304:	226a      	movs	r2, #106	; 0x6a
-    1306:	482e      	ldr	r0, [pc, #184]	; (13c0 <run+0x648>)
+    1306:	4833      	ldr	r0, [pc, #204]	; (13d4 <run+0x65c>)
     1308:	f7ff fffe 	bl	0 <do_test>
     130c:	4621      	mov	r1, r4
     130e:	226b      	movs	r2, #107	; 0x6b
-    1310:	482c      	ldr	r0, [pc, #176]	; (13c4 <run+0x64c>)
+    1310:	4831      	ldr	r0, [pc, #196]	; (13d8 <run+0x660>)
     1312:	f7ff fffe 	bl	0 <do_test>
     1316:	4621      	mov	r1, r4
     1318:	226c      	movs	r2, #108	; 0x6c
-    131a:	482b      	ldr	r0, [pc, #172]	; (13c8 <run+0x650>)
+    131a:	4830      	ldr	r0, [pc, #192]	; (13dc <run+0x664>)
     131c:	f7ff fffe 	bl	0 <do_test>
     1320:	4621      	mov	r1, r4
     1322:	226d      	movs	r2, #109	; 0x6d
-    1324:	4829      	ldr	r0, [pc, #164]	; (13cc <run+0x654>)
+    1324:	482e      	ldr	r0, [pc, #184]	; (13e0 <run+0x668>)
     1326:	f7ff fffe 	bl	0 <do_test>
     132a:	4621      	mov	r1, r4
     132c:	226e      	movs	r2, #110	; 0x6e
-    132e:	4828      	ldr	r0, [pc, #160]	; (13d0 <run+0x658>)
+    132e:	482d      	ldr	r0, [pc, #180]	; (13e4 <run+0x66c>)
     1330:	f7ff fffe 	bl	0 <do_test>
     1334:	4621      	mov	r1, r4
     1336:	226f      	movs	r2, #111	; 0x6f
-    1338:	4826      	ldr	r0, [pc, #152]	; (13d4 <run+0x65c>)
+    1338:	482b      	ldr	r0, [pc, #172]	; (13e8 <run+0x670>)
     133a:	f7ff fffe 	bl	0 <do_test>
     133e:	4621      	mov	r1, r4
     1340:	2270      	movs	r2, #112	; 0x70
-    1342:	4825      	ldr	r0, [pc, #148]	; (13d8 <run+0x660>)
+    1342:	482a      	ldr	r0, [pc, #168]	; (13ec <run+0x674>)
     1344:	f7ff fffe 	bl	0 <do_test>
     1348:	4621      	mov	r1, r4
     134a:	2271      	movs	r2, #113	; 0x71
-    134c:	4823      	ldr	r0, [pc, #140]	; (13dc <run+0x664>)
+    134c:	4828      	ldr	r0, [pc, #160]	; (13f0 <run+0x678>)
     134e:	f7ff fffe 	bl	0 <do_test>
     1352:	4621      	mov	r1, r4
     1354:	2272      	movs	r2, #114	; 0x72
-    1356:	4822      	ldr	r0, [pc, #136]	; (13e0 <run+0x668>)
+    1356:	4827      	ldr	r0, [pc, #156]	; (13f4 <run+0x67c>)
     1358:	f7ff fffe 	bl	0 <do_test>
     135c:	4621      	mov	r1, r4
     135e:	2273      	movs	r2, #115	; 0x73
-    1360:	4820      	ldr	r0, [pc, #128]	; (13e4 <run+0x66c>)
-    1362:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
-    1366:	f7ff bffe 	b.w	0 <do_test>
-    136a:	bf00      	nop
+    1360:	4825      	ldr	r0, [pc, #148]	; (13f8 <run+0x680>)
+    1362:	f7ff fffe 	bl	0 <do_test>
+    1366:	4621      	mov	r1, r4
+    1368:	2274      	movs	r2, #116	; 0x74
+    136a:	4824      	ldr	r0, [pc, #144]	; (13fc <run+0x684>)
+    136c:	f7ff fffe 	bl	0 <do_test>
+    1370:	4621      	mov	r1, r4
+    1372:	2275      	movs	r2, #117	; 0x75
+    1374:	4822      	ldr	r0, [pc, #136]	; (1400 <run+0x688>)
+    1376:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
+    137a:	f7ff bffe 	b.w	0 <do_test>
+    137e:	bf00      	nop
 	...
 
 Disassembly of section .rodata:

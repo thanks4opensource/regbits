@@ -1,5 +1,5 @@
 # regbits: C++ templates for type-safe bit manipulation
-# Copyright (C) 2019 Mark R. Rubin
+# Copyright (C) 2019,2020 Mark R. Rubin
 #
 # This file is part of regbits.
 #
@@ -22,12 +22,10 @@ ifndef GCC_ARM_ROOT
 $(error set GCC_ARM_ROOT environment variable)
 endif
 
-ifndef GDB_OPENOCD
-$(error set GDB_OPENOCD environment variable)
-endif
+.SUFFIXES:
 
-CXX_STANDARD ?= c++11
-OPTIMIZE     ?= -O1
+CXX_STANDARD ?= c++17
+# OPTIMIZE     ?= -O1
 DEBUG        ?= -g3
 GCC_ARM_BUG  ?= -DGCC_ARM_BUG
 EXTRA_CC     ?=
@@ -58,48 +56,35 @@ RLFS     = $(subst .elf,.elf.rdelf,$(ELFS))
 OUTS     = $(subst .elf,.out,$(ELFS))
 INL_FILE = ../../../../do_tests.inl
 
-unittest: main.o $(INL_FILE) $(INIT_FILE).o $(ELFS) $(DMPS) $(RLFS)
-	@ ../../../../unittest.py arm '$(MCU) $(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp
 
-gdb: $(OUTS) main.o $(INL_FILE) $(INIT_FILE).o $(ELFS) $(DMPS) $(RLFS)
-	@ ../../../../unittest.py arm '$(MCU) $(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp *.out
+o_all: o1 o2 o3
 
-o:
-	@ rm -f $(OPT_LEVEL)/*
-	@ make --no-print-directory clean
-	@ make OPTIMIZE=-$(OPT_LEVEL) --no-print-directory | tee $(OPT_LEVEL)/make.out
-	@ mv *.dmp $(OPT_LEVEL)
+# gdb: $(OUTS) main.o $(INL_FILE) $(INIT_FILE).o $(ELFS) $(DMPS) $(RLFS)
+# 	@ if [ -z $$GDB_OPENOCD ] ; then \
+# 	echo Set 'GDB_OPENOCD' environment variable and attach hardware \
+# 	     to make '"gdb"' target. ; \
+# 	else \
+# 	../../../../unittest.py arm '$(MCU) $(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD)' ../../../../do_tests.inl *.o.dmp *.out ; \
+# 	fi
+# 
+# o_gdb:
+# 	@ rm -f $(OPT_LEVEL)/*
+# 	@ make --no-print-directory clean
+# 	@ make OPTIMIZE=-$(OPT_LEVEL) --no-print-directory gdb | tee $(OPT_LEVEL)/make.out
 
-o_gdb:
-	@ rm -f $(OPT_LEVEL)/*
-	@ make --no-print-directory clean
-	@ make OPTIMIZE=-$(OPT_LEVEL) --no-print-directory gdb | tee $(OPT_LEVEL)/make.out
-	@ mv *.dmp *.out $(OPT_LEVEL)
 
-o1:
-	make OPT_LEVEL=O1 o
-o2:
-	make OPT_LEVEL=O2 o
-o3:
-	make OPT_LEVEL=O3 o
-
-o1_gdb:
-	make OPT_LEVEL=O1 o_gdb
-
-o2_gdb:
-	make OPT_LEVEL=O2 o_gdb
-
-o3_gdb:
-	make OPT_LEVEL=O3 o_gdb
+o1: O1/results.txt
+o2: O2/results.txt
+o3: O3/results.txt
 
 
 .PHONY: clean cleanbin
 clean: cleanbin
-	rm -f  *.dmp *.map *.out *.rdelf
+	@ rm -f O?/*.dmp O?/*.map O?/*.out O?/*.rdelf O?/*.dmp O?/make.out O?/results.txt
 cleanbin:
-	rm -f *.o *.elf
+	@ rm -f O?/*.o O?/*.elf O?/*.map
 
-.PRECIOUS: %.o %.elf
+.PRECIOUS: O1/%.o O1/%.elf O2/%.o O2/%.elf O3/%.o O3/%.elf
 
 INCLUDES = -I. -I../../../.. -I../../../../.. -Iinclude
 vpath %c	../../../.. ../../..
@@ -154,39 +139,51 @@ CXXOPTS = -Wall				\
 LDOPTS    = -marmelf -static -M --print-memory-usage  # -nostdlib
 
 
-%.elf: %.o main.o $(INIT_FILE).o
-	@- $(LD) -o $@   		\
-		    $^			\
-		    $(LDOPTS)		\
-		    $(GNU_ARM_LIBDIRS)	\
-		    $(LDLIBS) 		\
-		    -T $(LD_SCRIPT)	\
-	      > $@.map
-	@ echo $@.map
-	@ awk '/^Memory region/ {on = 1} on {print $0}' $@.map
-
-%.elf.dmp: %.elf
-	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data -j.bss $< > $@
-
-%.out: %.elf
-	@ rm -f $@
-	@ if [ -x $< ] ; then \
-	$$GDB_OPENOCD $< -q -x ../../../../$(subst .elf,.gdb,$^) -x ../../../unittest.gdb > /dev/null ; \
-	sleep 2 ; \
-	fi
+# $(OPT_LEVEL)/%.out: %.elf
+# 	@  if [ -z $$GDB_OPENOCD ] ; then \
+# 	if [ -x $< ] ; then \
+# 	echo Set 'GDB_OPENOCD' environment variable and attach hardware \
+# 	     to make '"gdb"' target. ; \
+# 	else \
+# 	rm -f $@ ; \
+# 	$$GDB_OPENOCD $< -q -x ../../../../$(subst .elf,.gdb,$^) -x ../../../unittest.gdb > /dev/null ; \
+# 	sleep 2 ; \
+# 	fi ; \
+# 	fi
 
 #	$$GDB_OPENOCD $< -x ../../../../$(subst .elf,.gdb,$^) -x ../../../unittest.gdb ; \
 
 
+define OPTIMIZE_DIR_RULES
+$(1)/%.o: %.c
+	@- $(CC) -c -$(1) $(CCOPTS) $$< -o $$@
 
-%.elf.rdelf: %.elf
-	@- $(READELF) -a $<  > $@
+$(1)/%.o: %.cxx
+	@- $(CXX) -c -$(1) $(CXXOPTS) $$< -o $$@
 
-%.o.dmp: %.o
-	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data -j.bss $< > $@
+$(1)/results.txt: $(addprefix $(1)/,$(DMPS))
+	@ tail --lines=3 $(1)/*.map > $(1)/results.txt
+	@ ../../../../unittest.py arm '$(MCU) $(ACPU) $(ABI) $(TUNE) $(ARCH) $(TPCS) $(OPTIMIZE) $(DEBUG) $(GCC_ARM_BUG) $(EXTRA_CXX) $(CXX_STANDARD) -$(1)' ../../../../do_tests.inl $(1)/*.o.dmp >> $(1)/results.txt
 
-%.o: %.c
-	@- $(CC) -c $(CCOPTS) $< -o $@
+$(1)/%.elf.rdelf: $(1)/%.elf
+	@- $(READELF) -a $$<  > $$@
 
-%.o: %.cxx
-	@- $(CXX) -c $(CXXOPTS) $< -o $@
+$(1)/%.o.dmp: $(1)/%.o
+	@- $(OBJDUMP) -dC -j.text -j.rodata -j.data -j.bss $$< > $$@
+
+$(1)/%.elf.dmp: $(1)/%.elf
+	@- if [ -f $$< ] ; then \
+	$(OBJDUMP) -dC -j.text -j.rodata -j.data -j.bss $$< > $$@ ; \
+	fi
+
+$(1)/%.elf: $(1)/%.o $(1)/main.o $(1)/$(INIT_FILE).o
+	@- $(LD) -o $$@                 \
+                    $$^                 \
+                    $(LDOPTS)           \
+                    $(GNU_ARM_LIBDIRS)  \
+                    $(LDLIBS)           \
+                    -T $(LD_SCRIPT)     \
+              > $$@.map
+endef
+
+$(foreach dir,O1 O2 O3,$(eval $(call OPTIMIZE_DIR_RULES,$(dir))))

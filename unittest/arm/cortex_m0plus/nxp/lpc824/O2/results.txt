@@ -1,80 +1,76 @@
-struct.elf.map
+==> O2/bitfield.elf.map <==
 Memory region         Used Size  Region Size  %age Used
            FLASH:          0 GB        32 KB      0.00%
-             RAM:        6784 B         8 KB     82.81%
-../../../Makefile.arm:158: recipe for target 'bitfield.elf' failed
-bitfield.elf.map
-Memory region         Used Size  Region Size  %age Used
-           FLASH:          0 GB        32 KB      0.00%
-             RAM:        9152 B         8 KB    111.72%
-raw.elf.map
-Memory region         Used Size  Region Size  %age Used
-           FLASH:          0 GB        32 KB      0.00%
-             RAM:        6780 B         8 KB     82.76%
-regbits.elf.map
-Memory region         Used Size  Region Size  %age Used
-           FLASH:          0 GB        32 KB      0.00%
-             RAM:        6744 B         8 KB     82.32%
-../../../Makefile.arm:169: recipe for target 'bitfield.elf.dmp' failed
-../../../Makefile.arm:183: recipe for target 'bitfield.elf.rdelf' failed
+             RAM:        8880 B         8 KB    108.40%
 
-compile: lpc824 cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
+==> O2/raw.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        6764 B         8 KB     82.57%
+
+==> O2/regbits.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        6720 B         8 KB     82.03%
+
+==> O2/struct.elf.map <==
+Memory region         Used Size  Region Size  %age Used
+           FLASH:          0 GB        32 KB      0.00%
+             RAM:        6760 B         8 KB     82.52%
+
+compile: lpc824 cortex-m0plus apcs-gnu -g3 -DGCC_ARM_BUG c++17 -O2
    regbits    struct       raw  bitfield
       24 *      24 *      24 *      56      .rodata
       12 *      12 *      12 *      12 *    assign_array_global
       12 *      12 *      12 *      24      assign_register_global
       28 *      28 *      28 *      52      bits_extract_eq
       28 *      28 *      28 *      52      bits_extract_ne
-      16 *      16 *      16 *     124      bits_ref
-                                    28 *    bits_ref.constprop.16
-                                    36 *    bits_ref.constprop.17
-      16 *      16 *      16 *      72      bits_val
-                                    24 *    bits_val.constprop.18
-      16 *                                  bits_val.constprop.45
-                16 *      16 *              bits_val.constprop.7
+      12 *      12 *      12 *     124      bits_ref
+      12 *      12 *      12 *      72      bits_val
       20 *      20 *      20 *      24      call_bits_ref_const
       20 *      20 *      20 *      24      call_bits_ref_global
       20 *      20 *      20 *      24      call_bits_ref_var
-      12        12         8 *       8 *    call_bits_val_const
-      12         8 *       8 *       8 *    call_bits_val_global
-      12        12         8 *       8 *    call_bits_val_var
+      20 *      20 *      20 *      24      call_bits_ref_zero
+      12 *      12 *      12 *      12 *    call_bits_val_const
+      12 *      12 *      12 *      12 *    call_bits_val_global
+      12 *      12 *      12 *      12 *    call_bits_val_var
+      12 *      12 *      12 *      12 *    call_bits_val_zero
       28 *      28 *      28 *      40      call_copy_bits_ref
       20 *      20 *      20 *      32      call_copy_bits_val
       24 *      28        28        24 *    call_mskd_ref_const
       24 *      28        28        24 *    call_mskd_ref_global
       28        28        28        24 *    call_mskd_ref_var
-      12 *      12 *      12 *      12 *    call_mskd_val_const
-      12         8 *       8 *       8 *    call_mskd_val_global
-      12 *      12 *      12 *      12 *    call_mskd_val_var
+      12 *      20        20        20      call_mskd_val_const
+      12 *      12 *      12 *      12 *    call_mskd_val_global
+      12 *      20        20        20      call_mskd_val_var
       16 *      16 *      16 *      16 *    call_periph_bits
-      24        24        24        20 *    call_periph_bits_ref
-      16        16        16         8 *    call_periph_bits_val
+      24 *      24 *      24 *      24 *    call_periph_bits_ref
+      16 *      16 *      16 *      16 *    call_periph_bits_val
       16 *      16 *      16 *      16 *    call_periph_mskd
-      20 *      36        36        20 *    call_periph_mskd_ref
-      20        20        20         8 *    call_periph_mskd_val
+      20 *      36        36        24      call_periph_mskd_ref
+      20        20        20        16 *    call_periph_mskd_val
       28        28        28        24 *    call_pos_ref
       20 *      20 *      20 *      20 *    call_pos_ref_global
-      16        12 *      12 *      12 *    call_pos_val
-      12         8 *       8 *       8 *    call_pos_val_global
+      16 *      16 *      16 *      16 *    call_pos_val
+      12 *      12 *      12 *      12 *    call_pos_val_global
       16 *      28        28        16 *    call_range_ref
       12 *      12 *      12 *      12 *    call_range_ref_port
       16        16        16        12 *    call_range_val
-                12 *      12 *              call_range_val.constprop.0
-      12         8 *       8 *      12      call_range_val_port
-      24        24        24        20 *    call_reg_bits_ref
-      16        16        16         8 *    call_reg_bits_val
-      20 *      36        36        20 *    call_reg_mskd_ref
-      20        20        20         8 *    call_reg_mskd_val
+      12 *      12 *      12 *      12 *    call_range_val_port
+      24 *      24 *      24 *      24 *    call_reg_bits_ref
+      16 *      16 *      16 *      16 *    call_reg_bits_val
+      20 *      36        36        24      call_reg_mskd_ref
+      20        20        20        16 *    call_reg_mskd_val
       32 *      32 *      32 *      52      call_return_bits
       48 *      52        52        76      call_return_mskd
       36 *      36 *      36 *      56      call_return_periph
       36 *      36 *      36 *      60      call_return_reg
       28        28        28        20 *    call_shifted_const_ref
-      16        16        16         8 *    call_shifted_const_val
+      16        16        16        12 *    call_shifted_const_val
       28        28        28        20 *    call_shifted_global_ref
-      16        16        16         8 *    call_shifted_global_val
+      16        16        16        12 *    call_shifted_global_val
       28        28        28        20 *    call_shifted_var_ref
-      16        16        16         8 *    call_shifted_var_val
+      16        16        16        12 *    call_shifted_var_val
       24 *      24 *      24 *      24 *    check_array_range_fail
       24 *      24 *      24 *      24 *    check_array_range_pass
       24 *      24 *      24 *      24 *    check_bits_range_fail
@@ -138,59 +134,38 @@ compile: lpc824 cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
       44 *      52        52        68      mskd_extract_lss
       28 *      32        32        56      mskd_extract_ne
       20 *      20 *      20 *     244      mskd_ref
-                                    44 *    mskd_ref.constprop.14
       16 *      16 *      16 *     156      mskd_val
-                                    32 *    mskd_val.constprop.15
-      20 *                                  mskd_val.constprop.44
-                20 *      20 *              mskd_val.constprop.6
       12 *      12 *      12 *      12 *    periph_bits
       12 *      12 *      12 *      16      periph_bits_ref
-                                    16 *    periph_bits_ref.constprop.11
        8 *       8 *       8 *      16      periph_bits_val
-                                    16 *    periph_bits_val.constprop.13
       16 *      16 *      16 *      16 *    periph_mskd
       12 *      16        16        20      periph_mskd_ref
-                                    20 *    periph_mskd_ref.constprop.7
       12 *      12 *      12 *      20      periph_mskd_val
-                                    20 *    periph_mskd_val.constprop.9
       12 *      12 *      12 *      24      pos_cmp_eq
       12 *      12 *      12 *      24      pos_cmp_ne
       40 *      40 *      40 *      40 *    pos_ref
-                12 *      12 *      12 *    pos_ref.constprop.2
-                12 *      12 *      12 *    pos_ref.constprop.3
-      12 *                                  pos_ref.constprop.40
-      12 *                                  pos_ref.constprop.41
       32 *      36        36        32 *    pos_val
-                12 *      12 *      12 *    pos_val.constprop.4
-      12 *                                  pos_val.constprop.42
-      12 *                                  pos_val.constprop.43
-                12 *      12 *      12 *    pos_val.constprop.5
       28 *      28 *      28 *      40      prescaler_high
       28 *      28 *      28 *      36      prescaler_low
       12 *      12 *      12 *      16      reg_bits_ref
-                                    16 *    reg_bits_ref.constprop.10
        8 *       8 *       8 *      16      reg_bits_val
-                                    16 *    reg_bits_val.constprop.12
       64 *      64 *      64 *      80      reg_mskd_geq
       48 *      48 *      48 *      72      reg_mskd_gtr
       56 *      56 *      56 *      84      reg_mskd_leq
       52 *      52 *      52 *      72      reg_mskd_lss
       12 *      16        16        20      reg_mskd_ref
-                                    20 *    reg_mskd_ref.constprop.6
       12 *      12 *      12 *      20      reg_mskd_val
-                                    20 *    reg_mskd_val.constprop.8
        4 *       4 *       4 *       4 *    return_bits
       12 *      12 *      12 *      12 *    return_mskd
       12 *      12 *      20        20      return_periph
       20        20        12 *      28      return_reg
-    1236      1192 *    1192 *    1192 *    run
+    1256      1212 *    1212 *    1212 *    run
        2 *                                  run::gpio1_words_3
        2 *                                  run::serial2_config
        2 *                                  run::timer1_prescale
       28 *      28 *      28 *      28 *    runtime_bits_array
       16 *      20        20        32      runtime_range_ref
       16 *      16 *      16 *      28      runtime_range_val
-                24 *      24 *              runtime_range_val.constprop.1
       16 *      16 *      16 *      16 *    set_bits_global
       16 *      16 *      16 *      24      set_multi_bits_method
       16 *      16 *      16 *      24      set_multi_bits_operator
@@ -200,24 +175,10 @@ compile: lpc824 cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
       16 *      16 *      16 *      32      set_singl_mskd_operator
       28 *      28 *      28 *      40      shifted_global
       32 *      32 *      32 *      52      shifted_ref
-                                    44 *    shifted_ref.constprop.0
       28 *      28 *      28 *      48      shifted_val
-                                    44 *    shifted_val.constprop.1
       12 *      12 *      12 *      12 *    zero_array
       12 *      12 *      12 *      12 *    zero_reg
-compile: lpc824 cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
+compile: lpc824 cortex-m0plus apcs-gnu -g3 -DGCC_ARM_BUG c++17 -O2
    regbits    struct       raw  bitfield
-      12        12         8 *       8 *    call_bits_val_const
-      12         8 *       8 *       8 *    call_bits_val_global
-      12        12         8 *       8 *    call_bits_val_var
-      12         8 *       8 *       8 *    call_mskd_val_global
-      16        12 *      12 *      12 *    call_pos_val
-      12         8 *       8 *       8 *    call_pos_val_global
-      12         8 *       8 *      12      call_range_val_port
       20        20        12 *      28      return_reg
-    1236      1192 *    1192 *    1192 *    run
-
-compile: lpc824 cortex-m0plus apcs-gnu -O3 -g3 -DGCC_ARM_BUG c++11
-raw.out         	size: 3708	time: 7846
-regbits.out     	size: 3592	time: 7668
-struct.out      	size: 3712	time: 7894
+    1256      1212 *    1212 *    1212 *    run
