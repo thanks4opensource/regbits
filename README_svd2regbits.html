@@ -1,0 +1,222 @@
+<h1 id="readmeforsvd2regbits.py">README for svd2regbits.py</h1>
+
+<p><strong>svd2regbits.py</strong> is a tool to convert CMSIS System View Description (SVD) files into <a href="README.md">regbits</a> C++ header files.</p>
+
+<h2 id="copyrightanamecopyrighta">Copyright <a name="copyright"></a					   ></h2>
+
+<p>regbits: C++ templates for type-safe bit manipulation
+Copyright (C) 2019,2020 Mark R. Rubin</p>
+
+<p>This file is part of regbits.</p>
+
+<p>The regbits program is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.</p>
+
+<p>The regbits program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License
+(LICENSE.txt) along with the regbits program. If not, see
+<a href="https://www.gnu.org/licenses/gpl.html">https://www.gnu.org/licenses/gpl.html</a>.</p>
+
+<h2 id="contentsanamecontentsa">Contents <a name="contents"></a></h2>
+
+<ul>
+<li><a href="#copyright">Copyright</a></li>
+<li><a href="#svd_and_svd2regbits.py">SVD and svd2regbits.py</a>
+
+<ul>
+<li><a href="#disclosure">Disclosure</a></li>
+<li><a href="#design_and_documentation">Design and documentation</a></li>
+<li><a href="#svd2regbits_py">svd2regbits.py</a></li>
+<li><a href="#dim_vs_dim_index"><code>&lt;dim&gt;</code>/<code>[%s]</code> arrays vs <code>&lt;dimIndex&gt;</code>/<code>%s</code> lists vs <code>&lt;derivedFrom&gt;</code></a></li>
+<li><a href="#svd2regbits.py_`&lt;derivedFrom&gt;`_limitations">svd2regbits.py <code>&lt;derivedFrom&gt;</code> limitations</a></li>
+<li><a href="#Missing_`&lt;headerStructName&gt;`_tags">Missing <code>&lt;headerStructName&gt;</code> tags</a></li>
+<li><a href="#unconvertible_svd_constructs">Unconvertible SVD constructs</a></li>
+<li><a href="#size_and_alignment_errors">Size and alignment errors</a></li>
+<li><a href="#svds_file_quality">SVDs file &#8220;quality&#8221;</a></li>
+</ul></li>
+<li><a href="#credits">Credits</a></li>
+</ul>
+
+<h2 id="svdandsvd2regbits.pyanamesvd_and_svd2regbits.pya">SVD and svd2regbits.py <a name="svd_and_svd2regbits.py"></a></h2>
+
+<p><a name="disclosure"></a></p>
+
+<h4 id="disclosure">Disclosure</h4>
+
+<p>This document includes highly opinionated comments and occasional criticisms regarding the design of the SVD standard and its implementation in many existing SVD file implementations. All statements are strictly the author&#8217;s opinion and do not in any way reflect the views of the individuals and organizations listed <a href="#credits">below</a>.</p>
+
+<p><a name="design_and_documentation"></a></p>
+
+<h3 id="designanddocumentation">Design and documentation</h3>
+
+<p>The design of the SVD file format, and its related documentation, is in general highly commendable. The design is exceptionally complete and general, covering a wide range of disparate use cases. Likewise,the documentation is among the best <a href="#footnote_1"><sup>1</sup></a> that exists in the realm of embedded software.</p>
+
+<p>That said, neither are perfect. The documentation is unclear and/or ambiguous several places. That, and more importantly, the complexity of the format almost guarantees that many creators of SVD files will make serious mistakes <a href="#footnote_2"><sup>2</sup></a>. Such files are frequently semantically incorrect or at minimum &#8220;clumsy&#8221; and non-optimal, and often even syntactically malformed on some level.</p>
+
+<h3 id="svd2regbits.pyanamesvd2regbits_pya">svd2regbits.py <a name="svd2regbits_py"></a></h3>
+
+<p>The current <a href="svd2regbits.py">svd2regbits.py</a> program should be considered an early beta release. It is missing several important capabilities, and likewise doesn&#8217;t handle (or handles poorly) several SVD features. The intent is that many of these failings will be addressed in future releases, although not all (see <a href="#unconvertible_svd_constructs">below</a>).</p>
+
+<p>The general intent, both currently and for the future, is to &#8220;fix&#8221; incorrect and/or untranslatable SVD file features when strictly necessary, but to &#8220;drop&#8221; all others (malformed, or other elements that svd2regbits.py cannot handle, will not appear in the regbits .hxx file output). Warning messages will be printed in both cases. Specifically, constructs which the author (rightly or wrongly) considers in violation of the documented SVD file format will be removed. Several examples of these are described in the following sections.</p>
+
+<p>In terms of testing, the current svd2regbits.py successfully converts all SVD examples in the <a href="https://github.com/posborne/cmsis-svd/tree/master/data">posborne/cmsis-dvd/data</a> repository (see <a href="#credits">Credits</a>, below) as of this writing, and all compile with the exception of two which contain &#8220;svd2regbits-will-not-attempt-to-fix&#8221; typos <a href="#footnote_3"><sup>3</sup></a>. Whether or not the resulting regbits .hxx files contain correct addresses, offsets, register layouts, and/or bitfield descriptions is another question entirely.</p>
+
+<p><a name="dim_vs_dim_index"></a></p>
+
+<h3 id="dimsarraysvsdimindexslistsvsderivedfrom"><code>&lt;dim&gt;</code>/<code>[%s]</code> arrays vs <code>&lt;dimIndex&gt;</code>/<code>%s</code> lists vs <code>&lt;derivedFrom&gt;</code></h3>
+
+<p>This is the most frequent misuse/misinterpretation of the complex SVD format. The documentation clearly states (for <code>&lt;cluster&gt;</code>, <code>&lt;register&gt;</code>, and <code>&lt;field</code>&gt; elements):</p>
+
+<p><em>name:</em> &#8230; <em>You can use the placeholder %s, which is replaced by the dimIndex substring. Use the placeholder [%s] only at the end of the identifier to generate arrays in the header file. The placeholder [%s] cannot be used together with dimIndex.</em></p>
+
+<p>and:</p>
+
+<p><em>dimIndex: Specify the substrings that replaces the %s placeholder within name and displayName. By default, the index is a decimal value starting with 0 for the first register. dimIndex should not be used together with the placeholder [%s], but rather with %s.</em></p>
+
+<p>Despite this clarity, many existent SVD files contain elements with <code>&lt;name&gt;</code> tags containing <code>%s</code> but no corresponding <code>&lt;dimIndex&gt;</code>, and vice-versa (<code>[%s]</code> with <code>&lt;dimIndex&gt;</code>). Also <code>%s</code> with <code>&lt;dim&gt;</code> in addition to <code>&lt;dimIndex&gt;</code> (which is the correct size? <code>&lt;dim&gt;</code> or the number of the <code>&lt;dimIndex&gt;</code> values?) and other such horrors.</p>
+
+<p>In addition, there is almost universal &#8220;misuse&#8221; of <code>%s</code> with e.g. <code>&lt;dimIndex&gt;0,1,2,3&lt;/dimIndex&gt;</code> which conceptually should be replaced (in this example) with <code>[%s]</code> and <code>&lt;dim&gt;4&lt;/dim&gt;</code>. Admittedly this is both a question of style (whether individually-named elements vs a singly-named array is desired), and also somewhat regbits specific where e.g. <code>ARRAY[2]</code> is safely range-checked at compile time without any impact on executable code size or speed compared to <code>NAME_2</code>.</p>
+
+<p>Also note that <code>&lt;peripheral&gt;</code> elements are clearly documented as only allowing <code>[%s]</code>, not <code>%s</code> <a href="#footnote_4"><sup>4</sup></a>.</p>
+
+<p>Partly due to current limitations <a href="#footnote_5"><sup>5</sup></a> of regbits, the problems are handled as follows:</p>
+
+<ul>
+<li><code>&lt;peripheral&gt;</code>: Illegal <code>%s</code> and/or missing <code>&lt;dim&gt;</code> or <code>&lt;dimIncrement&gt;</code> ignored/removed, otherwise handled correctly.</li>
+<li><code>&lt;cluster&gt;</code> and <code>&lt;register&gt;</code>: Ignored if more than one <code>%s</code> and/or <code>[%s]</code> <a href="#footnote_6"><sup>6</sup></a>. If <code>[%s]</code> and <code>&lt;dimIndex&gt;</code>, <code>[%s]</code> changed to <code>%s</code> and <code>&lt;dimIndex&gt;</code> used. Ignored if <code>%s</code> without <code>dimIndex</code>. Otherwise handled correctly by expanding <code>%s</code>/<code>&lt;dimIndex&gt;</code> as separately-named elements, or <code>[%s]</code>/<code>&lt;dim&gt;</code> as array.</li>
+<li><code>&lt;field&gt;</code>: Always expanded as separate <code>%s</code>/<code>&lt;dimIndex&gt;</code> names (including implicit rewrite of <code>[%s]</code>/<code>&lt;dim&gt;</code> to <code>%s</code>/<code>&lt;dimIndex&gt;</code> if the former) due to current regbits limitation <a href="#footnote_5"><sup>5</sup></a>.</li>
+</ul>
+
+<p><a name="svd2regbits.py_`<derivedFrom>`_limitations"></a></p>
+
+<h3 id="svd2regbits.pyderivedfromlimitations">svd2regbits.py <code>&lt;derivedFrom&gt;</code> limitations</h3>
+
+<p>The current svd2regbits.py converter intentionally misinterprets <code>&lt;derivedFrom&gt;</code> tags in <code>&lt;peripheral&gt;</code>, <code>&lt;cluster&gt;</code>, and <code>&lt;register&gt;</code> elements, effectively treating them as &#8220;clonedFrom&#8221; or &#8220;copyOf&#8221;, i.e. without modification or overriding. (It also completely ignores <code>&lt;derivedFrom&gt;</code> in <code>&lt;field&gt;</code> and <code>&lt;enumeratedValue&gt;</code> elements.)</p>
+
+<p>The <code>&lt;derivedFrom&gt;</code> tag adds useful the capabilities to the design of SVD format, but is very difficult to implement fully in an SVD-to-C/C++ converter. This is especially true if the converter attempts to create single struct/object definitions for multiple SVD elements which are identical instead of blindly expanding a possibly deep <code>&lt;derivedFrom&gt;</code> tree without analysis of what, if anything, is being added/overridden.</p>
+
+<p>Future releases of svd2regbits.py should have improvements regarding the issue.</p>
+
+<p>In addition, svd2regbits.py cannot handle &#8220;retrograde&#8221; <code>&lt;derivedFrom&gt;</code> addresses. C++ (and C) peripheral structs must have their registers/clusters in address order because they must know the type of each sub-object as it is instantiated (forward declaration does not work in this situation). For example, if an SVD file has:</p>
+
+<pre><code>    &lt;peripheral&gt;
+      &lt;name&gt;SOME_PERIPHERAL&lt;/name&gt;
+      &lt;register&gt;
+        &lt;name&gt;FIRST_OF_THIS_TYPE&lt;/name&gt;
+        &lt;addressOffset&gt;0x20&lt;/addressOffset&gt;
+        ...
+      &lt;/register&gt;
+      ...
+      &lt;register derivedFrom FIRST_OF_THIS_TYPE&gt;
+        &lt;name&gt;SECOND_OF_THIS_TYPE&lt;/name&gt;
+        &lt;addressOffset&gt;0x10&lt;/addressOffset&gt;
+        ...
+      &lt;/register&gt;
+    &lt;/peripheral&gt;
+</code></pre>
+
+<p>the converted regbits .hxx file will fail to compile:</p>
+
+<pre><code>    struct SomePeripheral {
+        first_of_this_type_t   secondOfThisType;
+        // ...
+        struct FirstOfThisType {
+            // ...
+        };
+        using first_of_this_type_t = Reg&lt;uint32_t, FirstOfThisType&gt;;
+              first_of_this_type_t   first_of_this_type;
+    };
+</code></pre>
+
+<p>Again, this could be corrected by a &#8220;virtual&#8221; reordering of the SVD file at conversion time, but the difficulty of doing so will likely remain out of the scope of this converter for the conceivable future, regardless that the problem is specific to svd2regbits.py and does not affect SVD-to-CMSIS converters. (I contend that such SVD files are conceptually misleading and should be
+changed anyway &#8211; if the ordering is not in fact a typo in the first place.)</p>
+
+<p>Note that the above is a separate issue from the order in the SVD file (although it would also be nice if SVD writers respected address order, thus allowing linear &#8220;stream&#8221; parsing of the files).</p>
+
+<p><a name="Missing_`<headerStructName>`_tags"></a></p>
+
+<h3 id="missingheaderstructnametags">Missing <code>&lt;headerStructName&gt;</code> tags</h3>
+
+<p>A problem with many existing SVD files (not the SVD standard itself) is the lack of <code>&lt;headerStructName&gt;</code> tags, particularly in <code>&lt;derivedFrom&gt;</code> peripherals where they would be most useful. The SVD documentation clearly states:</p>
+
+<p><em>headerStructName: Specify the base name of C structures. The headerfile generator uses the name of a peripheral as the base name for the C structure type. If <headerStructName> element is specfied, then this string is used instead of the peripheral name; useful when multiple peripherals get derived and a generic type name should be used.</em></p>
+
+<p>Failure to include meaningful <code>&lt;headerStructName&gt;</code> tags results in C/C++ pointers in converted files with confusingly inaccurate types, such the following in a regbits/C++/.hxx file:</p>
+
+<pre><code>    static volatile GenTim2* gen_tim_4 = reinterpret_cast&lt;volatile GenTim2*&gt;(TIM4_BASE);
+</code></pre>
+
+<p>or the equivalent in a CMSIS .h header file:</p>
+
+<pre><code>    #define TIM4 ((TIM2_TypeDef *)TIM4_BASE)
+</code></pre>
+
+<p>Note that, ironically, the <code>&lt;groupName&gt;</code> tag <em>is</em> often included but cannot be used as a substitute for <code>&lt;headerStructName&gt;</code> as it is frequently more &#8220;generic&#8221; (e.g. all timers being given <code>&lt;groupName&gt;TIMER&lt;/groupname&gt;</code> tags despite the various timers belonging to conceptually and C/C++ struct/class different sub-types).</p>
+
+<p><a name="unconvertible_svd_constructs"></a></p>
+
+<h3 id="unconvertiblesvdconstructs">Unconvertible SVD constructs</h3>
+
+<p>The SVD file format allows the description of elements that while syntactically and semantically correct cannot be converted into C/C++ structs without extensive reinterpretation. For example, consider the following pathological case:</p>
+
+<pre><code>    &lt;register&gt;
+      &lt;name&gt;A[%s]&lt;/name&gt;
+      &lt;addressOffset&gt;0x20&lt;/addressOffset&gt;
+      &lt;size&gt;32&lt;/size&gt;
+      &lt;dim&gt;4&lt;/dim&gt;
+      &lt;dimIncrement&gt;8&lt;/dimIncrement&gt;
+      ...
+    &lt;/register&gt;
+    &lt;register&gt;
+      &lt;name&gt;B[%s]&lt;/name&gt;
+      &lt;addressOffset&gt;0x24&lt;/addressOffset&gt;
+      &lt;size&gt;32&lt;/size&gt;
+      &lt;dim&gt;4&lt;/dim&gt;
+      &lt;dimIncrement&gt;8&lt;/dimIncrement&gt;
+      ...
+    &lt;/register&gt;
+</code></pre>
+
+<p>Of course these interleaved registers should be more properly written as a <code>&lt;cluster&gt;</code> containing &#8220;A&#8221; and &#8220;B&#8221; and <code>&lt;dim&gt;4&lt;/dim&gt;</code>, but while the above is perfectly legal SVD, it cannot be converted without an A.I.-level analysis and implicit rewrite.</p>
+
+<p><a name="size_and_alignment_errors"></a></p>
+
+<h3 id="sizeandalignmenterrors">Size and alignment errors</h3>
+
+<p>Many existent SVD files contain obvious alignment and/or size errors, such as 16, 32, 64 bit registers with <code>&lt;addressOffset&gt;</code> values that are not 2, 4, 8 bit aligned. I understand that some ARM (and other) CPUs can handle misaligned data, but other evidence in the files imply that the misalignments are in fact typos or misunderstandings.</p>
+
+<p><a name="svds_file_quality"></a></p>
+
+<h3 id="svdsfilequality">SVDs file &#8220;quality&#8221;</h3>
+
+<p>As noted in the SVD documentation, the &#8220;quality&#8221; of an SVD file is a separate issue from its correctness. An SVD file can be syntactically and semantically correct but if it is missing <code>&lt;field&gt;</code> and/or <code>&lt;enumeratedValue&gt;</code> elements it will likely be of little use, both in and of itself and after conversion to a usable format such as CMSIS header or regbits .hxx file <a href="#footnote_7"><sup>7</sup></a>. &#8220;Garbage in, garbage out&#8221; as the saying from the dawn of computing goes.</p>
+
+<h2 id="creditsanamecreditsa">Credits <a name="credits"></a></h2>
+
+<p>Many thanks to:</p>
+
+<ul>
+<li><a href="https://github.com/gzigzigzeo">gzigzigzeo</a> for informing me about the existence of SVD files (<a href="https://github.com/thanks4opensource/regbits_stm/issues/1">Generate RegBits definitions from SVD #1</a>)</li>
+<li><a href="https://github.com/posborne">posborne</a> for his excellent work creating and maintaining his <a href="https://github.com/posborne/cmsis-svd/">CMSIS-SVD Repository and Parsers</a></li>
+<li><a href="https://www.arm.com/">Arm Limited</a> and/or <a href="https://www.keil.com/">armKeil</a> <a href="#footnote_8"><sup>8</sup></a> for creating and making publicly available <a href="#footnote_9"><sup>9</sup></a> SVD and its documentation (<a href="https://arm-software.github.io/CMSIS_5/SVD/html/index.html">System View Description</a>, <a href="https://www.keil.com/pack/doc/CMSIS/SVD/html/index.html">System View Description</a>).</li>
+</ul>
+
+<h2 id="footnotes">Footnotes</h2>
+
+<ol>
+<li><a name="footnote_1"></a> Given the quality level of most embedded documentation, this is unfortunately a very low hurdle to clear.</li>
+<li><a name="footnote_2"></a> And they do. Lots of them.</li>
+<li><a name="footnote_3"></a> Not to name any names, but a company whose initials begin with &#8220;S&#8221; and &#8220;T&#8221; and end with &#8220;M&#8221; shouldn&#8217;t include multiple <code>&lt;interrupt&gt;</code> elements with the same <code>&lt;name&gt;</code> but different <code>&lt;value&gt;</code> values. To be fair, these obvious typos affect only two of the 87 STM SVD examples tested.</li>
+<li><a name="footnote_4"></a> I have not seen any examples that violate this rule, nor in fact any arrays of <code>&lt;peripheral&gt;</code> at all. Once again the possibility that the SVD standard is more complex than necessary, in this case with <code>&lt;peripheral&gt;</code> arrays being a subset of the <code>&lt;derivedFrom&gt;</code> semantics.</li>
+<li><a name="footnote_5"></a> Which will be addressed in an upcoming release.</li>
+<li><a name="footnote_6"></a> What does having both <code>%s</code> and <code>[%s]</code> in a <code>&lt;cluster&gt;</code> or <code>&lt;register&gt;</code> name mean? Multiple <code>&lt;dimIndex&gt;</code>-replaced names each being a <code>&lt;dim&gt;</code> array, or an array of <code>&lt;dimIndex&gt;</code> names in an implicit <code>&lt;cluster&gt;</code>?</li>
+<li><a name="footnote_7"></a> I find it ironic that STM, which does a fair job of <code>#define</code>-ing field values in its CMSIS headers (although only for single bit fields, completely giving up on multiple regardless of whether wide and semantically an integer vs. narrow with a small number of enumerated encoded values) (and likewise has no <code>&lt;enumeratedValue&gt;</code> tags in its SVD files), while NXP which at least in the CMSIS headers for the older, low-end LPC series chips I&#8217;ve seen has no field descriptions at all nevertheless supplies <code>&lt;field&gt;</code> tags with <code>&lt;description&gt;</code> and <code>&lt;enumeratedValue&gt;</code> elements in its SVDs. (Their CMSIS headers aren&#8217;t generated from the SVDs?)</li>
+<li><a name="footnote_8"></a> The creation, history, and ownership of SVD is unclear to me.</li>
+<li><a name="footnote_9"></a> Likewise its licensing terms, other than the Apache license in the published <a href="https://arm-software.github.io/CMSIS_5/SVD/html/schema_1_2_gr.html">CMSIS-SVD Schema File</a>, <a href="https://www.keil.com/pack/doc/CMSIS/SVD/html/schema_1_2_gr.html">CMSIS-SVD Schema File</a></li>
+</ol>

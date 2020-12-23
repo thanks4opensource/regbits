@@ -22,8 +22,8 @@
 #define regbits_hxx
 
 #define REGBITS_MAJOR_VERSION   1
-#define REGBITS_MINOR_VERSION   0
-#define REGBITS_MICRO_VERSION   2
+#define REGBITS_MINOR_VERSION   1
+#define REGBITS_MICRO_VERSION   0
 
 
 namespace regbits {
@@ -987,12 +987,39 @@ const unsigned  bits) \
 }
 
 
+// same as REGBITS_MSKD_RANGE but with explicit type for RUNTIME_NAME
+// argument if mskd_t WORD size is wider than unsigned
+//
+//
+#define REGBITS_MSKD_UNSGN(CLASS, UNSIGNED_TYPE, CONSTEXPR_NAME, RUNTIME_NAME, MASK, POS, LIMIT) \
+static constexpr shft_t     CONSTEXPR_NAME##_SHFT = shft_t(MASK, POS);   \
+\
+template<unsigned BITS> static constexpr mskd_t CONSTEXPR_NAME() \
+    { \
+    static_assert(BITS <= (LIMIT), \
+                  CLASS "::" #CONSTEXPR_NAME "<BITS> out of range"); \
+    return mskd_t(MASK, BITS, POS); \
+} \
+\
+static const mskd_t RUNTIME_NAME( \
+const UNSIGNED_TYPE bits) \
+{ \
+    return mskd_t(MASK << POS.pos(), bits << POS.pos()); \
+} \
+\
+static bool RUNTIME_NAME##_valid( \
+const unsigned  bits) \
+{ \
+    return bits <= (LIMIT); \
+}
+
+
 // macro for generating functions returning array member (constexpr and non-)
 #define REGBITS_ARRAY_RANGE(CLASS, CONSTEXPR_NAME, RUNTIME_NAME, DATATYPE, ARRAY, LIMIT) \
 template<unsigned INDEX> volatile DATATYPE& CONSTEXPR_NAME() \
     volatile { \
     static_assert(INDEX <= (LIMIT), \
-                  CLASS "::" #CONSTEXPR_NAME "<INDEX> out of range"); \
+                  #CLASS "::" #CONSTEXPR_NAME "<INDEX> out of range"); \
     return ARRAY[INDEX]; \
 } \
 \
