@@ -33,7 +33,7 @@ import sys
 # Constants
 #
 
-VERSION = (0, 1, 0)
+VERSION = (0, 1, 1)
 
 FIX_BAD_CHARS = {
     i :      i
@@ -180,10 +180,30 @@ def import_xml_lib(lib, fail_ok=False):
 
 
 
+def get_enumerated_values(register, field):
+    while True:
+        if field is None:
+            return None
+        values = field.find('enumeratedValues')
+        if values is None:
+            return None
+        derived_from = values.get('derivedFrom')
+        if not derived_from:
+            return values
+        if '.' in derived_from:
+            sys.stderr.write(  "Current version can't handle "
+                               "<field><name>%s</name> "
+                               "<enumeratedValues derivedFrom=\"%s\" /> "
+                               "from different field/register/peripheral\n"
+                             % (find_text(field, 'name'),
+                                derived_from            )                  )
+            return values
+        field = register.find("./fields/field/[name='%s']" % derived_from)
 
-def dervd(root, node, element_type, child_name):
-    if root is None or node is None:
-        return None
+
+def derived_from_by_name(root, node, element_type, child_name):
+    # if root is None or node is None:
+    #   return None
     child = node.find(child_name   )
     dfrm  = node.get ('derivedFrom')
     while child is None and dfrm is not None and node is not None:
@@ -194,13 +214,12 @@ def dervd(root, node, element_type, child_name):
     return child
 
 
-
-def find_derived_from(root, element, element_type, clone_tags):
+def derived_from_stop_tag(root, element, element_type, stop_tag):
     while True:
         dfrm_name = element.get('derivedFrom')
         if not dfrm_name:
             return element
-        if any([child.tag in clone_tags for child in element.iterfind('*')]):
+        if any([child.tag == stop_tag for child in element.iterfind('*')]):
             sys.stderr.write(  "Element %s of %s has derivedFrom=\"%s\" "
                                "but one of %s is in %s. Current converter "
                                "can't handle modified \"derivedFrom\", only "
@@ -737,8 +756,9 @@ def do_register(outfile      ,
             else:
                 mskds[begin] = name
             valus[name] = []
-            values = field.find('enumeratedValues')
-            if values:
+            # values = field.find('enumeratedValues')
+            values = get_enumerated_values(register, field)
+            if values is not None:
                 if not begin in mskds:  # enumeratedValues for single bit fields
                     mskds[begin] = name
                 for value in values.findall('enumeratedValue'):
@@ -1083,10 +1103,10 @@ def do_cluster(outfile       ,
         dim_index       =           find_text(register, 'dimIndex'      )
         if not dim: dim = 1
         if not register_size:
-            register_size = dervd(registers      ,
-                                  register       ,
-                                  'register'     ,
-                                  'size'         )
+            register_size = derived_from_by_name(registers ,
+                                                 register  ,
+                                                 'register',
+                                                 'size'    )
             if register_size is None:
                 register_size = default_size
             else:
@@ -1223,10 +1243,10 @@ def do_cluster(outfile       ,
                              register_size // 8 ,
                              dim                )                  )
 
-        derived_from = find_derived_from(registers ,
-                                         register  ,
-                                         'register',
-                                         ('fields',))
+        derived_from = derived_from_stop_tag(registers ,
+                                             register  ,
+                                             'register',
+                                             'fields'  )
         if derived_from == register:
             if is_cluster:
                 if had_dim_index:
@@ -1502,10 +1522,10 @@ def main(xml_lib, svd_path, outfile, version):
                                      in  periph_name.split('%d')         ])
         else:
             periph_name = fixname(periph_name.lower())
-        struct_periph = find_derived_from(root.find('peripherals'),
-                                          periph                  ,
-                                          'peripheral'            ,
-                                          ('registers',)          )
+        struct_periph = derived_from_stop_tag(root.find('peripherals'),
+                                              periph                  ,
+                                              'peripheral'            ,
+                                              'registers'             )
         struct_name = get_struct_name(struct_periph        )
         addr        =       find_text(periph, 'baseAddress')
         if not addr: addr = '0x00000000'
