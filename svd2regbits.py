@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # regbits: C++ templates for type-safe bit manipulation
-# Copyright (C) 2020 Mark R. Rubin
+# Copyright (C) 2020, 2021 Mark R. Rubin
 #
 # This file is part of regbits.
 #
@@ -33,7 +33,7 @@ import sys
 # Constants
 #
 
-VERSION = (0, 1, 1)
+VERSION = (0, 1, 2)
 
 FIX_BAD_CHARS = {
     i :      i
@@ -544,7 +544,8 @@ def do_padding(outfile        ,
                register_name  ,
                register_size  ,
                register_offset,
-               padding_number ):
+               padding_number ,
+               indentation    ):
     bad_address = None
     if register_size == 16 and register_offset & 0x1:
         bad_address      = register_offset
@@ -578,7 +579,8 @@ def do_padding(outfile        ,
                             register_offset)                      )
         return (periph_size, padding_number)
     elif needed > 0:
-        outfile.write("\n    private: uint8_t padding_%d" % padding_number)
+        outfile.write(  "\n%sprivate: uint8_t padding_%d"
+                      % (" " * indentation, padding_number))
         padding_number += 1
         if needed > 1:
             outfile.write('[%d]; public:\n\n' % needed)
@@ -1051,7 +1053,8 @@ def do_cluster(outfile       ,
                cluster_dim   ,
                is_peripheral ,
                registers     ,
-               default_size  ):
+               default_size  ,
+               dim_increment ):
 
     if cluster_struct != periph_struct:
         outfile.write('\n\n')
@@ -1073,6 +1076,7 @@ def do_cluster(outfile       ,
         del cluster_dflt
 
     if registers is None:
+        # can only happen when called with peripheral, not cluster
         return (periph_size, padding_number)
 
     # sort registers by <addressOffset>
@@ -1230,7 +1234,8 @@ def do_cluster(outfile       ,
                                                    register_name  ,
                                                    register_size  ,
                                                    register_offset,
-                                                   padding_number )
+                                                   padding_number ,
+                                                   indentation    )
 
         if 'offset' in opts.debug:
             outfile.write(  "\n    // periph_size=%d,0x%x  "
@@ -1258,6 +1263,8 @@ def do_cluster(outfile       ,
                 cluster_name =      cluster_name + 'Cluster'        \
                                if   cluster_name == cluster_struct  \
                                else cluster_name
+
+                dim_increment = parse_int(find_text(register, 'dimIncrement'))
                 (decl_rbar  ,
                  struct_size) = do_cluster(outfile      ,
                                            indentation  ,  # already incremented
@@ -1270,7 +1277,8 @@ def do_cluster(outfile       ,
                                            dim          ,
                                            False        ,
                                            register     ,
-                                           default_size )
+                                           default_size ,
+                                           dim_increment)
                 indent(outfile                         ,
                        indentation                     ,
                          "};  // struct %s (cluster)\n"
@@ -1334,6 +1342,22 @@ def do_cluster(outfile       ,
     if is_peripheral:
         return (periph_size, padding_number)
     else:
+        if dim_increment > periph_size:
+            (periph_size, padding_number) = do_padding(outfile        ,
+                                                       periph_in_svd  ,
+                                                       periph_size    ,
+                                                       register_name  ,
+                                                       0              ,
+                                                       dim_increment  ,
+                                                       padding_number ,
+                                                       indentation    )
+        elif dim_increment > 0 and periph_size > dim_increment:
+            sys.stderr.write(  "Cluster %s in peripheral %s, <dimIncrement> "
+                               "%d bytes but cluster size %d bytes\n"
+                             % (register_name,
+                                periph_in_svd,
+                                dim_increment,
+                                periph_size  )                               )
         return register_finish(cluster_struct,
                                cluster_struct,
                                periph_size   ,
@@ -1444,7 +1468,8 @@ def main(xml_lib, svd_path, outfile, version):
                                                    1                       ,
                                                    True                    ,
                                                    periph.find('registers'),
-                                                   device_default          )
+                                                   device_default          ,
+                                                   0                       )
         align_size = (periph_size + 0x3) & ~0x3;
         if align_size > periph_size:
             outfile.write("\n    // pad to modulo 4 bytes")  # no newline
@@ -1454,7 +1479,8 @@ def main(xml_lib, svd_path, outfile, version):
                                                        '<periph_align>',
                                                        0               ,
                                                        align_size      ,
-                                                       padding_number  )
+                                                       padding_number  ,
+                                                       4               )
         if 'offset' in opts.debug:
             outfile.write(  "    // periph_size=%d,0x%x  align_size=%d\n"
                           % (periph_size,
