@@ -33,7 +33,7 @@ import sys
 # Constants
 #
 
-VERSION = (0, 1, 2)
+VERSION = (0, 1, 3)
 
 FIX_BAD_CHARS = {
     i :      i
@@ -107,7 +107,6 @@ PERIPH_UNDEF = "\n#undef {upper}_PERIPH\n"
 
 ARM_NVIC_HEADER = '''
 
-namespace arm {
 enum class NvicIrqn {
 ''' + "    // ARM IRQs\n"
 
@@ -132,7 +131,6 @@ ARM_IRQS = (
 ARM_IRQ_NAMES = [irq[0] for irq in ARM_IRQS]
 
 ARM_NVIC_FOOTER = '''}; // enum NvicIrqn
-}  // namespace arm
 '''
 
 
@@ -185,9 +183,7 @@ def get_enumerated_values(register, field):
         if field is None:
             return None
         values = field.find('enumeratedValues')
-        if values is None:
-            return None
-        derived_from = values.get('derivedFrom')
+        derived_from = field.get('derivedFrom')
         if not derived_from:
             return values
         if '.' in derived_from:
@@ -758,7 +754,6 @@ def do_register(outfile      ,
             else:
                 mskds[begin] = name
             valus[name] = []
-            # values = field.find('enumeratedValues')
             values = get_enumerated_values(register, field)
             if values is not None:
                 if not begin in mskds:  # enumeratedValues for single bit fields
