@@ -33,7 +33,7 @@ import sys
 # Constants
 #
 
-VERSION = (0, 1, 3)
+VERSION = (0, 1, 4)
 
 FIX_BAD_CHARS = {
     i :      i
@@ -1575,18 +1575,19 @@ def main(xml_lib, svd_path, outfile, version):
     mcu_irqs = []
     alreadys = set()
     for periph in root.iter('peripheral'):
-        interrupt = periph.find('interrupt')
-        if interrupt is None:
+        interrupts = periph.findall('interrupt')
+        if interrupts is None:
             continue
-        name = fixname(remove_name_dim(find_text(interrupt, 'name')))
-        if not name: continue    # already printed warning
-        desc = find_text(interrupt, 'description')
-        valu = find_text(interrupt, 'value'      )
-        try:    valu = int(valu)
-        except: valu = 0
-        if name and valu not in alreadys:
-            alreadys.add   ( valu               )
-            mcu_irqs.append((valu, (name, desc)))
+        for interrupt in interrupts:
+            name = fixname(remove_name_dim(find_text(interrupt, 'name')))
+            if not name: continue    # already printed warning
+            desc = find_text(interrupt, 'description')
+            valu = find_text(interrupt, 'value'      )
+            try:    valu = int(valu)
+            except: valu = 0
+            if name and valu not in alreadys:
+                alreadys.add   ( valu               )
+                mcu_irqs.append((valu, (name, desc)))
     outfile.write("    // %s IRQs\n" % mcu)
     if 'irqs' in opts.sort:
         if 'name' in opts.sort:
